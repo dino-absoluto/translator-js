@@ -64,9 +64,10 @@ class Chapter {
       const extras = []
       const prefix = `${index.toString().padStart(3, '0')}`
       for (const [i, item] of data.extras.entries()) {
+        const name = `${prefix}-${i.toString().padStart(2, '0')} ${item.name}`
         extras.push({
           url: item.url,
-          file: item.file || `${prefix}-${i.toString().padStart(2, '0')} ${item.name}`
+          file: item.file || path.join(data.volume.pathname, name)
         })
       }
       Object.defineProperties(this, {
