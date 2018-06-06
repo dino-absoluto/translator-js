@@ -21,6 +21,7 @@
 
 const chalk = require('chalk')
 const process = require('process')
+const { URL } = require('url')
 
 const Tale = require('./get/tale')
 
@@ -54,9 +55,20 @@ const _main = async () => {
     console.log(_version)
     return
   }
+  // TODO: deprecate --dir
+  // if (config.dir.length) {
+  //   console.warn(chalk`{yellow warning} usage of {cyan --dir} is deprecated`)
+  // }
   let tales = []
-  for (const url of config._) {
-    tales.push({ url })
+  for (const src of config._) {
+    try {
+      let url = new URL(src)
+      tales.push({ url })
+    } catch (err) {
+      tales.push({
+        targetDir: src
+      })
+    }
   }
   for (const dir of config.dir) {
     tales.push({
