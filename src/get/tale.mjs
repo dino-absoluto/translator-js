@@ -1,31 +1,31 @@
 /**
- * @file tale.js
+ * @file Tale
  * @license
- * This file is part of novel-js.
+ * This file is part of translator-js.
  *
- * novel-js is free software: you can redistribute it and/or modify
+ * translator-js is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * novel-js is distributed in the hope that it will be useful,
+ * translator-js is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with novel-js.  If not, see <http://www.gnu.org/licenses/>.
+ * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 /* Imports */
-const path = require('path')
-const fs = require('fs')
-const {URL} = require('url')
-const makeDir = require('make-dir')
-const chalk = require('chalk')
-const loadJsonFile = require('load-json-file')
-const filenamify = require('filenamify')
-const engines = require('./engines')
+import path from 'path'
+import fs from 'fs'
+import { URL } from 'url'
+import makeDir from 'make-dir'
+import chalk from 'chalk'
+import loadJsonFile from 'load-json-file'
+import filenamify from 'filenamify'
+import engines from './engines'
 
 class Volume extends String {
   constructor (index, title) {
@@ -78,7 +78,7 @@ class Chapter {
   }
 }
 
-class Tale {
+export default class Tale {
   constructor (options) {
     const minVersion = 1
     const modVersion = 1
@@ -264,5 +264,3 @@ class Tale {
     }
   }
 }
-
-module.exports = Tale

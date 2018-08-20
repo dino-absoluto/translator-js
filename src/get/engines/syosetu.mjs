@@ -1,30 +1,33 @@
 /**
- * @file syosetu.js
+ * @file syosetu.mjs
  * @license
- * This file is part of novel-js.
+ * This file is part of translator-js.
  *
- * novel-js is free software: you can redistribute it and/or modify
+ * translator-js is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * novel-js is distributed in the hope that it will be useful,
+ * translator-js is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with novel-js.  If not, see <http://www.gnu.org/licenses/>.
+ * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-/* Imports */
-const got = require('got')
-const cookie = require('cookie')
-const crypto = require('crypto')
-const chalk = require('chalk')
-const mime = require('mime-types')
-const { JSDOM } = require('jsdom')
-const { URL } = require('url')
+/* imports */
+import got from 'got'
+import cookie from 'cookie'
+import crypto from 'crypto'
+import chalk from 'chalk'
+import mime from 'mime-types'
+import jsdom from 'jsdom'
+import { URL } from 'url'
+/* -imports */
+
+const { JSDOM } = jsdom
 
 const _processChapter = async (url, config, doc) => {
   if (doc == null) {
@@ -71,7 +74,7 @@ const _processChapter = async (url, config, doc) => {
   }
 }
 
-module.exports = class Syosetu {
+export default class Syosetu {
   static test (url) {
     return /^((http|https):\/\/|)(ncode|novel18).syosetu.com\/[^/]+\/?$/.test(url)
   }
@@ -100,7 +103,7 @@ module.exports = class Syosetu {
         extras = data.extras
       }
       const hash = crypto.createHash('sha256')
-        .update(description)
+        .update(description, 'utf8')
         .digest('base64')
       updater.addChapter({
         volumeIndex: 0,
