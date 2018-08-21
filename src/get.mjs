@@ -1,4 +1,4 @@
-#!/usr/bin/env node --experimental-modules
+#!/usr/bin/env node -r esm
 /**
  * @file get.js
  * @license
