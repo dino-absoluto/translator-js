@@ -23,7 +23,7 @@ import chalk from 'chalk'
 import { URL } from 'url'
 import yargsParser from 'yargs-parser'
 import Tale from './get/tale'
-import pkgInfo from './index.js'
+import pkgInfo from './info.js'
 /* -imports */
 
 const _version = pkgInfo.version
