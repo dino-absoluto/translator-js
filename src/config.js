@@ -17,8 +17,10 @@
  * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-const version = require('../package.json').version
-
-module.exports = {
-  version
+/* config */
+const config = {
+  version: require('../package.json').version,
+  sourceDir: __dirname
 }
+
+module.exports = config

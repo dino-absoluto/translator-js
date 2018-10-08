@@ -18,5 +18,4 @@
  *
  */
 /* imports */
-import './get'
 /* -imports */
