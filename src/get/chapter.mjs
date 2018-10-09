@@ -24,6 +24,12 @@ import path from 'path'
 import filenamify from 'filenamify'
 /* -imports */
 
+export class FileInfo {
+  constructor (options) {
+    this.filename = options.filename
+  }
+}
+
 export default class Chapter extends Base {
   get base () {
     const { props } = this
@@ -55,5 +61,13 @@ export default class Chapter extends Base {
 
   get absolute () {
     return path.resolve(this.base, this.relative)
+  }
+
+  shouldUpdate (nProps = {}) {
+    const { props } = this
+    if (nProps.hash && nProps.hash !== props.hash) {
+      return true
+    }
+    return false
   }
 }
