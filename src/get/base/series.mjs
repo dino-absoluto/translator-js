@@ -22,6 +22,7 @@
 import Base from './base'
 import path from 'path'
 import fs from 'fs'
+import filenamify from 'filenamify'
 /* -imports */
 
 export default class Series extends Base {
@@ -29,22 +30,26 @@ export default class Series extends Base {
     const meta = Series.parseMeta(props)
     super(meta)
     Object.defineProperties(this, {
-      url: { enumerable: true, get: () => this.props.url }
+      sourceURL: { enumerable: true, get: () => this.props.sourceURL }
     })
   }
 
   static parseMeta (props) {
     try {
       let url = new URL(props.source)
+      let name = props.name || filenamify(`${url.host}${url.pathname}`)
       return {
-        url
+        sourceURL: url,
+        targetDir: name
       }
     } catch (err) {
       try {
         let fname = path.join(props.source, 'index.json')
         let data = JSON.parse(fs.readFileSync(fname, 'utf8'))
-        data.url = new URL(data.url)
-        return data
+        data.sourceURL = new URL(data.sourceURL)
+        return Object.assign(data, {
+          targetDir: path.dirname(fname)
+        })
       } catch (error) {
         throw new Error('Failed to read index.json')
       }

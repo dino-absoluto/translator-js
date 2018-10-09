@@ -27,13 +27,13 @@ import fs from 'fs'
 /* -imports */
 
 test('init with url', () => {
-  const url = new URL('https://www.example.com')
+  const sourceURL = new URL('https://www.example.com')
   let ss = new Series({
-    source: url
+    source: sourceURL
   })
-  expect(ss.url).toEqual(url)
+  expect(ss.sourceURL).toEqual(sourceURL)
   expect(ss).toEqual({
-    url
+    sourceURL
   })
 })
 
@@ -42,15 +42,15 @@ test('init with path', async () => {
   process.chdir('./__tmp__/')
   await del('series/simple')
   await makeDir('series/simple')
-  const url = new URL('https://www.example.com')
+  const sourceURL = new URL('https://www.example.com')
   fs.writeFileSync('series/simple/index.json', JSON.stringify({
-    url
+    sourceURL
   }, null, 1))
   let ss = new Series({
     source: 'series/simple'
   })
-  expect(ss.url).toEqual(url)
+  expect(ss.sourceURL).toEqual(sourceURL)
   expect(ss).toEqual({
-    url
+    sourceURL
   })
 })
