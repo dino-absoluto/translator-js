@@ -21,12 +21,30 @@
 /* eslint-env jest */
 /* imports */
 import Series from './series'
+import makeDir from 'make-dir'
+import fs from 'fs'
 /* -imports */
 
 test('init with url', () => {
   const url = new URL('https://www.example.com')
   let ss = new Series({
     source: url
+  })
+  expect(ss.url).toEqual(url)
+  expect(ss).toEqual({
+    url
+  })
+})
+
+test('init with path', async () => {
+  await makeDir('./__tmp__/series/simple')
+  process.chdir('./__tmp__/')
+  const url = new URL('https://www.example.com')
+  fs.writeFileSync('series/simple/index.json', JSON.stringify({
+    url
+  }, null, 1))
+  let ss = new Series({
+    source: 'series/simple'
   })
   expect(ss.url).toEqual(url)
   expect(ss).toEqual({
