@@ -20,7 +20,16 @@
  */
 /* eslint-env jest */
 /* imports */
+import Series from './series'
 /* -imports */
 
-test('simple', () => {
+test('init with url', () => {
+  const url = new URL('https://www.example.com')
+  let ss = new Series({
+    source: url
+  })
+  expect(ss.url).toEqual(url)
+  expect(ss).toEqual({
+    url
+  })
 })
