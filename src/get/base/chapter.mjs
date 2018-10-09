@@ -63,7 +63,12 @@ export default class Chapter extends Base {
       files: { enumerable: true, get: () => this.props.files },
       volume: {
         enumerable: true,
-        get: () => (this.props.volume && this.props.volume.index) || undefined
+        get: () => {
+          let vol = this.props.volume && this.props.volume.index
+          if (Number.isInteger(vol)) {
+            return vol
+          }
+        }
       }
     })
   }
