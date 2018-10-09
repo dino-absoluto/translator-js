@@ -28,8 +28,8 @@ export default class Volume extends Base {
   constructor (props) {
     super(props)
     Object.defineProperties(this, {
-      title: { enumerable: true, get: () => props.title },
-      index: { enumerable: true, get: () => props.index }
+      title: { enumerable: true, get: () => this.props.title },
+      index: { enumerable: true, get: () => this.props.index }
     })
   }
 

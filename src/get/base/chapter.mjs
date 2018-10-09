@@ -59,11 +59,12 @@ export default class Chapter extends Base {
   constructor (props) {
     super(props)
     Object.defineProperties(this, {
-      title: { enumerable: true, get: () => props.title },
-      index: { enumerable: true, get: () => props.index },
+      title: { enumerable: true, get: () => this.props.title },
+      index: { enumerable: true, get: () => this.props.index },
+      files: { enumerable: true, get: () => this.props.files },
       volume: {
         enumerable: true,
-        get: () => (props.volume && props.volume.index) || undefined
+        get: () => (this.props.volume && this.props.volume.index) || undefined
       }
     })
   }
@@ -91,6 +92,13 @@ export default class Chapter extends Base {
   }
 
   shouldUpdate (last, patch) {
+    {
+      /* ignore files */
+      let names = Object.getOwnPropertyNames(patch)
+      if (names.length === 1 && names[0] === 'files') {
+        return false
+      }
+    }
     if (patch.integrity && patch.integrity !== last.integrity) {
       return true
     }
@@ -106,7 +114,7 @@ export default class Chapter extends Base {
         integrity: props.integrity
       })
     ]
-    this.files = files
+    this.setProps({ files })
     return files
   }
 }

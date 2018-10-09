@@ -19,7 +19,6 @@
  *
  */
 /* imports */
-import clone from 'clone'
 /* -imports */
 
 export default class Base {
@@ -35,7 +34,7 @@ export default class Base {
       return
     }
     const last = this.props
-    const props = Object.assign(clone(last), patch)
+    const props = Object.assign({}, last, patch)
     this.props = props
     if (this.shouldUpdate(last, patch)) {
       this.update()
