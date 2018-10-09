@@ -26,7 +26,7 @@ import filenamify from 'filenamify'
 
 export class FileInfo {
   constructor (options) {
-    this.filename = options.filename
+    this.title = options.title
     this.integrity = options.integrity
     Object.defineProperties(this, {
       chapter: { value: options.chapter }
@@ -75,7 +75,12 @@ export default class Chapter extends Base {
   }
 
   get dirname () {
-    return path.dirname(this.absolute)
+    const { props } = this
+    if (props.volume) {
+      return props.volume.absolute
+    } else {
+      return this.base
+    }
   }
 
   shouldUpdate (last, patch) {
