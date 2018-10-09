@@ -1,5 +1,6 @@
 /**
  * @file index.js
+ * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
  *
