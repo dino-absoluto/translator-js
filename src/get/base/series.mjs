@@ -19,6 +19,8 @@
  *
  */
 /* imports */
+import Chapter from './chapter'
+import Volume from './volume'
 import Base from './base'
 import path from 'path'
 import fs from 'fs'
@@ -32,6 +34,14 @@ export default class Series extends Base {
     Object.defineProperties(this, {
       sourceURL: { enumerable: true, get: () => this.props.sourceURL }
     })
+  }
+
+  get Chapter () {
+    return Chapter
+  }
+
+  get Volume () {
+    return Volume
   }
 
   get targetDir () {
