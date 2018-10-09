@@ -21,23 +21,35 @@
 /* imports */
 import Base from './base'
 import path from 'path'
+import fs from 'fs'
 import filenamify from 'filenamify'
 /* -imports */
 
 export class FileInfo {
   constructor (options) {
-    this.title = options.title
-    this.integrity = options.integrity
+    const { chapter } = options
+    let fname = filenamify(`${
+      chapter.props.index.toString().padStart(3, '0')
+    } ${this.fname}`)
     Object.defineProperties(this, {
-      chapter: { value: options.chapter }
+      chapter: { value: options.chapter },
+      integrity: { enumerable: true, value: options.integrity },
+      fname: { enumerable: true, value: fname }
     })
   }
 
   get absolute () {
-    return path.join(this.chapter.dirname, this.filename)
+    return path.join(this.chapter.dirname, this.fname)
   }
 
   exists () {
+    return fs.accessSync(this.absolute)
+  }
+
+  write (buffer, overwrite = false) {
+    fs.writeFileSync(this.absolute, buffer, {
+      flag: overwrite ? 'w' : 'wx'
+    })
   }
 }
 
@@ -51,27 +63,6 @@ export default class Chapter extends Base {
       return props.volume.base
     }
     return process.cwd()
-  }
-
-  get filename () {
-    const { props } = this
-    let name = filenamify(`${
-      props.index.toString().padStart(3, '0')
-    } ${props.title}.txt`)
-    return name
-  }
-
-  get relative () {
-    const { props } = this
-    let relative = this.filename
-    if (props.volume) {
-      return path.join(props.volume.relative, relative)
-    }
-    return relative
-  }
-
-  get absolute () {
-    return path.resolve(this.base, this.relative)
   }
 
   get dirname () {
@@ -88,5 +79,8 @@ export default class Chapter extends Base {
       return true
     }
     return false
+  }
+
+  update () {
   }
 }
