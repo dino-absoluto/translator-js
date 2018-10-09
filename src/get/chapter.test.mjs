@@ -18,42 +18,19 @@
  * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+/* eslint-env jest */
 /* imports */
-import Base from './base'
+import Chapter from './chapter'
 import path from 'path'
-import filenamify from 'filenamify'
 /* -imports */
 
-export default class Chapter extends Base {
-  get base () {
-    const { props } = this
-    if (props.base) {
-      return path.resolve(props.base)
-    }
-    if (props.volume) {
-      return props.volume.base
-    }
-    return process.cwd()
-  }
-
-  get filename () {
-    const { props } = this
-    let name = filenamify(`${
-      props.index.toString().padStart(3, '0')
-    } ${props.title}.txt`)
-    return name
-  }
-
-  get relative () {
-    const { props } = this
-    let relative = this.filename
-    if (props.volume) {
-      path.join(props.volume.relative, relative)
-    }
-    return relative
-  }
-
-  get absolute () {
-    return path.resolve(this.base, this.relative)
-  }
-}
+test('init with simple data', () => {
+  let ch = new Chapter({
+    index: 2,
+    title: 'Prologue'
+  })
+  expect(ch.filename).toBe('002 Prologue.txt')
+  expect(ch.relative).toBe('002 Prologue.txt')
+  expect(ch.base).toBe(path.resolve('.'))
+  expect(ch.absolute).toBe(path.resolve('./002 Prologue.txt'))
+})
