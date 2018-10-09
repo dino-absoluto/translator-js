@@ -20,47 +20,29 @@
  */
 /* eslint-env jest */
 /* imports */
-import Chapter from './chapter'
 import Volume from './volume'
 import path from 'path'
 /* -imports */
 
 test('init with minimum data', () => {
-  let ch = new Chapter({
+  let vol = new Volume({
     index: 2,
     title: 'Prologue'
   })
-  expect(ch.filename).toBe('002 Prologue.txt')
-  expect(ch.relative).toBe('002 Prologue.txt')
-  expect(ch.base).toBe(path.resolve('.'))
-  expect(ch.absolute).toBe(path.resolve('./002 Prologue.txt'))
+  expect(vol.filename).toBe('02 Prologue')
+  expect(vol.relative).toBe('02 Prologue')
+  expect(vol.base).toBe(path.resolve('.'))
+  expect(vol.absolute).toBe(path.resolve('./02 Prologue'))
 })
 
 test('init with base', () => {
-  let ch = new Chapter({
+  let vol = new Volume({
     index: 2,
     title: 'Prologue',
-    base: 'test'
+    base: 'download'
   })
-  expect(ch.filename).toBe('002 Prologue.txt')
-  expect(ch.relative).toBe('002 Prologue.txt')
-  expect(ch.base).toBe(path.resolve('./test'))
-  expect(ch.absolute).toBe(path.resolve('./test/002 Prologue.txt'))
-})
-
-test('init with volume', () => {
-  let volume = new Volume({
-    index: 1,
-    title: 'Chapter One',
-    base: 'test'
-  })
-  let ch = new Chapter({
-    index: 2,
-    title: 'Prologue',
-    volume
-  })
-  expect(ch.filename).toBe('002 Prologue.txt')
-  expect(ch.relative).toBe('01 Chapter One/002 Prologue.txt')
-  expect(ch.base).toBe(path.resolve('./test'))
-  expect(ch.absolute).toBe(path.resolve('./test/01 Chapter One/002 Prologue.txt'))
+  expect(vol.filename).toBe('02 Prologue')
+  expect(vol.relative).toBe('02 Prologue')
+  expect(vol.base).toBe(path.resolve('./download'))
+  expect(vol.absolute).toBe(path.resolve('./download/02 Prologue'))
 })
