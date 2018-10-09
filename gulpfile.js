@@ -1,7 +1,5 @@
-#!/usr/bin/env node
 /**
- * @file main.js
- * @author Dino <dinoabsoluto+dev@gmail.com>
+ * @file gulpfile.js
  * @license
  * This file is part of translator-js.
  *
@@ -20,5 +18,9 @@
  *
  */
 /* imports */
-module.exports = (require('esm')(module))('./src/index.mjs')
-/* -imports */
+/* gulp */
+// require('coffeescript/register')
+require('@babel/register')({
+  extensions: [ '.coffee', '.js', '.mjs' ]
+})
+module.exports = require('./gulpfile.mjs')

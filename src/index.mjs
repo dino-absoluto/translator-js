@@ -19,4 +19,6 @@
  *
  */
 /* imports */
+import * as get from './get'
 /* -imports */
+export default get
