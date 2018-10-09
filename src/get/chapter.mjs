@@ -48,7 +48,7 @@ export default class Chapter extends Base {
     const { props } = this
     let relative = this.filename
     if (props.volume) {
-      path.join(props.volume.relative, relative)
+      return path.join(props.volume.relative, relative)
     }
     return relative
   }
