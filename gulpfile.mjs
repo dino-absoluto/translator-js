@@ -19,6 +19,7 @@
  *
  */
 /* imports */
+import gulp from 'gulp'
 import { rollup } from 'rollup'
 import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
@@ -54,6 +55,10 @@ export const scripts = async () => {
     name: 'app',
     sourcemap: true
   })
+}
+
+export const watch = () => {
+  gulp.watch('src/**/*.(js|mjs|jsx)', scripts)
 }
 
 export default scripts
