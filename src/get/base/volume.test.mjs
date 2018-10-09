@@ -33,6 +33,10 @@ test('init with minimum data', () => {
   expect(vol.relative).toBe('02 Prologue')
   expect(vol.base).toBe(path.resolve('.'))
   expect(vol.absolute).toBe(path.resolve('./02 Prologue'))
+  expect(JSON.parse(JSON.stringify(vol))).toEqual({
+    index: 2,
+    title: 'Prologue'
+  })
 })
 
 test('init with base', () => {
@@ -45,4 +49,8 @@ test('init with base', () => {
   expect(vol.relative).toBe('02 Prologue')
   expect(vol.base).toBe(path.resolve('./download'))
   expect(vol.absolute).toBe(path.resolve('./download/02 Prologue'))
+  expect(JSON.parse(JSON.stringify(vol))).toEqual({
+    index: 2,
+    title: 'Prologue'
+  })
 })

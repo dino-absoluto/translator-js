@@ -56,6 +56,18 @@ export class FileInfo {
 }
 
 export default class Chapter extends Base {
+  constructor (props) {
+    super(props)
+    Object.defineProperties(this, {
+      title: { enumerable: true, get: () => props.title },
+      index: { enumerable: true, get: () => props.index },
+      volume: {
+        enumerable: true,
+        get: () => (props.volume && props.volume.index) || undefined
+      }
+    })
+  }
+
   get prefix () {
     return `${
       this.props.index.toString().padStart(3, '0')

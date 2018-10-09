@@ -25,6 +25,14 @@ import filenamify from 'filenamify'
 /* -imports */
 
 export default class Volume extends Base {
+  constructor (props) {
+    super(props)
+    Object.defineProperties(this, {
+      title: { enumerable: true, get: () => props.title },
+      index: { enumerable: true, get: () => props.index }
+    })
+  }
+
   get base () {
     const { props } = this
     if (props.base) {

@@ -23,13 +23,15 @@
 import Chapter from './chapter'
 import Volume from './volume'
 import path from 'path'
+import clone from 'clone'
 /* -imports */
 
 test('init with minimum data', () => {
-  let ch = new Chapter({
+  const config = {
     index: 2,
     title: 'Prologue'
-  })
+  }
+  let ch = new Chapter(config)
   expect(ch.prefix).toBe('002')
   ch.update()
   expect(ch.files.length).toBe(1)
@@ -40,6 +42,13 @@ test('init with minimum data', () => {
     expect(f.relative).toBe('002 Prologue.txt')
     expect(f.absolute).toBe(path.resolve('002 Prologue.txt'))
   }
+  expect(JSON.parse(JSON.stringify(ch))).toEqual(Object.assign(clone(config), {
+    files: [
+      {
+        fname: '002 Prologue.txt'
+      }
+    ]
+  }))
 })
 
 test('init with volume', () => {
@@ -63,4 +72,14 @@ test('init with volume', () => {
     expect(f.relative).toBe('01 Chapter One/002 Prologue.txt')
     expect(f.absolute).toBe(path.resolve('test/01 Chapter One/002 Prologue.txt'))
   }
+  expect(JSON.parse(JSON.stringify(ch))).toEqual({
+    index: 2,
+    title: 'Prologue',
+    volume: 1,
+    files: [
+      {
+        fname: '002 Prologue.txt'
+      }
+    ]
+  })
 })
