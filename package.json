@@ -47,6 +47,10 @@
     ]
   },
   "jest": {
+    "roots": [
+      "<rootDir>/src/",
+      "<rootDir>/tests/"
+    ],
     "transform": {
       "^.+\\.(js|mjs|jsx)$": "babel-jest"
     },
