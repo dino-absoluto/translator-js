@@ -67,3 +67,37 @@ test('init with path', async () => {
     sourceURL
   })
 })
+
+test('init with data', async () => {
+  await makeDir('./__tmp__/')
+  process.chdir('./__tmp__/')
+  await del('series/simple')
+  await makeDir('series/simple')
+  const sourceURL = new URL('https://www.example.com')
+  fs.writeFileSync('series/simple/index.json', JSON.stringify({
+    sourceURL,
+    volumes: [
+      {
+        'title': 'Chapter One'
+      }
+    ],
+    chapters: [
+      {
+        title: 'Description',
+        integrity: undefined,
+        files: [{
+          fname: '000 Description.txt',
+          integrity: undefined
+        }]
+      }
+    ]
+  }, null, 1))
+  let ss = new Series({
+    source: 'series/simple'
+  })
+  expect(ss.sourceURL).toEqual(sourceURL)
+  expect(ss.targetDir).toBe(path.resolve('series/simple'))
+  expect(ss).toEqual({
+    sourceURL
+  })
+})

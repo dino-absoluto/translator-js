@@ -58,8 +58,8 @@ export default class Chapter extends Base {
   constructor (props) {
     super(props)
     Object.defineProperties(this, {
+      index: { get: () => this.props.index },
       title: { enumerable: true, get: () => this.props.title },
-      index: { enumerable: true, get: () => this.props.index },
       files: { enumerable: true, get: () => this.props.files },
       volume: {
         enumerable: true,
