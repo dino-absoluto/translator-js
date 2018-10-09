@@ -39,6 +39,16 @@ test('init with url', () => {
   })
 })
 
+test('init chdir', () => {
+  const sourceURL = new URL('https://www.example.com')
+  let ss = new Series({
+    chdir: '__tmp__',
+    source: sourceURL
+  })
+  expect(ss.sourceURL).toEqual(sourceURL)
+  expect(ss.targetDir).toBe(path.resolve('__tmp__/www.example.com'))
+})
+
 test('init with path', async () => {
   await makeDir('./__tmp__/')
   process.chdir('./__tmp__/')
