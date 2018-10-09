@@ -117,4 +117,11 @@ test('init with data', async () => {
       }
     ]
   })
+  {
+    const ch = ss.chapters[0]
+    const vol = ss.volumes[0]
+    expect(ch.props.volume).toBe(vol)
+    expect(ch.dirRelative).toBe('00 Chapter One')
+    expect(ch.dirAbsolute).toBe(path.resolve('series/simple/00 Chapter One'))
+  }
 })
