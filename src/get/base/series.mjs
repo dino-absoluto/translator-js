@@ -31,8 +31,29 @@ export default class Series extends Base {
   constructor (props) {
     const meta = Series.parseMeta(props)
     super(meta)
+    props = this.props
+    if (props.volumes) {
+      const { Volume } = this
+      props.volumes = props.volumes.map((vol, index) => {
+        return new Volume(Object.assign({}, vol, {
+          index
+        }))
+      })
+    }
+    if (props.chapters) {
+      const { Chapter } = this
+      props.chapters = props.chapters.map((ch, index) => {
+        let vol = (Number.isInteger(ch.volume) && props.volumes[ch.volume]) || undefined
+        return new Chapter(Object.assign({}, ch, {
+          index,
+          volume: vol
+        }))
+      })
+    }
     Object.defineProperties(this, {
-      sourceURL: { enumerable: true, get: () => this.props.sourceURL }
+      sourceURL: { enumerable: true, get: () => this.props.sourceURL },
+      volumes: { enumerable: true, get: () => this.props.volumes },
+      chapters: { enumerable: true, get: () => this.props.chapters }
     })
   }
 

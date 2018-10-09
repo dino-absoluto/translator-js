@@ -85,6 +85,7 @@ test('init with data', async () => {
       {
         title: 'Description',
         integrity: undefined,
+        volume: 0,
         files: [{
           fname: '000 Description.txt',
           integrity: undefined
@@ -98,6 +99,22 @@ test('init with data', async () => {
   expect(ss.sourceURL).toEqual(sourceURL)
   expect(ss.targetDir).toBe(path.resolve('series/simple'))
   expect(ss).toEqual({
-    sourceURL
+    sourceURL,
+    volumes: [
+      {
+        'title': 'Chapter One'
+      }
+    ],
+    chapters: [
+      {
+        title: 'Description',
+        integrity: undefined,
+        volume: 0,
+        files: [{
+          fname: '000 Description.txt',
+          integrity: undefined
+        }]
+      }
+    ]
   })
 })
