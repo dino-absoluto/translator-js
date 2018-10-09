@@ -28,7 +28,7 @@ import filenamify from 'filenamify'
 export class FileInfo {
   constructor (options) {
     const { chapter } = options
-    let fname = filenamify(`${chapter.prefix} ${this.fname}`)
+    let fname = filenamify(`${chapter.prefix} ${options.fname}`)
     Object.defineProperties(this, {
       chapter: { value: options.chapter },
       integrity: { enumerable: true, value: options.integrity },
@@ -86,5 +86,15 @@ export default class Chapter extends Base {
   }
 
   update () {
+    const { props } = this
+    const files = [
+      new FileInfo({
+        chapter: this,
+        fname: `${props.title}.txt`,
+        integrity: props.integrity
+      })
+    ]
+    this.files = files
+    return files
   }
 }

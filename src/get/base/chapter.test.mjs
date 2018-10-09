@@ -31,6 +31,15 @@ test('init with minimum data', () => {
     title: 'Prologue'
   })
   expect(ch.prefix).toBe('002')
+  ch.update()
+  expect(ch.files.length).toBe(1)
+  {
+    const f = ch.files[0]
+    expect(f.fname).toBe('002 Prologue.txt')
+    expect(f.integrity).toBe(undefined)
+    expect(f.relative).toBe('002 Prologue.txt')
+    expect(f.absolute).toBe(path.resolve('002 Prologue.txt'))
+  }
 })
 
 test('init with volume', () => {
@@ -45,6 +54,13 @@ test('init with volume', () => {
     volume
   })
   expect(ch.prefix).toBe('002')
-  expect(ch.dirRelative).toBe('01 Chapter One')
-  expect(ch.dirAbsolute).toBe(path.resolve('test/01 Chapter One'))
+  ch.update()
+  expect(ch.files.length).toBe(1)
+  {
+    const f = ch.files[0]
+    expect(f.fname).toBe('002 Prologue.txt')
+    expect(f.integrity).toBe(undefined)
+    expect(f.relative).toBe('01 Chapter One/002 Prologue.txt')
+    expect(f.absolute).toBe(path.resolve('test/01 Chapter One/002 Prologue.txt'))
+  }
 })
