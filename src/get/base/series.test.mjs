@@ -22,6 +22,7 @@
 /* imports */
 import Series from './series'
 import makeDir from 'make-dir'
+import del from 'del'
 import fs from 'fs'
 /* -imports */
 
@@ -37,8 +38,10 @@ test('init with url', () => {
 })
 
 test('init with path', async () => {
-  await makeDir('./__tmp__/series/simple')
+  await makeDir('./__tmp__/')
   process.chdir('./__tmp__/')
+  await del('series/simple')
+  await makeDir('series/simple')
   const url = new URL('https://www.example.com')
   fs.writeFileSync('series/simple/index.json', JSON.stringify({
     url
