@@ -34,6 +34,7 @@ test('init with minimum data', () => {
   expect(ch.relative).toBe('002 Prologue.txt')
   expect(ch.base).toBe(path.resolve('.'))
   expect(ch.absolute).toBe(path.resolve('./002 Prologue.txt'))
+  expect(ch.dirname).toBe(path.resolve('.'))
 })
 
 test('init with base', () => {
@@ -46,6 +47,7 @@ test('init with base', () => {
   expect(ch.relative).toBe('002 Prologue.txt')
   expect(ch.base).toBe(path.resolve('./test'))
   expect(ch.absolute).toBe(path.resolve('./test/002 Prologue.txt'))
+  expect(ch.dirname).toBe(path.resolve('./test'))
 })
 
 test('init with volume', () => {
@@ -63,4 +65,5 @@ test('init with volume', () => {
   expect(ch.relative).toBe('01 Chapter One/002 Prologue.txt')
   expect(ch.base).toBe(path.resolve('./test'))
   expect(ch.absolute).toBe(path.resolve('./test/01 Chapter One/002 Prologue.txt'))
+  expect(ch.dirname).toBe(path.resolve('./test/01 Chapter One'))
 })
