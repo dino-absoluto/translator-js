@@ -30,18 +30,7 @@ test('init with minimum data', () => {
     index: 2,
     title: 'Prologue'
   })
-  expect(ch.base).toBe(path.resolve('.'))
-  expect(ch.dirname).toBe(path.resolve('.'))
-})
-
-test('init with base', () => {
-  let ch = new Chapter({
-    index: 2,
-    title: 'Prologue',
-    base: 'test'
-  })
-  expect(ch.base).toBe(path.resolve('./test'))
-  expect(ch.dirname).toBe(path.resolve('./test'))
+  expect(ch.prefix).toBe('002')
 })
 
 test('init with volume', () => {
@@ -55,6 +44,7 @@ test('init with volume', () => {
     title: 'Prologue',
     volume
   })
-  expect(ch.base).toBe(path.resolve('./test'))
-  expect(ch.dirname).toBe(path.resolve('./test/01 Chapter One'))
+  expect(ch.prefix).toBe('002')
+  expect(ch.dirRelative).toBe('01 Chapter One')
+  expect(ch.dirAbsolute).toBe(path.resolve('test/01 Chapter One'))
 })

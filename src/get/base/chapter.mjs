@@ -28,9 +28,7 @@ import filenamify from 'filenamify'
 export class FileInfo {
   constructor (options) {
     const { chapter } = options
-    let fname = filenamify(`${
-      chapter.props.index.toString().padStart(3, '0')
-    } ${this.fname}`)
+    let fname = filenamify(`${chapter.prefix} ${this.fname}`)
     Object.defineProperties(this, {
       chapter: { value: options.chapter },
       integrity: { enumerable: true, value: options.integrity },
@@ -38,8 +36,12 @@ export class FileInfo {
     })
   }
 
+  get relative () {
+    return path.join(this.chapter.dirRelative, this.fname)
+  }
+
   get absolute () {
-    return path.join(this.chapter.dirname, this.fname)
+    return path.join(this.chapter.dirAbsolute, this.fname)
   }
 
   exists () {
@@ -54,24 +56,26 @@ export class FileInfo {
 }
 
 export default class Chapter extends Base {
-  get base () {
-    const { props } = this
-    if (props.base) {
-      return path.resolve(props.base)
-    }
-    if (props.volume) {
-      return props.volume.base
-    }
-    return process.cwd()
+  get prefix () {
+    return `${
+      this.props.index.toString().padStart(3, '0')
+    }`
   }
 
-  get dirname () {
-    const { props } = this
-    if (props.volume) {
-      return props.volume.absolute
-    } else {
-      return this.base
+  get dirRelative () {
+    const { volume } = this.props
+    if (volume) {
+      return volume.relative
     }
+    return ''
+  }
+
+  get dirAbsolute () {
+    const { volume } = this.props
+    if (volume) {
+      return volume.absolute
+    }
+    return process.cwd()
   }
 
   shouldUpdate (last, patch) {
