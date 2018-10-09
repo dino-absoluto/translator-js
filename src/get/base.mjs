@@ -22,16 +22,27 @@
 /* -imports */
 export default class Base {
   constructor (props = {}) {
+    props = Object.assign({}, props)
     Object.defineProperties(this, {
-      props: { value: {} }
+      props: { value: props }
     })
-    this.update(props)
   }
 
-  update (props) {
+  setProps (props) {
     if (typeof props !== 'object') {
       return
     }
+    const shouldUpdate = this.shouldUpdate(props)
     Object.assign(this.props, props)
+    if (shouldUpdate) {
+      this.update()
+    }
+  }
+
+  shouldUpdate (nProps) {
+    return false
+  }
+
+  update () {
   }
 }
