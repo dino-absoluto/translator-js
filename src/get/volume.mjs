@@ -19,17 +19,34 @@
  *
  */
 /* imports */
-import Base, { File } from './base'
+import Base from './base'
+import path from 'path'
 import filenamify from 'filenamify'
 /* -imports */
 
 export default class Volume extends Base {
-  render () {
+  get base () {
     const { props } = this
-    const dirname = filenamify(`${
-      props.index.toString().padStart(2, '0')} ${props.title}`)
-    return new File({
-      dirname
-    })
+    if (props.base) {
+      return path.resolve(props.base)
+    } else {
+      return process.cwd()
+    }
+  }
+
+  get filename () {
+    const { props } = this
+    const name = filenamify(`${
+      props.index.toString().padStart(2, '0')
+    } ${props.title}`)
+    return name
+  }
+
+  get relative () {
+    return this.filename
+  }
+
+  get absolute () {
+    return path.resolve(this.base, this.relative)
   }
 }

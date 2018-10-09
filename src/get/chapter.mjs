@@ -19,19 +19,41 @@
  *
  */
 /* imports */
+import Base from './base'
+import path from 'path'
+import filenamify from 'filenamify'
 /* -imports */
-export default class Base {
-  constructor (props = {}) {
-    Object.defineProperties(this, {
-      props: { value: {} }
-    })
-    this.update(props)
+
+export default class Chapter extends Base {
+  get base () {
+    const { props } = this
+    if (props.base) {
+      return path.resolve(props.base)
+    }
+    if (props.volume) {
+      return props.volume.base
+    }
+    return process.cwd()
   }
 
-  update (props) {
-    if (typeof props !== 'object') {
-      return
+  get filename () {
+    const { props } = this
+    let name = filenamify(`${
+      props.index.toString().padStart(3, '0')
+    } ${props.title}.txt`)
+    return name
+  }
+
+  get relative () {
+    const { props } = this
+    let relative = this.name
+    if (props.volume) {
+      path.join(props.volume.relative, relative)
     }
-    Object.assign(this.props, props)
+    return relative
+  }
+
+  get absolute () {
+    return path.resolve(this.base, this.relative)
   }
 }
