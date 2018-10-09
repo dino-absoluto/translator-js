@@ -23,3 +23,4 @@
 /* exports */
 export { default as Chapter } from './chapter'
 export { default as Volume } from './volume'
+export { default as Series } from './series'
