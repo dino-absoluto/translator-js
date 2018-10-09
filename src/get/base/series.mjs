@@ -36,7 +36,8 @@ export default class Series extends Base {
       const { Volume } = this
       props.volumes = props.volumes.map((vol, index) => {
         return new Volume(Object.assign({}, vol, {
-          index
+          index,
+          base: this.targetDir
         }))
       })
     }
