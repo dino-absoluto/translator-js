@@ -19,27 +19,30 @@
  *
  */
 /* imports */
+import clone from 'clone'
 /* -imports */
+
 export default class Base {
   constructor (props = {}) {
     props = Object.assign({}, props)
     Object.defineProperties(this, {
-      props: { value: props }
+      props: { writable: true, value: props }
     })
   }
 
-  setProps (props) {
-    if (typeof props !== 'object') {
+  setProps (patch) {
+    if (typeof patch !== 'object') {
       return
     }
-    const shouldUpdate = this.shouldUpdate(props)
-    Object.assign(this.props, props)
-    if (shouldUpdate) {
+    const last = this.props
+    const props = Object.assign(clone(last), patch)
+    this.props = props
+    if (this.shouldUpdate(last, patch)) {
       this.update()
     }
   }
 
-  shouldUpdate (nProps) {
+  shouldUpdate (last, patch) {
     return false
   }
 
