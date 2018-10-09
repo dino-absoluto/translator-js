@@ -20,10 +20,9 @@
  */
 /* eslint-env jest */
 /* imports */
+import path from 'path'
 import Chapter from './chapter'
 import Volume from './volume'
-import path from 'path'
-import clone from 'clone'
 /* -imports */
 
 test('init with minimum data', () => {
