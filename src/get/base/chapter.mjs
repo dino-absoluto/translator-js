@@ -28,11 +28,10 @@ import filenamify from 'filenamify'
 export class FileInfo {
   constructor (options) {
     const { chapter } = options
-    let fname = filenamify(`${chapter.prefix} ${options.fname}`)
     Object.defineProperties(this, {
-      chapter: { value: options.chapter },
+      chapter: { value: chapter },
       integrity: { enumerable: true, value: options.integrity },
-      fname: { enumerable: true, value: fname }
+      fname: { enumerable: true, value: options.fname }
     })
   }
 
@@ -67,6 +66,10 @@ export default class Chapter extends Base {
         get: () => (this.props.volume && this.props.volume.index) || undefined
       }
     })
+  }
+
+  getName (fname) {
+    return filenamify(`${this.prefix} ${fname}`)
   }
 
   get prefix () {
@@ -110,7 +113,7 @@ export default class Chapter extends Base {
     const files = [
       new FileInfo({
         chapter: this,
-        fname: `${props.title}.txt`,
+        fname: this.getName(`${props.title}.txt`),
         integrity: props.integrity
       })
     ]
