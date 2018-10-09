@@ -34,13 +34,17 @@ export default class Series extends Base {
     })
   }
 
+  get targetDir () {
+    return path.resolve(this.props.targetDir)
+  }
+
   static parseMeta (props) {
     try {
       let url = new URL(props.source)
       let name = props.name || filenamify(`${url.host}${url.pathname}`)
       return {
         sourceURL: url,
-        targetDir: name
+        targetDir: path.resolve(props.chdir || '', name)
       }
     } catch (err) {
       try {
@@ -48,7 +52,7 @@ export default class Series extends Base {
         let data = JSON.parse(fs.readFileSync(fname, 'utf8'))
         data.sourceURL = new URL(data.sourceURL)
         return Object.assign(data, {
-          targetDir: path.dirname(fname)
+          targetDir: path.resolve(props.chdir || '', path.dirname(fname))
         })
       } catch (error) {
         throw new Error('Failed to read index.json')

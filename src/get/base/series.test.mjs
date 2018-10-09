@@ -24,6 +24,7 @@ import Series from './series'
 import makeDir from 'make-dir'
 import del from 'del'
 import fs from 'fs'
+import path from 'path'
 /* -imports */
 
 test('init with url', () => {
@@ -32,6 +33,7 @@ test('init with url', () => {
     source: sourceURL
   })
   expect(ss.sourceURL).toEqual(sourceURL)
+  expect(ss.targetDir).toBe(path.resolve('www.example.com'))
   expect(ss).toEqual({
     sourceURL
   })
@@ -50,6 +52,7 @@ test('init with path', async () => {
     source: 'series/simple'
   })
   expect(ss.sourceURL).toEqual(sourceURL)
+  expect(ss.targetDir).toBe(path.resolve('series/simple'))
   expect(ss).toEqual({
     sourceURL
   })
