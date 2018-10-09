@@ -105,6 +105,9 @@ export default class Chapter extends Base {
     if (patch.integrity && patch.integrity !== last.integrity) {
       return true
     }
+    if (patch.index && patch.index !== last.index) {
+      return true
+    }
     return false
   }
 
