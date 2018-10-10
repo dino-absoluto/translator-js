@@ -107,48 +107,39 @@ export default class Series extends Base {
   willUpdate (last, patch) {
     const { props, Volume, Chapter } = this
     const { volumes, chapters } = patch
-    delete patch.volumes
-    delete patch.chapters
-    super.willUpdate(last, patch)
     if (volumes) {
-      if (!props.volumes) {
-        props.volumes = []
-      }
-      props.volumes = volumes.map((data, index) => {
-        let vol = props.volumes[index]
-        if (!vol) {
-          vol = new Volume({
-            index,
-            base: this.targetDir
-          })
-        }
-        vol.setProps(data)
+      patch.volumes = volumes.map((data, index) => {
+        let vol = new Volume(
+          (props.volumes[index] && props.volumes[index].props) ||
+        {
+          index
+        })
+        vol.setProps(Object.assign({}, data, {
+          index,
+          base: this.targetDir
+        }))
         return vol
       })
     }
     if (chapters) {
-      if (!props.chapters) {
-        props.chapters = []
-      }
-      props.chapters = chapters.map((data, index) => {
-        let ch = props.chapters[index]
-        let volume = Number.isInteger(data.volume) && props.volumes[data.volume]
-        if (!ch) {
-          ch = new Chapter({
-            index,
-            volume
-          })
-          props.chapters[index] = ch
-        }
+      patch.chapters = chapters.map((data, index) => {
+        let volume = Number.isInteger(data.volume) && patch.volumes[data.volume]
+        let ch = new Chapter(
+          (props.chapters[index] && props.chapters[index].props) ||
+        {
+          index
+        })
         if (!volume) {
           // Vol matching failed
         }
         ch.setProps(Object.assign({}, data, {
+          index,
           volume
         }))
         return ch
       })
     }
+    super.willUpdate(last, patch)
   }
 
   refresh () {

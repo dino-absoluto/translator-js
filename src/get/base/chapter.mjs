@@ -49,19 +49,31 @@ export class FileInfo {
     return fs.accessSync(this.absolute)
   }
 
-  write (overwrite = false) {
+  write (force = false) {
     if (!this.buffer) {
       return
     }
     fs.writeFileSync(this.absolute, this.buffer, {
-      flag: overwrite ? 'w' : 'wx'
+      flag: force ? 'w' : 'wx'
     })
+  }
+
+  remove (force = false) {
+    const { relative } = this
+    if (relative.length > 0 && typeof relative === 'string') {
+      fs.unlinkSync(this.absolute)
+    }
   }
 }
 
 export default class Chapter extends Base {
   constructor (props) {
     super(props)
+    this.props.files = props.files && props.files.map((data, index) => {
+      return new FileInfo(Object.assign({}, data, {
+        chapter: this
+      }))
+    })
     Object.defineProperties(this, {
       index: { get: () => this.props.index },
       title: { enumerable: true, get: () => this.props.title },
@@ -119,6 +131,18 @@ export default class Chapter extends Base {
       return true
     }
     return false
+  }
+
+  willUpdate (last, patch) {
+    super.willUpdate(...arguments)
+    const files = this.props.files
+    makeDir.sync(this.dirAbsolute)
+    if (!files) {
+      return
+    }
+    for (const info of files) {
+      info.remove()
+    }
   }
 
   update () {
