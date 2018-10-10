@@ -64,12 +64,14 @@ test('init with volume', () => {
   let ch = new Chapter({
     index: 2,
     title: 'Prologue',
+    integrity: 'prologue',
     volume
   })
   expect(volume.index).toBe(1)
   expect(ch.prefix).toBe('002')
   ch.update()
   expect(ch.index).toBe(2)
+  expect(ch.integrity).toBe('prologue')
   expect(ch.files.length).toBe(1)
   {
     const f = ch.files[0]
@@ -81,6 +83,7 @@ test('init with volume', () => {
   ch = JSON.parse(JSON.stringify(ch))
   expect(ch).toEqual({
     title: 'Prologue',
+    integrity: 'prologue',
     volume: 1,
     files: [
       {

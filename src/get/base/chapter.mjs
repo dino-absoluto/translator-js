@@ -86,6 +86,7 @@ export default class Chapter extends Base {
       index: { get: () => this.props.index },
       title: { enumerable: true, get: () => this.props.title },
       files: { enumerable: true, get: () => this.props.files },
+      integrity: { enumerable: true, get: () => this.props.integrity },
       volume: {
         enumerable: true,
         get: () => {
@@ -177,7 +178,7 @@ export default class Chapter extends Base {
       new FileInfo({
         chapter: this,
         fname: this.getName(`${props.title}.txt`),
-        integrity: props.integrity
+        integrity: undefined
       })
     ]
     props.files = files
