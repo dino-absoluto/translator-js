@@ -52,21 +52,21 @@ export class Series extends base.Series {
   async refresh () {
     const volumes = [
       {
-        title: 'The Beginning'
+        'title': 'Chapter One'
       },
       {
-        title: 'The Happening'
+        title: 'The Beginning'
       }
     ]
     const chapters = [
       {
-        title: 'Prologue',
-        integrity: 'prologue',
+        title: 'Description',
+        integrity: 'start',
         volume: 0
       },
       {
-        title: 'Reborn',
-        integrity: 'reborn',
+        title: 'Prologue',
+        integrity: 'prologue',
         volume: 1
       }
     ]
