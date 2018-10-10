@@ -82,17 +82,26 @@ export default class Series extends Base {
     try {
       let url = new URL(props.source)
       let name = props.name || filenamify(`${url.host}${url.pathname}`)
-      return {
-        sourceURL: url,
-        targetDir: path.resolve(props.chdir || '', name)
+      let targetDir = path.resolve(props.chdir || '', name)
+      let data = {}
+      try {
+        let fname = path.join(targetDir, 'index.json')
+        let fdata = JSON.parse(fs.readFileSync(fname, 'utf8'))
+        Object.assign(data, fdata)
+      } catch (err) {
       }
+      return Object.assign(data, {
+        sourceURL: url,
+        targetDir
+      })
     } catch (err) {
       try {
         let fname = path.join(props.source, 'index.json')
         let data = JSON.parse(fs.readFileSync(fname, 'utf8'))
+        let targetDir = path.resolve(props.chdir || '', path.dirname(fname))
         data.sourceURL = new URL(data.sourceURL)
         return Object.assign(data, {
-          targetDir: path.resolve(props.chdir || '', path.dirname(fname))
+          targetDir
         })
       } catch (error) {
         throw new Error('Failed to read index.json')
