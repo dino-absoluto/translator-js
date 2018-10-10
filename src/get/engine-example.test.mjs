@@ -18,22 +18,40 @@
  * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+/* eslint-env jest */
 /* imports */
-import * as base from './base'
+// import Engine from './engine-example'
+import fs from 'fs'
+import del from 'del'
+import makeDir from 'make-dir'
 /* -imports */
 
-export class Chapter extends base.Chapter {
+const initData = async () => {
+  const sourceURL = new URL('https://www.example.com')
+  const prefix = '__tmp__/engine-example__simple/'
+  await del(prefix)
+  await makeDir(prefix)
+  fs.writeFileSync(`${prefix}index.json`, JSON.stringify({
+    sourceURL,
+    volumes: [
+      {
+        'title': 'Chapter One'
+      }
+    ],
+    chapters: [
+      {
+        title: 'Description',
+        integrity: undefined,
+        volume: 0,
+        files: [{
+          fname: '000 Description.txt',
+          integrity: undefined
+        }]
+      }
+    ]
+  }, null, 1))
 }
 
-export class Volume extends base.Volume {
-}
-
-export default class Series extends base.Series {
-  get Chapter () {
-    return Chapter
-  }
-
-  get Volume () {
-    return Volume
-  }
-}
+test('simple', async () => {
+  await initData()
+})
