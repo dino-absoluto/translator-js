@@ -28,8 +28,8 @@ import filenamify from 'filenamify'
 /* -imports */
 
 export default class Series extends Base {
-  constructor (props) {
-    const meta = Series.parseMeta(props)
+  constructor (props, parsed = false) {
+    const meta = parsed ? props : Series.parseMeta(props)
     super(meta)
     props = this.props
     if (props.volumes) {
