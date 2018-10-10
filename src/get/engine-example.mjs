@@ -33,7 +33,7 @@ export class Chapter extends base.Chapter {
         buffer: `${props.title}\n---\n\nHello World!`
       })
     ]
-    this.setProps({ files })
+    props.files = files
   }
 }
 

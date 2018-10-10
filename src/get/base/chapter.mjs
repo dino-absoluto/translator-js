@@ -46,7 +46,12 @@ export class FileInfo {
   }
 
   exists () {
-    return fs.accessSync(this.absolute)
+    try {
+      fs.accessSync(this.absolute)
+      return true
+    } catch (error) {
+      return false
+    }
   }
 
   write (force = false) {
@@ -130,6 +135,13 @@ export default class Chapter extends Base {
     if (patch.index && patch.index !== last.index) {
       return true
     }
+    if (last.files) {
+      for (const info of last.files) {
+        if (!info.exists()) {
+          return true
+        }
+      }
+    }
     return false
   }
 
@@ -158,8 +170,7 @@ export default class Chapter extends Base {
         integrity: props.integrity
       })
     ]
-    this.setProps({ files })
-    return files
+    props.files = files
   }
 
   didUpdate () {
