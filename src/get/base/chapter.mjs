@@ -58,6 +58,9 @@ export class FileInfo {
     if (!this.buffer) {
       return
     }
+    if (typeof this.buffer === 'function') {
+      this.buffer = this.buffer()
+    }
     fs.writeFileSync(this.absolute, this.buffer, {
       flag: force ? 'w' : 'wx'
     })
