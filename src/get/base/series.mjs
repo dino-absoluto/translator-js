@@ -104,25 +104,25 @@ export default class Series extends Base {
     return true
   }
 
-  willUpdate (last, patch) {
+  async willUpdate (last, patch) {
     const { props, Volume, Chapter } = this
     const { volumes, chapters } = patch
     if (volumes) {
-      patch.volumes = volumes.map((data, index) => {
+      patch.volumes = await Promise.all(volumes.map(async (data, index) => {
         let vol = new Volume(
           (props.volumes[index] && props.volumes[index].props) ||
         {
           index
         })
-        vol.setProps(Object.assign({}, data, {
+        await vol.setProps(Object.assign({}, data, {
           index,
           base: this.targetDir
         }))
         return vol
-      })
+      }))
     }
     if (chapters) {
-      patch.chapters = chapters.map((data, index) => {
+      patch.chapters = await Promise.all(chapters.map(async (data, index) => {
         let volume = Number.isInteger(data.volume) && patch.volumes[data.volume]
         let ch = new Chapter(
           (props.chapters[index] && props.chapters[index].props) ||
@@ -132,14 +132,14 @@ export default class Series extends Base {
         if (!volume) {
           // Vol matching failed
         }
-        ch.setProps(Object.assign({}, data, {
+        await ch.setProps(Object.assign({}, data, {
           index,
           volume
         }))
         return ch
-      })
+      }))
     }
-    super.willUpdate(last, patch)
+    return super.willUpdate(last, patch)
   }
 
   refresh () {

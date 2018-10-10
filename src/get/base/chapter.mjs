@@ -54,12 +54,12 @@ export class FileInfo {
     }
   }
 
-  write (force = false) {
+  async write (force = false) {
     if (!this.buffer) {
       return
     }
     if (typeof this.buffer === 'function') {
-      this.buffer = this.buffer()
+      this.buffer = await this.buffer()
     }
     fs.writeFileSync(this.absolute, this.buffer, {
       flag: force ? 'w' : 'wx'
@@ -124,7 +124,7 @@ export default class Chapter extends Base {
     return process.cwd()
   }
 
-  shouldUpdate (last, patch) {
+  async shouldUpdate (last, patch) {
     {
       /* ignore files */
       let names = Object.getOwnPropertyNames(patch)
@@ -140,7 +140,7 @@ export default class Chapter extends Base {
     }
     if (last.files) {
       for (const info of last.files) {
-        if (!info.exists()) {
+        if (!await info.exists()) {
           return true
         }
       }
@@ -156,20 +156,19 @@ export default class Chapter extends Base {
     return false
   }
 
-  willUpdate (last, patch) {
+  async willUpdate (last, patch) {
     super.willUpdate(...arguments)
     const files = this.props.files
     makeDir.sync(this.dirAbsolute)
     if (!files) {
       return
     }
-    for (const info of files) {
+    await Promise.all(files.map(info => {
       try {
         info.remove()
       } catch (err) {
-        continue
       }
-    }
+    }))
   }
 
   update () {
@@ -184,13 +183,14 @@ export default class Chapter extends Base {
     props.files = files
   }
 
-  didUpdate () {
+  async didUpdate () {
     const files = this.props.files
     makeDir.sync(this.dirAbsolute)
-    for (const info of files) {
+    const promises = Promise.all(files.map(info => {
       if (info.buffer) {
-        info.write()
+        return info.write()
       }
-    }
+    }))
+    return promises
   }
 }

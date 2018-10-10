@@ -107,11 +107,11 @@ test('setProps', async () => {
   })
   let spies = ['update', 'willUpdate', 'didUpdate'].map(
     name => jest.spyOn(ch, name))
-  ch.setProps({
+  await ch.setProps({
     integrity: 1
   })
   spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))
-  ch.setProps({
+  await ch.setProps({
     integrity: 1
   })
   spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))

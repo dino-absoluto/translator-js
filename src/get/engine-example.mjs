@@ -49,7 +49,7 @@ export class Series extends base.Series {
     return Volume
   }
 
-  refresh () {
+  async refresh () {
     const volumes = [
       {
         title: 'The Beginning'
@@ -70,7 +70,7 @@ export class Series extends base.Series {
         volume: 1
       }
     ]
-    this.setProps({
+    await this.setProps({
       volumes,
       chapters
     })

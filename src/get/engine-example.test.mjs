@@ -62,5 +62,5 @@ test('simple', async () => {
   const series = new Engine.Series({
     source: prefix
   })
-  series.refresh()
+  await series.refresh()
 })
