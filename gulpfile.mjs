@@ -32,6 +32,7 @@ const external = Object.keys(pkg.dependencies).concat(builtinModules)
 
 export const clean = async () => {
   await del('bin/')
+  await del('__tmp__/')
 }
 
 export const scripts = async () => {
