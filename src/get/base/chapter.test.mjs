@@ -20,9 +20,10 @@
  */
 /* eslint-env jest */
 /* imports */
-import path from 'path'
 import Chapter from './chapter'
 import Volume from './volume'
+import path from 'path'
+import del from 'del'
 /* -imports */
 
 test('init with minimum data', () => {
@@ -87,11 +88,12 @@ test('init with volume', () => {
   })
 })
 
-test('setProps', () => {
+test('setProps', async () => {
+  await del('__tmp__/simpleUpdate')
   let volume = new Volume({
     index: 1,
     title: 'Chapter One',
-    base: 'test'
+    base: '__tmp__/simpleUpdate'
   })
   let ch = new Chapter({
     index: 2,

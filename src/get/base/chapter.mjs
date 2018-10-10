@@ -23,6 +23,7 @@ import Base from './base'
 import path from 'path'
 import fs from 'fs'
 import filenamify from 'filenamify'
+import makeDir from 'make-dir'
 /* -imports */
 
 export class FileInfo {
@@ -31,7 +32,8 @@ export class FileInfo {
     Object.defineProperties(this, {
       chapter: { value: chapter },
       integrity: { enumerable: true, value: options.integrity },
-      fname: { enumerable: true, value: options.fname }
+      fname: { enumerable: true, value: options.fname },
+      buffer: { enumerable: true, value: options.buffer }
     })
   }
 
@@ -47,8 +49,11 @@ export class FileInfo {
     return fs.accessSync(this.absolute)
   }
 
-  write (buffer, overwrite = false) {
-    fs.writeFileSync(this.absolute, buffer, {
+  write (overwrite = false) {
+    if (!this.buffer) {
+      return
+    }
+    fs.writeFileSync(this.absolute, this.buffer, {
       flag: overwrite ? 'w' : 'wx'
     })
   }
@@ -127,5 +132,15 @@ export default class Chapter extends Base {
     ]
     this.setProps({ files })
     return files
+  }
+
+  didUpdate () {
+    const files = this.props.files
+    makeDir.sync(this.dirAbsolute)
+    for (const info of files) {
+      if (info.buffer) {
+        info.write()
+      }
+    }
   }
 }
