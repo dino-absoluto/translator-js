@@ -20,7 +20,7 @@
  */
 /* eslint-env jest */
 /* imports */
-// import Engine from './engine-example'
+import * as Engine from './engine-example'
 import fs from 'fs'
 import del from 'del'
 import makeDir from 'make-dir'
@@ -30,8 +30,11 @@ const initData = async () => {
   const sourceURL = new URL('https://www.example.com')
   const prefix = '__tmp__/engine-example__simple/'
   await del(prefix)
-  await makeDir(prefix)
-  fs.writeFileSync(`${prefix}index.json`, JSON.stringify({
+  await makeDir(`${prefix}00 Chapter One`)
+  const write = (fname, data) => {
+    fs.writeFileSync(`${prefix}${fname}`, data)
+  }
+  write('index.json', JSON.stringify({
     sourceURL,
     volumes: [
       {
@@ -41,7 +44,7 @@ const initData = async () => {
     chapters: [
       {
         title: 'Description',
-        integrity: undefined,
+        integrity: 'start',
         volume: 0,
         files: [{
           fname: '000 Description.txt',
@@ -50,8 +53,14 @@ const initData = async () => {
       }
     ]
   }, null, 1))
+  write('00 Chapter One/000 Description.txt', 'Hello World!')
 }
 
 test('simple', async () => {
+  const prefix = '__tmp__/engine-example__simple/'
   await initData()
+  const series = new Engine.Series({
+    source: prefix
+  })
+  series.refresh()
 })

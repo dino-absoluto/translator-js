@@ -23,17 +23,56 @@ import * as base from './base'
 /* -imports */
 
 export class Chapter extends base.Chapter {
+  update () {
+    const { props } = this
+    const files = [
+      new base.FileInfo({
+        chapter: this,
+        fname: this.getName(`${props.title}.txt`),
+        integrity: undefined,
+        buffer: `${props.title}\n---\n\nHello World!`
+      })
+    ]
+    this.setProps({ files })
+  }
 }
 
 export class Volume extends base.Volume {
 }
 
-export default class Series extends base.Series {
+export class Series extends base.Series {
   get Chapter () {
     return Chapter
   }
 
   get Volume () {
     return Volume
+  }
+
+  refresh () {
+    const volumes = [
+      {
+        title: 'The Beginning'
+      },
+      {
+        title: 'The Happening'
+      }
+    ]
+    const chapters = [
+      {
+        title: 'Prologue',
+        integrity: 'prologue',
+        volume: 0
+      },
+      {
+        title: 'Reborn',
+        integrity: 'reborn',
+        volume: 1
+      }
+    ]
+    this.updateData({
+      volumes,
+      chapters
+    })
   }
 }
