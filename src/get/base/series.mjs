@@ -46,7 +46,7 @@ export default class Series extends Base {
     if (props.chapters) {
       const { Chapter } = this
       props.chapters = props.chapters.map((ch, index) => {
-        let vol = (Number.isInteger(ch.volume) && props.volumes[ch.volume]) || undefined
+        let vol = (Number.isInteger(ch.volume) && props.volumes[ch.volume])
         return new Chapter(Object.assign({}, ch, {
           index,
           volume: vol
@@ -114,9 +114,9 @@ export default class Series extends Base {
             index,
             base: this.targetDir
           })
-          props.volumes[index] = vol
         }
         vol.setProps(data)
+        return vol
       })
     }
     if (chapters) {
@@ -125,17 +125,21 @@ export default class Series extends Base {
       }
       props.chapters = chapters.map((data, index) => {
         let ch = props.chapters[index]
+        let volume = Number.isInteger(data.volume) && props.volumes[data.volume]
         if (!ch) {
           ch = new Chapter({
-            index
+            index,
+            volume
           })
           props.chapters[index] = ch
         }
-        let vol = (Number.isInteger(ch.volume) &&
-          props.volumes[ch.volume]) || undefined
+        if (!volume) {
+          // Vol matching failed
+        }
         ch.setProps(Object.assign({}, data, {
-          volume: vol
+          volume
         }))
+        return ch
       })
     }
   }
