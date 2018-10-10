@@ -19,5 +19,8 @@
  *
  */
 /* imports */
+// import Syosetu from './engine-syosetu'
 /* -imports */
-export * from './base'
+
+export default (source) => {
+}

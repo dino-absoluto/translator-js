@@ -47,12 +47,12 @@ export class Volume extends base.Volume {
 export class Series extends base.Series {
   constructor (props) {
     super(props)
-    {
-      const regexp = /^((http|https):\/\/|)(ncode|novel18).syosetu.com\/[^/]+\/?$/
-      if (!regexp.test(this.sourceURL)) {
-        throw new Error('Invalid URL')
-      }
+    if (!Series.test(this.sourceURL)) {
+      throw new Error('Invalid URL')
     }
+  }
+  static test (url) {
+    return /^((http|https):\/\/|)(ncode|novel18).syosetu.com\/[^/]+\/?$/.test(url)
   }
   get Chapter () { return Chapter }
   get Volume () { return Volume }
@@ -149,3 +149,5 @@ export class Series extends base.Series {
     })
   }
 }
+
+export default Series
