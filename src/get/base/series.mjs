@@ -122,6 +122,7 @@ export default class Series extends Base {
       }))
     }
     if (chapters) {
+      const defers = []
       patch.chapters = await Promise.all(chapters.map(async (data, index) => {
         let volume = Number.isInteger(data.volume) && patch.volumes[data.volume]
         let ch = new Chapter(
@@ -132,12 +133,18 @@ export default class Series extends Base {
         if (!volume) {
           // Vol matching failed
         }
-        await ch.setProps(Object.assign({}, data, {
+        let defer = await ch.setProps(Object.assign({}, data, {
           index,
           volume
-        }))
+        }), true)
+        if (defer) {
+          defers.push(defer)
+        }
         return ch
       }))
+      for (const defer of defers) {
+        await defer()
+      }
     }
     return super.willUpdate(last, patch)
   }

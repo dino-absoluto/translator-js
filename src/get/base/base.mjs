@@ -29,18 +29,28 @@ export default class Base {
     })
   }
 
-  async setProps (patch) {
+  async setProps (patch, defer = false) {
     if (typeof patch !== 'object') {
       return
     }
     const last = this.props
+    let update
     if (await this.shouldUpdate(last, patch)) {
-      await this.willUpdate(last, patch)
-      this.props = Object.assign({}, last, patch)
-      await this.update()
-      await this.didUpdate()
+      update = async () => {
+        await this.willUpdate(last, patch)
+        this.props = Object.assign({}, last, patch)
+        await this.update()
+        await this.didUpdate()
+      }
     } else {
-      this.props = Object.assign({}, last, patch)
+      update = async () => {
+        this.props = Object.assign({}, last, patch)
+      }
+    }
+    if (defer) {
+      return update
+    } else {
+      await update()
     }
   }
 
