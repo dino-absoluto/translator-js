@@ -30,7 +30,7 @@ export class Chapter extends base.Chapter {
         chapter: this,
         fname: this.getName(`${props.title}.txt`),
         integrity: undefined,
-        buffer: `${props.title}\n---\n\nHello World!`
+        buffer: async () => `${props.title}\n---\n\nHello World!\n`
       })
     ]
     props.files = files
@@ -41,13 +41,8 @@ export class Volume extends base.Volume {
 }
 
 export class Series extends base.Series {
-  get Chapter () {
-    return Chapter
-  }
-
-  get Volume () {
-    return Volume
-  }
+  get Chapter () { return Chapter }
+  get Volume () { return Volume }
 
   async refresh () {
     const volumes = [
@@ -66,6 +61,11 @@ export class Series extends base.Series {
       },
       {
         title: 'Prologue',
+        integrity: 'prologue',
+        volume: 1
+      },
+      {
+        title: 'Prologue 2',
         integrity: 'prologue',
         volume: 1
       }
