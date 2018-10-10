@@ -34,23 +34,20 @@ export default class Base {
       return
     }
     const last = this.props
-    let update
     if (await this.shouldUpdate(last, patch)) {
-      update = async () => {
+      const update = async () => {
         await this.willUpdate(last, patch)
         this.props = Object.assign({}, last, patch)
         await this.update()
         await this.didUpdate()
       }
-    } else {
-      update = async () => {
-        this.props = Object.assign({}, last, patch)
+      if (defer) {
+        return update
+      } else {
+        await update()
       }
-    }
-    if (defer) {
-      return update
     } else {
-      await update()
+      this.props = Object.assign({}, last, patch)
     }
   }
 
