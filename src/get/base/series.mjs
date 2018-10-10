@@ -149,6 +149,12 @@ export default class Series extends Base {
     return super.willUpdate(last, patch)
   }
 
+  didUpdate () {
+    const { props } = this
+    const fpath = path.join(props.targetDir, 'index.json')
+    fs.writeFileSync(fpath, JSON.stringify(this, null, 1), 'utf8')
+  }
+
   refresh () {
   }
 }

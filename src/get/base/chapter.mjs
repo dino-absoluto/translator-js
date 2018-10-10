@@ -33,7 +33,7 @@ export class FileInfo {
       chapter: { value: chapter },
       integrity: { enumerable: true, value: options.integrity },
       fname: { enumerable: true, value: options.fname },
-      buffer: { enumerable: true, writable: true, value: options.buffer }
+      buffer: { writable: true, value: options.buffer }
     })
   }
 
