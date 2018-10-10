@@ -86,3 +86,26 @@ test('init with volume', () => {
     ]
   })
 })
+
+test('setProps', () => {
+  let volume = new Volume({
+    index: 1,
+    title: 'Chapter One',
+    base: 'test'
+  })
+  let ch = new Chapter({
+    index: 2,
+    title: 'Prologue',
+    volume
+  })
+  let spies = ['update', 'willUpdate', 'didUpdate'].map(
+    name => jest.spyOn(ch, name))
+  ch.setProps({
+    integrity: 1
+  })
+  spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))
+  ch.setProps({
+    integrity: 1
+  })
+  spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))
+})
