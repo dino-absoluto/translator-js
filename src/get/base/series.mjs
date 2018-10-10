@@ -135,7 +135,8 @@ export default class Series extends Base {
         }
         let defer = await ch.setProps(Object.assign({}, data, {
           index,
-          volume
+          volume,
+          base: volume ? undefined : this.targetDir
         }), true)
         if (defer) {
           defers.push(defer)

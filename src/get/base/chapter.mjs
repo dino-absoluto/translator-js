@@ -122,6 +122,9 @@ export default class Chapter extends Base {
     if (volume) {
       return volume.absolute
     }
+    if (this.props.base) {
+      return this.props.base
+    }
     return process.cwd()
   }
 
