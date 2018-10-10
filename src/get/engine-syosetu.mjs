@@ -19,12 +19,67 @@
  *
  */
 /* imports */
-import got from 'got'
+import gotBase from 'got'
 import cookie from 'cookie'
+import mime from 'mime-types'
 import JSDOM from 'jsdom'
 import crypto from 'crypto'
 import * as base from './base'
 /* -imports */
+
+const got = (url, config = {}) => {
+  config.headers = Object.assign({}, config.headers)
+  if (/^novel18./.test(url.hostname)) {
+    config.headers.cookie = cookie.serialize('over18', 'yes')
+  }
+  return gotBase(url, config)
+}
+
+/* @TODO: merge to class Chapter */
+export const _processChapter = async (url, config, doc) => {
+  if (doc == null) {
+    let { window: { document: ndoc } } =
+      new JSDOM((await got(url, config)).body, { url: url })
+    doc = ndoc
+  }
+  let imgs = []
+  for (const img of doc.querySelectorAll('#novel_color img')) {
+    let node = doc.createTextNode(`![](${img.src})`)
+    img.parentNode.replaceChild(node, img)
+    imgs.push(img.src)
+  }
+  let text = ''
+  {
+    const selectors = [
+      '.novel_subtitle',
+      '#novel_p',
+      '#novel_honbun',
+      '#novel_a'
+    ]
+    for (const sel of selectors) {
+      for (const node of doc.querySelectorAll(sel)) {
+        text += node.textContent + '\n\n-----\n\n'
+      }
+    }
+  }
+  imgs = imgs.map(async url => {
+    let { body: content, headers } = await got(url, { encoding: null })
+    let name = `image.${mime.extension(headers['content-type']) || 'jpg'}`
+    return {
+      url,
+      content,
+      name
+    }
+  })
+  const extras = []
+  for (const item of imgs) {
+    extras.push(await item)
+  }
+  return {
+    content: text,
+    extras
+  }
+}
 
 export class Chapter extends base.Chapter {
   update () {
@@ -56,14 +111,6 @@ export class Series extends base.Series {
   }
   get Chapter () { return Chapter }
   get Volume () { return Volume }
-
-  async got (url, config = {}) {
-    config.headers = {}
-    if (/^novel18./.test(url.hostname)) {
-      config.headers.cookie = cookie.serialize('over18', 'yes')
-    }
-    return got(url, config)
-  }
 
   async refresh () {
     const url = this.sourceURL
