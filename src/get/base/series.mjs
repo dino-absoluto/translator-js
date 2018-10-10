@@ -104,6 +104,9 @@ export default class Series extends Base {
     const { props, Volume, Chapter } = this
     const { volumes, chapters } = options
     if (volumes) {
+      if (!props.volumes) {
+        props.volumes = []
+      }
       props.volumes = volumes.map((data, index) => {
         let vol = props.volumes[index]
         if (!vol) {
@@ -117,6 +120,9 @@ export default class Series extends Base {
       })
     }
     if (chapters) {
+      if (!props.chapters) {
+        props.chapters = []
+      }
       props.chapters = chapters.map((data, index) => {
         let ch = props.chapters[index]
         if (!ch) {
