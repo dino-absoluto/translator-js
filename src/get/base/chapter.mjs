@@ -141,6 +141,14 @@ export default class Chapter extends Base {
           return true
         }
       }
+      if (patch.files) {
+        for (const [info, index] of last.files.entries()) {
+          const pInfo = patch.files[index]
+          if (info.integrity !== pInfo.integrity) {
+            return true
+          }
+        }
+      }
     }
     return false
   }
