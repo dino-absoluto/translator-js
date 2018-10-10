@@ -19,8 +19,8 @@
  *
  */
 /* imports */
-import Chapter from './chapter'
-import Volume from './volume'
+import BaseChapter from './chapter'
+import BaseVolume from './volume'
 import Base from './base'
 import path from 'path'
 import fs from 'fs'
@@ -40,6 +40,8 @@ export default class Series extends Base {
           base: this.targetDir
         }))
       })
+    } else {
+      props.volumes = []
     }
     if (props.chapters) {
       const { Chapter } = this
@@ -50,20 +52,26 @@ export default class Series extends Base {
           volume: vol
         }))
       })
+    } else {
+      props.chapters = []
     }
     Object.defineProperties(this, {
       sourceURL: { enumerable: true, get: () => this.props.sourceURL },
-      volumes: { enumerable: true, get: () => this.props.volumes },
-      chapters: { enumerable: true, get: () => this.props.chapters }
+      volumes: { enumerable: true,
+        get: () =>
+          (this.props.volumes.length && this.props.volumes) || undefined },
+      chapters: { enumerable: true,
+        get: () =>
+          (this.props.chapters.length && this.props.chapters) || undefined }
     })
   }
 
   get Chapter () {
-    return Chapter
+    return BaseChapter
   }
 
   get Volume () {
-    return Volume
+    return BaseVolume
   }
 
   get targetDir () {
@@ -89,6 +97,40 @@ export default class Series extends Base {
       } catch (error) {
         throw new Error('Failed to read index.json')
       }
+    }
+  }
+
+  updateData (options) {
+    const { props, Volume, Chapter } = this
+    const { volumes, chapters } = options
+    if (volumes) {
+      props.volumes = volumes.map((data, index) => {
+        let vol = props.volumes[index]
+        if (!vol) {
+          vol = new Volume({
+            index,
+            base: this.targetDir
+          })
+          props.volumes[index] = vol
+        }
+        vol.setProps(data)
+      })
+    }
+    if (chapters) {
+      props.chapters = chapters.map((data, index) => {
+        let ch = props.chapters[index]
+        if (!ch) {
+          ch = new Chapter({
+            index
+          })
+          props.chapters[index] = ch
+        }
+        let vol = (Number.isInteger(ch.volume) &&
+          props.volumes[ch.volume]) || undefined
+        ch.setProps(Object.assign({}, data, {
+          volume: vol
+        }))
+      })
     }
   }
 
