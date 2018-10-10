@@ -47,7 +47,7 @@ export class Series extends base.Series {
   async refresh () {
     const volumes = [
       {
-        'title': 'Chapter One'
+        title: 'Chapter One'
       },
       {
         title: 'The Beginning'
