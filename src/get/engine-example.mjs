@@ -70,7 +70,7 @@ export class Series extends base.Series {
         volume: 1
       }
     ]
-    this.updateData({
+    this.setProps({
       volumes,
       chapters
     })

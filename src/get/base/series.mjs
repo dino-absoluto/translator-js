@@ -100,9 +100,16 @@ export default class Series extends Base {
     }
   }
 
-  updateData (options) {
+  shouldUpdate () {
+    return true
+  }
+
+  willUpdate (last, patch) {
     const { props, Volume, Chapter } = this
-    const { volumes, chapters } = options
+    const { volumes, chapters } = patch
+    delete patch.volumes
+    delete patch.chapters
+    super.willUpdate(last, patch)
     if (volumes) {
       if (!props.volumes) {
         props.volumes = []

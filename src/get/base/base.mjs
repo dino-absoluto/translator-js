@@ -34,14 +34,13 @@ export default class Base {
       return
     }
     const last = this.props
-    const props = Object.assign({}, last, patch)
     if (this.shouldUpdate(last, patch)) {
-      this.willUpdate(props)
-      this.props = props
+      this.willUpdate(last, patch)
+      this.props = Object.assign({}, last, patch)
       this.update()
       this.didUpdate()
     } else {
-      this.props = props
+      this.props = Object.assign({}, last, patch)
     }
   }
 
@@ -49,7 +48,7 @@ export default class Base {
     return false
   }
 
-  willUpdate (nprops) {
+  willUpdate (last, patch) {
   }
 
   update () {
