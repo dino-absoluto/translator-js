@@ -141,7 +141,11 @@ export default class Chapter extends Base {
       return
     }
     for (const info of files) {
-      info.remove()
+      try {
+        info.remove()
+      } catch (err) {
+        continue
+      }
     }
   }
 
