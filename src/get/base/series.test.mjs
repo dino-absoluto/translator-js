@@ -50,31 +50,27 @@ test('init chdir', () => {
 })
 
 test('init with path', async () => {
-  await makeDir('./__tmp__/')
-  process.chdir('./__tmp__/')
-  await del('series/simple')
-  await makeDir('series/simple')
+  await del('__tmp__/series/simple')
+  await makeDir('__tmp__/series/simple')
   const sourceURL = new URL('https://www.example.com')
-  fs.writeFileSync('series/simple/index.json', JSON.stringify({
+  fs.writeFileSync('__tmp__/series/simple/index.json', JSON.stringify({
     sourceURL
   }, null, 1))
   let ss = new Series({
-    source: 'series/simple'
+    source: '__tmp__/series/simple'
   })
   expect(ss.sourceURL).toEqual(sourceURL)
-  expect(ss.targetDir).toBe(path.resolve('series/simple'))
+  expect(ss.targetDir).toBe(path.resolve('__tmp__', 'series/simple'))
   expect(ss).toEqual({
     sourceURL
   })
 })
 
 test('init with data', async () => {
-  await makeDir('./__tmp__/')
-  process.chdir('./__tmp__/')
-  await del('series/simple')
-  await makeDir('series/simple')
+  await del('__tmp__series/simple')
+  await makeDir('__tmp__/series/simple')
   const sourceURL = new URL('https://www.example.com')
-  fs.writeFileSync('series/simple/index.json', JSON.stringify({
+  fs.writeFileSync('__tmp__/series/simple/index.json', JSON.stringify({
     sourceURL,
     volumes: [
       {
@@ -94,10 +90,10 @@ test('init with data', async () => {
     ]
   }, null, 1))
   let ss = new Series({
-    source: 'series/simple'
+    source: '__tmp__/series/simple'
   })
   expect(ss.sourceURL).toEqual(sourceURL)
-  expect(ss.targetDir).toBe(path.resolve('series/simple'))
+  expect(ss.targetDir).toBe(path.resolve('__tmp__/series/simple'))
   expect(ss).toEqual({
     sourceURL,
     volumes: [
@@ -122,6 +118,6 @@ test('init with data', async () => {
     const vol = ss.volumes[0]
     expect(ch.props.volume).toBe(vol)
     expect(ch.dirRelative).toBe('00 Chapter One')
-    expect(ch.dirAbsolute).toBe(path.resolve('series/simple/00 Chapter One'))
+    expect(ch.dirAbsolute).toBe(path.resolve('__tmp__/series/simple/00 Chapter One'))
   }
 })
