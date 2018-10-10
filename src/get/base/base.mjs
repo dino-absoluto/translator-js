@@ -39,6 +39,7 @@ export default class Base {
       this.willUpdate(props)
       this.props = props
       this.update()
+      this.didUpdate()
     } else {
       this.props = props
     }
@@ -52,5 +53,8 @@ export default class Base {
   }
 
   update () {
+  }
+
+  didUpdate () {
   }
 }
