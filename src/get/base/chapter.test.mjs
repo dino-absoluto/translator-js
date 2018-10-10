@@ -89,11 +89,12 @@ test('init with volume', () => {
 })
 
 test('setProps', async () => {
-  await del('__tmp__/simpleUpdate')
+  const prefix = '__tmp__/chapter__simple-update'
+  await del(prefix)
   let volume = new Volume({
     index: 1,
     title: 'Chapter One',
-    base: '__tmp__/simpleUpdate'
+    base: prefix
   })
   let ch = new Chapter({
     index: 2,

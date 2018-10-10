@@ -50,27 +50,29 @@ test('init chdir', () => {
 })
 
 test('init with path', async () => {
-  await del('__tmp__/series/simple')
-  await makeDir('__tmp__/series/simple')
+  const prefix = '__tmp__/series__simple/'
+  await del(prefix)
+  await makeDir(prefix)
   const sourceURL = new URL('https://www.example.com')
-  fs.writeFileSync('__tmp__/series/simple/index.json', JSON.stringify({
+  fs.writeFileSync(`${prefix}index.json`, JSON.stringify({
     sourceURL
   }, null, 1))
   let ss = new Series({
-    source: '__tmp__/series/simple'
+    source: prefix
   })
   expect(ss.sourceURL).toEqual(sourceURL)
-  expect(ss.targetDir).toBe(path.resolve('__tmp__', 'series/simple'))
+  expect(ss.targetDir).toBe(path.resolve(prefix))
   expect(ss).toEqual({
     sourceURL
   })
 })
 
 test('init with data', async () => {
-  await del('__tmp__series/simple')
-  await makeDir('__tmp__/series/simple')
+  const prefix = '__tmp__/series__simple/'
+  await del(prefix)
+  await makeDir(prefix)
   const sourceURL = new URL('https://www.example.com')
-  fs.writeFileSync('__tmp__/series/simple/index.json', JSON.stringify({
+  fs.writeFileSync(`${prefix}index.json`, JSON.stringify({
     sourceURL,
     volumes: [
       {
@@ -90,10 +92,10 @@ test('init with data', async () => {
     ]
   }, null, 1))
   let ss = new Series({
-    source: '__tmp__/series/simple'
+    source: prefix
   })
   expect(ss.sourceURL).toEqual(sourceURL)
-  expect(ss.targetDir).toBe(path.resolve('__tmp__/series/simple'))
+  expect(ss.targetDir).toBe(path.resolve(prefix))
   expect(ss).toEqual({
     sourceURL,
     volumes: [
@@ -118,6 +120,6 @@ test('init with data', async () => {
     const vol = ss.volumes[0]
     expect(ch.props.volume).toBe(vol)
     expect(ch.dirRelative).toBe('00 Chapter One')
-    expect(ch.dirAbsolute).toBe(path.resolve('__tmp__/series/simple/00 Chapter One'))
+    expect(ch.dirAbsolute).toBe(path.resolve(`${prefix}00 Chapter One`))
   }
 })
