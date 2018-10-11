@@ -28,6 +28,8 @@ import del from 'del'
 import makeDir from 'make-dir'
 /* -imports */
 
+const __tmpdir = path.resolve('__tmp__/tests')
+
 test('init with minimum data', () => {
   let ch = new Chapter({
     index: 2,
@@ -94,7 +96,7 @@ test('init with volume', () => {
 })
 
 test('setProps', async () => {
-  const prefix = '__tmp__/chapter__simple-update/'
+  const prefix = `${__tmpdir}/chapter__simple-update/`
   await del(prefix)
   await makeDir(`${prefix}01 Chapter One`)
   fs.writeFileSync(`${prefix}01 Chapter One/002 Prologue.txt`, '')

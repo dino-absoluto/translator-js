@@ -27,6 +27,8 @@ import fs from 'fs'
 import path from 'path'
 /* -imports */
 
+const __tmpdir = path.resolve('__tmp__/tests')
+
 test('init with url', () => {
   const sourceURL = new URL('https://www.example.com')
   let ss = new Series({
@@ -50,11 +52,11 @@ test('init chdir', () => {
 })
 
 test('init with path', async () => {
-  const prefix = '__tmp__/series__simple/'
+  const prefix = `${__tmpdir}/series__simple`
   await del(prefix)
   await makeDir(prefix)
   const sourceURL = new URL('https://www.example.com')
-  fs.writeFileSync(`${prefix}index.json`, JSON.stringify({
+  fs.writeFileSync(`${prefix}/index.json`, JSON.stringify({
     sourceURL
   }, null, 1))
   let ss = new Series({
@@ -68,11 +70,11 @@ test('init with path', async () => {
 })
 
 test('init with data', async () => {
-  const prefix = '__tmp__/series__simple/'
+  const prefix = `${__tmpdir}/series__with-data`
   await del(prefix)
   await makeDir(prefix)
   const sourceURL = new URL('https://www.example.com')
-  fs.writeFileSync(`${prefix}index.json`, JSON.stringify({
+  fs.writeFileSync(`${prefix}/index.json`, JSON.stringify({
     sourceURL,
     volumes: [
       {
@@ -120,6 +122,6 @@ test('init with data', async () => {
     const vol = ss.volumes[0]
     expect(ch.props.volume).toBe(vol)
     expect(ch.dirRelative).toBe('00 Chapter One')
-    expect(ch.dirAbsolute).toBe(path.resolve(`${prefix}00 Chapter One`))
+    expect(ch.dirAbsolute).toBe(path.resolve(`${prefix}/00 Chapter One`))
   }
 })
