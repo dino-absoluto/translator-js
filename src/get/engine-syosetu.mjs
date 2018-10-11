@@ -35,63 +35,86 @@ const got = (url, config = {}) => {
   return gotBase(url, config)
 }
 
-/* @TODO: merge to class Chapter */
-export const _processChapter = async (url, config, doc) => {
-  if (doc == null) {
-    let { window: { document: ndoc } } =
-      new JSDOM((await got(url, config)).body, { url: url })
-    doc = ndoc
-  }
-  let imgs = []
-  for (const img of doc.querySelectorAll('#novel_color img')) {
-    let node = doc.createTextNode(`![](${img.src})`)
-    img.parentNode.replaceChild(node, img)
-    imgs.push(img.src)
-  }
-  let text = ''
-  {
-    const selectors = [
-      '.novel_subtitle',
-      '#novel_p',
-      '#novel_honbun',
-      '#novel_a'
-    ]
-    for (const sel of selectors) {
-      for (const node of doc.querySelectorAll(sel)) {
-        text += node.textContent + '\n\n-----\n\n'
-      }
-    }
-  }
-  imgs = imgs.map(async url => {
-    let { body: content, headers } = await got(url, { encoding: null })
-    let name = `image.${mime.extension(headers['content-type']) || 'jpg'}`
-    return {
-      url,
-      content,
-      name
-    }
-  })
-  const extras = []
-  for (const item of imgs) {
-    extras.push(await item)
-  }
-  return {
-    content: text,
-    extras
-  }
+const hash = (buffer) => {
+  const integrity = crypto.createHash('sha256')
+    .update(buffer, 'utf8')
+    .digest('base64')
+  return integrity
 }
 
 export class Chapter extends base.Chapter {
-  update () {
+  async update () {
     const { props } = this
-    const files = [
-      new base.FileInfo({
+    delete props.files
+    if (props.buffer) {
+      props.files = [
+        new base.FileInfo({
+          chapter: this,
+          fname: this.getName(`${props.title}.txt`),
+          integity: undefined,
+          buffer: props.buffer
+        })
+      ]
+      return
+    }
+    let doc = props.doc
+    if (!doc) {
+      if (!props.sourceURL) {
+        return
+      }
+      doc = await (async () => {
+        let { window: { document: doc } } =
+        new JSDOM((await got(props.sourceURL)).body, { url: props.sourceURL })
+        return doc
+      })()
+    }
+    let files = []
+    let imgs = []
+    for (const img of doc.querySelectorAll('#novel_color img')) {
+      let node = doc.createTextNode(`![](${img.src})`)
+      img.parentNode.replaceChild(node, img)
+      imgs.push(img.src)
+    }
+    {
+      let text
+      const selectors = [
+        '.novel_subtitle',
+        '#novel_p',
+        '#novel_honbun',
+        '#novel_a'
+      ]
+      for (const sel of selectors) {
+        for (const node of doc.querySelectorAll(sel)) {
+          text += node.textContent + '\n\n-----\n\n'
+        }
+      }
+      files.push(new base.FileInfo({
         chapter: this,
         fname: this.getName(`${props.title}.txt`),
-        integrity: undefined,
-        buffer: async () => `${props.title}\n---\n\nHello World!\n`
+        integity: undefined,
+        buffer: text
+      }))
+    } /* -text */
+    {
+      let promises = imgs.map(async (url, index) => {
+        let { body: content, headers } = await got(url, { encoding: null })
+        let fname = `${
+          this.prefix
+        } image.${
+          mime.extension(headers['content-type']) || 'jpg'
+        }`
+        return {
+          chapter: this,
+          fname,
+          integrity: url,
+          buffer: content
+        }
       })
-    ]
+      imgs = await Promise.all(promises)
+      for (const info of imgs) {
+        files.push(new base.FileInfo(info))
+      }
+    } /* -images */
     props.files = files
   }
 }
@@ -123,17 +146,20 @@ export class Series extends base.Series {
       const author = doc.querySelector('.novel_writername')
         .textContent.trim().substr('作者：'.length)
       let description = `# ${title}\nAuthor: ${author}\n\n`
-      let descnode = doc.querySelector('#novel_ex')
-      if (descnode != null) {
-        description += descnode.textContent
+      let singular = false
+      {
+        let dnode = doc.querySelector('#novel_ex')
+        if (dnode != null) {
+          description += dnode.textContent
+        } else {
+          singular = true
+        }
       }
-      const integrity = crypto.createHash('sha256')
-        .update(description, 'utf8')
-        .digest('base64')
       chapters.push({
         title: 'Description',
-        integrity,
-        buffer: description
+        integrity: singular ? Date.now() : hash(description),
+        buffer: description,
+        doc: singular ? doc : undefined
       })
     } /* -description */
     let volumeIndex = -1
