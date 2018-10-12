@@ -155,6 +155,9 @@ export default class Chapter extends Base {
           if (info.integrity !== pInfo.integrity) {
             return true
           }
+          if (info.fname !== pInfo.fname) {
+            return true
+          }
         }
       }
     }
@@ -199,9 +202,9 @@ export default class Chapter extends Base {
     }))
     promises = await promises
     if (props.verbose) {
-      console.log(chalk`{cyan ${this.prefix}} ${props.title}${
+      console.log(chalk`{cyan ${this.prefix}} ${props.title}{green ${
         files.length > 1 ? (' +' + (files.length - 1)) : ''
-      }`)
+      }}`)
     }
     return promises
   }

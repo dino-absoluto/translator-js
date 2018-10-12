@@ -124,7 +124,7 @@ export default class Series extends Base {
     if (props.verbose) {
       console.log(chalk`Download {blue ${this.sourceURL}}`)
       console.log(chalk`{green ->} {blue ${
-        path.relative(path.resolve(''), this.targetDir)}}`)
+        path.relative('.', this.targetDir)}}`)
     }
     if (volumes) {
       patch.volumes = await Promise.all(volumes.map(async (data, index) => {
