@@ -50,7 +50,7 @@ test('double get', async () => {
   }
 }, 60000 * 2)
 
-test.skip('get long series', async () => {
+test('get long series', async () => {
   const testURL = 'https://ncode.syosetu.com/n0537cm/'
   const prefix = `${__tmpdir}/engine-syosetu__get2/`
   // await del(prefix)

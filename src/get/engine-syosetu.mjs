@@ -46,7 +46,8 @@ export class Chapter extends base.Chapter {
   async update () {
     const { props } = this
     delete props.files
-    if (props.buffer) {
+    /* prioritize props.doc */
+    if (props.buffer && !props.doc) {
       props.files = [
         new base.FileInfo({
           chapter: this,
@@ -140,12 +141,13 @@ export class Series extends base.Series {
     let { window: { document: doc } } = new JSDOM((await got(url)).body, { url: url })
     let volumes = []
     let chapters = []
+    let description = ''
     {
       const title = doc.querySelector('.novel_title')
         .textContent.trim()
       const author = doc.querySelector('.novel_writername')
         .textContent.trim().substr('作者：'.length)
-      let description = `# ${title}\nAuthor: ${author}\n\n`
+      description = `# ${title}\nAuthor: ${author}\n\n`
       let singular = false
       {
         let dnode = doc.querySelector('#novel_ex')
@@ -154,11 +156,11 @@ export class Series extends base.Series {
         } else {
           singular = true
         }
+        description += '\n\n-----\n\n'
       }
       chapters.push({
         title: 'Description',
-        integrity: singular ? Date.now() : hash(description),
-        buffer: description,
+        buffer: () => description,
         doc: singular ? doc : undefined
       })
     } /* -description */
@@ -170,9 +172,11 @@ export class Series extends base.Series {
     let chaptersAsync = []
     for (const node of indexBox.children) {
       if (node.classList.contains('chapter_title')) {
+        let title = node.textContent.trim()
         volumes.push({
-          title: node.textContent.trim()
+          title
         })
+        description += `\n## ${title}\n`
         ++volumeIndex
       } else if (node.classList.contains('novel_sublist2')) {
         let volIndex = Number(volumeIndex)
@@ -184,6 +188,10 @@ export class Series extends base.Series {
             }
             return anode
           })()
+          title = title.trim()
+          description += `${
+            String(chaptersAsync.length + 1).padStart(3, '0')
+          } ${title}\n`
           if (link.startsWith('//')) {
             link = url.protocol + link
           } else if (link.startsWith('/')) {
@@ -192,7 +200,7 @@ export class Series extends base.Series {
           return {
             volume: volIndex,
             sourceURL: link,
-            title: title.trim(),
+            title,
             integrity: (() => {
               let date = (() => {
                 let date = node.lastElementChild
@@ -215,7 +223,8 @@ export class Series extends base.Series {
         /* unexpected node */
       }
     }
-    chapters = await Promise.all(chaptersAsync)
+    chapters[0].integrity = hash(description)
+    chapters = chapters.concat(await Promise.all(chaptersAsync))
     await this.setProps({
       volumes,
       chapters
