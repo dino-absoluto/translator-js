@@ -123,8 +123,8 @@ export class Volume extends base.Volume {
 }
 
 export class Series extends base.Series {
-  constructor (props) {
-    super(props)
+  constructor (props, ...argv) {
+    super(props, ...argv)
     if (!Series.test(this.sourceURL)) {
       throw new Error('Invalid URL')
     }

@@ -18,26 +18,16 @@
  * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+/* eslint-env jest */
 /* imports */
-import { Series } from './base'
 import Syosetu from './engine-syosetu'
+import getEngine from './'
 /* -imports */
 
-const engines = [
-  Syosetu
-]
-
-export default (options) => {
-  const meta = Series.parseMeta(options)
-  const engine = (() => {
-    for (const Engine of engines) {
-      if (Engine.test(meta.sourceURL)) {
-        return new Engine(meta, true)
-      }
-    }
-  })()
-  if (!engine) {
-    throw new Error('Failed to find a matching engine')
-  }
-  return engine
-}
+test('get engine', () => {
+  const testURL = 'https://ncode.syosetu.com/n8201cq/'
+  let engine = getEngine({
+    source: testURL
+  })
+  expect(engine).toEqual(expect.any(Syosetu))
+})
