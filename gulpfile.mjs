@@ -22,6 +22,8 @@
 import gulp from 'gulp'
 import { rollup } from 'rollup'
 import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import json from 'rollup-plugin-json'
 import babel from 'rollup-plugin-babel'
 import del from 'del'
 import pkg from './package.json'
@@ -44,6 +46,8 @@ export const scripts = async () => {
         preferBuiltins: true,
         only: [ /(.|..)\/.+$/ ]
       }),
+      commonjs(),
+      json(),
       babel({
         exclude: 'node_modules/**'
       })
