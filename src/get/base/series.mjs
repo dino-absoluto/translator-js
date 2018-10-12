@@ -123,7 +123,7 @@ export default class Series extends Base {
     const { volumes, chapters } = patch
     if (props.verbose) {
       console.log(chalk`Download {blue ${this.sourceURL}}`)
-      console.log(chalk`To {blue ${
+      console.log(chalk`{green ->} {blue ${
         path.relative(path.resolve(''), this.targetDir)}}`)
     }
     if (volumes) {
