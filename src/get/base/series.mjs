@@ -24,7 +24,9 @@ import BaseVolume from './volume'
 import Base from './base'
 import path from 'path'
 import fs from 'fs'
+import makeDir from 'make-dir'
 import filenamify from 'filenamify'
+import chalk from 'chalk'
 /* -imports */
 
 export default class Series extends Base {
@@ -79,6 +81,9 @@ export default class Series extends Base {
   }
 
   static parseMeta (props) {
+    let accepted = {
+      verbose: props.verbose
+    }
     try {
       let url = new URL(props.source)
       let name = props.name || filenamify(`${url.host}${url.pathname}`)
@@ -93,7 +98,7 @@ export default class Series extends Base {
       return Object.assign(data, {
         sourceURL: url,
         targetDir
-      })
+      }, accepted)
     } catch (err) {
       try {
         let fname = path.join(props.source, 'index.json')
@@ -102,7 +107,7 @@ export default class Series extends Base {
         data.sourceURL = new URL(data.sourceURL)
         return Object.assign(data, {
           targetDir
-        })
+        }, accepted)
       } catch (error) {
         throw new Error('Failed to read index.json')
       }
@@ -116,6 +121,11 @@ export default class Series extends Base {
   async willUpdate (last, patch) {
     const { props, Volume, Chapter } = this
     const { volumes, chapters } = patch
+    if (props.verbose) {
+      console.log(chalk`Download {blue ${this.sourceURL}}`)
+      console.log(chalk`To {blue ${
+        path.relative(path.resolve(''), this.targetDir)}}`)
+    }
     if (volumes) {
       patch.volumes = await Promise.all(volumes.map(async (data, index) => {
         let config = (props.volumes[index] && props.volumes[index].props) || {}
@@ -136,7 +146,8 @@ export default class Series extends Base {
         let config = (props.chapters[index] && props.chapters[index].props) || {}
         let ch = new Chapter(Object.assign(config, {
           index,
-          base: this.targetDir
+          base: this.targetDir,
+          verbose: props.verbose
         }))
         if (!volume) {
           // Vol matching failed
@@ -151,17 +162,43 @@ export default class Series extends Base {
         }
         return ch
       }))
-      for (const defer of defers) {
-        await defer()
+      /* defer tasks */
+      patch.defers = defers
+      if (props.verbose && defers.length) {
+        let delta = chapters.length -
+        ((props.chapters && props.chapters.length) || 0)
+        if (delta) {
+          console.log(chalk`{red New =} ${delta}`)
+        }
       }
     }
     return super.willUpdate(last, patch)
   }
 
-  didUpdate () {
+  async saveIndex () {
+    const fpath = path.join(this.props.targetDir, 'index.json')
+    fs.writeFileSync(fpath, JSON.stringify(this, null, 1), 'utf8')
+  }
+
+  async update () {
     const { props } = this
     const fpath = path.join(props.targetDir, 'index.json')
+    await makeDir(props.targetDir)
     fs.writeFileSync(fpath, JSON.stringify(this, null, 1), 'utf8')
+    if (props.defers && props.defers.length) {
+      if (props.verbose) {
+        console.log(chalk`{red Updated =} ${props.defers.length}`)
+      }
+      for (const defer of props.defers) {
+        await defer()
+        await this.saveIndex()
+      }
+      delete props.defers
+    }
+  }
+
+  didUpdate () {
+    this.saveIndex()
   }
 
   refresh () {

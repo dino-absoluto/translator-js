@@ -24,6 +24,7 @@ import path from 'path'
 import fs from 'fs'
 import filenamify from 'filenamify'
 import makeDir from 'make-dir'
+import chalk from 'chalk'
 /* -imports */
 
 export class FileInfo {
@@ -188,13 +189,20 @@ export default class Chapter extends Base {
   }
 
   async didUpdate () {
-    const files = this.props.files
+    const { props } = this
+    const { files } = props
     makeDir.sync(this.dirAbsolute)
-    const promises = Promise.all(files.map(info => {
+    let promises = Promise.all(files.map(info => {
       if (info.buffer) {
         return info.write()
       }
     }))
+    promises = await promises
+    if (props.verbose) {
+      console.log(chalk`{cyan ${this.prefix}} ${props.title}${
+        files.length > 1 ? (' +' + (files.length - 1)) : ''
+      }`)
+    }
     return promises
   }
 }
