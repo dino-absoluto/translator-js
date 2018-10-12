@@ -31,14 +31,17 @@ const _parseArgs = async () => {
   const argv = yargsParser(process.argv.splice(2), {
     alias: {
       version: ['v'],
-      output: ['o']
+      output: ['o'],
+      help: ['h']
     },
-    boolean: [ 'version', 'stack' ]
+    boolean: [ 'version', 'stack', 'help' ]
   })
   delete argv['v']
   delete argv['o']
+  delete argv['h']
   const config = {
     _: [],
+    'help': false,
     'version': false,
     'stack': argv.stack,
     'output': './download/'
@@ -66,16 +69,26 @@ const _get = async (config) => {
   }
 }
 
+const _printUsage = () => {
+  return console.log(info.usage)
+}
+
 /**
  * Main function
  */
 const _main = async () => {
-  const config = await _parseArgs()
+  const config = await _parseArgs().catch(err => {
+    console.log(chalk`{red ${err}}`)
+    _printUsage()
+  })
   if (!config) {
     return
   }
   if (config.version) {
-    console.log(info.version)
+    return console.log(info.version)
+  }
+  if (config.help) {
+    return console.log(info.usage)
   }
   await _get(config)
 }

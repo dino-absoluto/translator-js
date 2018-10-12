@@ -24,4 +24,13 @@ const config = {
   sourceDir: __dirname
 }
 
+config.usage =
+`
+Usage: app.js [--output=<path>] [<URL> | <path>]
+
+--help, -h      Print this text
+--version, -v   Print the version and exit
+--output, -o    Set output directory
+`
+
 module.exports = config
