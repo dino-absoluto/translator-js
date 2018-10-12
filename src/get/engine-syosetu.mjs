@@ -101,7 +101,9 @@ export class Chapter extends base.Chapter {
         let { body: content, headers } = await got(url, { encoding: null })
         let fname = `${
           this.prefix
-        } image.${
+        } image ${
+          String(index + 1).padStart(2, '0')
+        }.${
           mime.extension(headers['content-type']) || 'jpg'
         }`
         return {
