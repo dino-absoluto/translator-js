@@ -21,6 +21,7 @@
 /* imports */
 import gulp from 'gulp'
 import { rollup } from 'rollup'
+import { terser } from 'rollup-plugin-terser'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
@@ -37,7 +38,7 @@ export const clean = async () => {
   await del('__tmp__/')
 }
 
-export const scripts = async () => {
+const _js = async (isdev = true) => {
   const bundle = await rollup({
     input: './src/index.mjs',
     external,
@@ -50,19 +51,28 @@ export const scripts = async () => {
       json(),
       babel({
         exclude: 'node_modules/**'
-      })
+      }),
+      (isdev ? undefined : terser())
     ]
   })
   await bundle.write({
-    file: './dist/app.js',
+    file: isdev ? './bin/app.js' : './bin/app.min.js',
     format: 'cjs',
     name: 'app',
     sourcemap: true
   })
 }
 
-export const watch = () => {
-  gulp.watch('src/**/*.(js|mjs|jsx)', scripts)
+export const js = async () => {
+  return _js()
 }
 
-export default scripts
+export const jsmin = async () => {
+  return _js(false)
+}
+
+export const watch = () => {
+  gulp.watch('src/**/*.(js|mjs|jsx)', js)
+}
+
+export default js
