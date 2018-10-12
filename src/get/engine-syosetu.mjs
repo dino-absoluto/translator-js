@@ -22,7 +22,7 @@
 import gotBase from 'got'
 import cookie from 'cookie'
 import mime from 'mime-types'
-import JSDOM from 'jsdom'
+import { JSDOM } from 'jsdom'
 import crypto from 'crypto'
 import * as base from './base'
 /* -imports */
@@ -76,7 +76,7 @@ export class Chapter extends base.Chapter {
       imgs.push(img.src)
     }
     {
-      let text
+      let text = ''
       const selectors = [
         '.novel_subtitle',
         '#novel_p',
@@ -137,7 +137,7 @@ export class Series extends base.Series {
 
   async refresh () {
     const url = this.sourceURL
-    let { window: { document: doc } } = new JSDOM((await this.got(url)).body, { url: url })
+    let { window: { document: doc } } = new JSDOM((await got(url)).body, { url: url })
     let volumes = []
     let chapters = []
     {
