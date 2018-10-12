@@ -118,14 +118,13 @@ export default class Series extends Base {
     const { volumes, chapters } = patch
     if (volumes) {
       patch.volumes = await Promise.all(volumes.map(async (data, index) => {
-        let vol = new Volume(
-          (props.volumes[index] && props.volumes[index].props) ||
-        {
-          index
-        })
-        await vol.setProps(Object.assign({}, data, {
+        let config = (props.volumes[index] && props.volumes[index].props) || {}
+        let vol = new Volume(Object.assign(config, {
           index,
           base: this.targetDir
+        }))
+        await vol.setProps(Object.assign({}, data, {
+          index
         }))
         return vol
       }))
@@ -134,18 +133,18 @@ export default class Series extends Base {
       const defers = []
       patch.chapters = await Promise.all(chapters.map(async (data, index) => {
         let volume = Number.isInteger(data.volume) && patch.volumes[data.volume]
-        let ch = new Chapter(
-          (props.chapters[index] && props.chapters[index].props) ||
-        {
-          index
-        })
+        let config = (props.chapters[index] && props.chapters[index].props) || {}
+        let ch = new Chapter(Object.assign(config, {
+          index,
+          base: this.targetDir
+        }))
         if (!volume) {
           // Vol matching failed
         }
         let defer = await ch.setProps(Object.assign({}, data, {
           index,
           volume,
-          base: volume ? undefined : this.targetDir
+          base: this.targetDir
         }), true)
         if (defer) {
           defers.push(defer)
