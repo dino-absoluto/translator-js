@@ -101,9 +101,9 @@ export default class Series extends Base {
       }, accepted)
     } catch (err) {
       try {
-        let fname = path.join(props.source, 'index.json')
+        let fname = path.resolve(path.join(props.source, 'index.json'))
         let data = JSON.parse(fs.readFileSync(fname, 'utf8'))
-        let targetDir = path.resolve(props.chdir || '', path.dirname(fname))
+        let targetDir = path.dirname(fname)
         data.sourceURL = new URL(data.sourceURL)
         return Object.assign(data, {
           targetDir
