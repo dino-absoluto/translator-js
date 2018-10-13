@@ -1,11 +1,13 @@
-# About translator-js
+# translator-js
 A translator's script(s).
 
 # Installation
-Require [nodejs](https://nodejs.org/).
+Requirements: [nodejs](https://nodejs.org/).
+Recommended: [gulp-cli](https://www.npmjs.com/package/gulp-cli).
 
 ```bash
 npm install
+gulp
 ```
 
 # Scripts
@@ -15,11 +17,11 @@ A simple DEMO can found at https://translatedino.blogspot.com/p/raw-downloader.h
 Replace the url with one of your choice.
 
 ```bash
-node src/get.js http://ncode.syosetu.com/n6803co/
+node bin/app.js https://ncode.syosetu.com/n6803co/
 ```
 
 Update a previously downloaded folder.
 
 ```bash
-node src/get.js --dir download/some-novel
+node bin/app.js download/some-novel
 ```
