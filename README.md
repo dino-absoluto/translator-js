@@ -2,7 +2,8 @@
 A translator's script(s).
 
 # Installation
-Require [nodejs](https://nodejs.org/).
+Requirements: [nodejs](https://nodejs.org/).
+Recommended: [gulp-cli](https://www.npmjs.com/package/gulp-cli).
 
 ```bash
 npm install
@@ -22,5 +23,5 @@ node bin/app.js https://ncode.syosetu.com/n6803co/
 Update a previously downloaded folder.
 
 ```bash
-node bin/app.js dir download/some-novel
+node bin/app.js download/some-novel
 ```
