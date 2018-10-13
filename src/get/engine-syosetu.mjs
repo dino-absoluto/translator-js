@@ -77,7 +77,10 @@ export class Chapter extends base.Chapter {
       imgs.push(img.src)
     }
     {
-      let text = ''
+      const { buffer } = props
+      let text = buffer ? (
+        typeof buffer === 'function' ? buffer() : buffer.toString()
+      ) : ''
       const selectors = [
         '.novel_subtitle',
         '#novel_p',
@@ -162,6 +165,7 @@ export class Series extends base.Series {
       }
       chapters.push({
         title: 'Description',
+        integrity: Date.now(),
         buffer: () => description,
         doc: singular ? doc : undefined
       })
@@ -169,7 +173,9 @@ export class Series extends base.Series {
     let volumeIndex = -1
     let indexBox = doc.querySelector('.index_box')
     if (indexBox == null) {
-      return
+      return this.setProps({
+        chapters
+      })
     }
     let chaptersAsync = []
     for (const node of indexBox.children) {
