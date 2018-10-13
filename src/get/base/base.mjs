@@ -37,7 +37,7 @@ export default class Base {
     if (await this.shouldUpdate(last, patch)) {
       const update = async () => {
         await this.willUpdate(last, patch)
-        this.props = Object.assign({}, last, patch)
+        this.props = Object.assign({}, this.props, patch)
         await this.update()
         await this.didUpdate()
       }

@@ -27,6 +27,7 @@ import fs from 'fs'
 import makeDir from 'make-dir'
 import filenamify from 'filenamify'
 import chalk from 'chalk'
+import readline from 'readline'
 /* -imports */
 
 export default class Series extends Base {
@@ -123,7 +124,7 @@ export default class Series extends Base {
     const { volumes, chapters } = patch
     if (props.verbose) {
       console.log(chalk`Download {blue ${this.sourceURL}}`)
-      console.log(chalk`{green ->} {blue ${
+      console.log(chalk`{green ->} {gray ${
         path.relative('.', this.targetDir)}}`)
     }
     if (volumes) {
@@ -146,8 +147,7 @@ export default class Series extends Base {
         let config = (props.chapters[index] && props.chapters[index].props) || {}
         let ch = new Chapter(Object.assign(config, {
           index,
-          base: this.targetDir,
-          verbose: props.verbose
+          base: this.targetDir
         }))
         if (!volume) {
           // Vol matching failed
@@ -158,19 +158,14 @@ export default class Series extends Base {
           base: this.targetDir
         }), true)
         if (defer) {
-          defers.push(defer)
+          defers.push([ch, defer])
         }
         return ch
       }))
       /* defer tasks */
       patch.defers = defers
-      if (props.verbose && defers.length) {
-        let delta = chapters.length -
+      patch.delta = chapters.length -
         ((props.chapters && props.chapters.length) || 0)
-        if (delta) {
-          console.log(chalk`{red New =} ${delta}`)
-        }
-      }
     }
     return super.willUpdate(last, patch)
   }
@@ -186,19 +181,40 @@ export default class Series extends Base {
     await makeDir(props.targetDir)
     fs.writeFileSync(fpath, JSON.stringify(this, null, 1), 'utf8')
     if (props.defers && props.defers.length) {
+      const length = props.defers.length
+      const shrink = props.defers.length > 16
       if (props.verbose) {
-        console.log(chalk`{red Updated =} ${props.defers.length}`)
+        if (props.delta) {
+          process.stdout.write(chalk`{red New} {gray =} ${
+            props.delta}{gray ,} `)
+        }
+        console.log(chalk`{red Updated} {gray =} ${props.defers.length}`)
       }
-      for (const defer of props.defers) {
-        await defer()
-        await this.saveIndex()
+      if (shrink) {
+        for (const [index, [, defer]] of props.defers.entries()) {
+          await defer()
+          await this.saveIndex()
+          readline.clearLine(process.stdout, 0)
+          readline.cursorTo(process.stdout, 0)
+          process.stdout.write(chalk`{green ->} {gray [${index + 1}/${length}]}`)
+        }
+        readline.clearLine(process.stdout, 0)
+        readline.cursorTo(process.stdout, 0)
+        console.log(chalk`{gray [${length}/${length}]}`)
+      } else {
+        for (const [ch, defer] of props.defers) {
+          await defer()
+          await ch.printInfo()
+          await this.saveIndex()
+        }
+      }
+      this.saveIndex()
+      if (props.verbose) {
+        console.log(chalk`{green Completed}`)
       }
       delete props.defers
+      delete props.delta
     }
-  }
-
-  didUpdate () {
-    this.saveIndex()
   }
 
   refresh () {

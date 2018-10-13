@@ -194,18 +194,23 @@ export default class Chapter extends Base {
   async didUpdate () {
     const { props } = this
     const { files } = props
+    if (!files) {
+      return
+    }
     makeDir.sync(this.dirAbsolute)
     let promises = Promise.all(files.map(info => {
       if (info.buffer) {
         return info.write()
       }
     }))
-    promises = await promises
-    if (props.verbose) {
-      console.log(chalk`{cyan ${this.prefix}} ${props.title}{green ${
-        files.length > 1 ? (' +' + (files.length - 1)) : ''
-      }}`)
-    }
     return promises
+  }
+
+  printInfo () {
+    const { props } = this
+    const { files } = props
+    console.log(chalk`{cyan ${this.prefix}} ${props.title}{green ${
+      files.length > 1 ? (' +' + (files.length - 1)) : ''
+    }}`)
   }
 }
