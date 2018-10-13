@@ -209,7 +209,7 @@ export default class Chapter extends Base {
   printInfo () {
     const { props } = this
     const { files } = props
-    console.log(chalk`{cyan ${this.prefix}} ${props.title}{green ${
+    console.log(chalk`  {gray ${this.prefix}} ${props.title}{green ${
       files.length > 1 ? (' +' + (files.length - 1)) : ''
     }}`)
   }

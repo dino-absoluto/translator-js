@@ -141,7 +141,7 @@ export class Series extends base.Series {
   get Chapter () { return Chapter }
   get Volume () { return Volume }
 
-  async refresh () {
+  async fetch () {
     const url = this.sourceURL
     let { window: { document: doc } } = new JSDOM((await got(url)).body, { url: url })
     let volumes = []

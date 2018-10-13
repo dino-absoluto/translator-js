@@ -44,7 +44,7 @@ export class Series extends base.Series {
   get Chapter () { return Chapter }
   get Volume () { return Volume }
 
-  async refresh () {
+  async fetch () {
     const volumes = [
       {
         title: 'Chapter One'

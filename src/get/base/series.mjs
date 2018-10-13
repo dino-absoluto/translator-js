@@ -122,11 +122,6 @@ export default class Series extends Base {
   async willUpdate (last, patch) {
     const { props, Volume, Chapter } = this
     const { volumes, chapters } = patch
-    if (props.verbose) {
-      console.log(chalk`Download {blue ${this.sourceURL}}`)
-      console.log(chalk`{green ->} {gray ${
-        path.relative('.', this.targetDir)}}`)
-    }
     if (volumes) {
       patch.volumes = await Promise.all(volumes.map(async (data, index) => {
         let config = (props.volumes[index] && props.volumes[index].props) || {}
@@ -184,11 +179,13 @@ export default class Series extends Base {
       const length = props.defers.length
       const shrink = props.defers.length > 16
       if (props.verbose) {
+        process.stdout.write(chalk`  {gray ${
+          props.chapters.length}} {green ->} `)
         if (props.delta) {
-          process.stdout.write(chalk`{green New} {gray =} ${
-            props.delta}{gray ,} `)
+          process.stdout.write(chalk`{green New ${
+            props.delta}}{gray ,} `)
         }
-        console.log(chalk`{red Updated} {gray =} ${props.defers.length}`)
+        console.log(chalk`{red Updated ${props.defers.length}}`)
       }
       if (shrink) {
         for (const [index, [, defer]] of props.defers.entries()) {
@@ -196,11 +193,11 @@ export default class Series extends Base {
           await this.saveIndex()
           readline.clearLine(process.stdout, 0)
           readline.cursorTo(process.stdout, 0)
-          process.stdout.write(chalk`{green ->} {gray [${index + 1}/${length}]}`)
+          process.stdout.write(chalk`  {green ->} {gray [${index + 1}/${length}]}`)
         }
         readline.clearLine(process.stdout, 0)
         readline.cursorTo(process.stdout, 0)
-        console.log(chalk`{gray [${length}/${length}]}`)
+        console.log(chalk`  {gray [${length}/${length}]}`)
       } else {
         for (const [ch, defer] of props.defers) {
           await defer()
@@ -210,13 +207,30 @@ export default class Series extends Base {
       }
       this.saveIndex()
       if (props.verbose) {
-        console.log(chalk`{green Completed}`)
+        console.log(chalk`  {green Completed}`)
       }
       delete props.defers
       delete props.delta
     }
   }
 
-  refresh () {
+  async refresh () {
+    const { props } = this
+    if (props.verbose) {
+      const maxWidth = process.stdout.columns
+      let output = path.relative('.', this.targetDir)
+      let width = 2 + 4 + String(this.sourceURL).length + output.length
+      process.stdout.write(chalk`{gray #} {blue ${this.sourceURL}}`)
+      if (width > maxWidth) {
+        console.log()
+      } else {
+        process.stdout.write(' ')
+      }
+      console.log(chalk`{green ->} ${output}`)
+    }
+    return this.fetch()
+  }
+
+  async fetch () {
   }
 }
