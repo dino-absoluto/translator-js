@@ -31,6 +31,7 @@ Usage: app.js [--output=<path>] [<URL> | <path>]
 --help, -h      Print this text
 --version, -v   Print the version and exit
 --output, -o    Set output directory
+--force, -f     Overwrite existing files
 `
 
 module.exports = config

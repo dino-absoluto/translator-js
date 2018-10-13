@@ -83,7 +83,8 @@ export default class Series extends Base {
 
   static parseMeta (props) {
     let accepted = {
-      verbose: props.verbose
+      verbose: props.verbose,
+      overwrite: props.overwrite
     }
     try {
       let url = new URL(props.source)
@@ -142,7 +143,8 @@ export default class Series extends Base {
         let config = (props.chapters[index] && props.chapters[index].props) || {}
         let ch = new Chapter(Object.assign(config, {
           index,
-          base: this.targetDir
+          base: this.targetDir,
+          overwrite: props.overwrite
         }))
         if (!volume) {
           // Vol matching failed
@@ -199,7 +201,8 @@ export default class Series extends Base {
         readline.cursorTo(process.stdout, 0)
         console.log(chalk`  {gray [${length}/${length}]}`)
       } else {
-        for (const [ch, defer] of props.defers) {
+        for (const [index, [ch, defer]] of props.defers.entries()) {
+          void index
           await defer()
           await ch.printInfo()
           await this.saveIndex()

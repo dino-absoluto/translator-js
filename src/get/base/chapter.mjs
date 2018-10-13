@@ -200,7 +200,7 @@ export default class Chapter extends Base {
     makeDir.sync(this.dirAbsolute)
     let promises = Promise.all(files.map(info => {
       if (info.buffer) {
-        return info.write()
+        return info.write(props.overwrite)
       }
     }))
     return promises

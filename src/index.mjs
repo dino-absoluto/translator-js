@@ -32,19 +32,22 @@ const _parseArgs = async () => {
     alias: {
       version: ['v'],
       output: ['o'],
-      help: ['h']
+      help: ['h'],
+      force: ['f']
     },
     boolean: [ 'version', 'stack', 'help' ]
   })
   delete argv['v']
   delete argv['o']
   delete argv['h']
+  delete argv['f']
   const config = {
     _: [],
     'help': false,
     'version': false,
     'stack': argv.stack,
-    'output': './download/'
+    'output': './download/',
+    'force': false
   }
   stack = !!config.stack
   for (const arg in argv) {
@@ -63,7 +66,8 @@ const _get = async (config) => {
     let engine = getEngine({
       source,
       verbose: true,
-      chdir: output
+      chdir: output,
+      overwrite: config.force
     })
     await engine.refresh()
   }
