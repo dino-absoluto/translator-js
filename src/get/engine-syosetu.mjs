@@ -77,9 +77,9 @@ export class Chapter extends base.Chapter {
       imgs.push(img.src)
     }
     {
-      const { buffer } = props
+      const buffer = await props.buffer
       let text = buffer ? (
-        typeof buffer === 'function' ? buffer() : buffer.toString()
+        typeof buffer === 'function' ? await buffer() : buffer.toString()
       ) : ''
       const selectors = [
         '.novel_subtitle',
