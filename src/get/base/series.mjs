@@ -181,8 +181,8 @@ export default class Series extends Base {
       const length = props.defers.length
       const shrink = props.defers.length > 16
       if (props.verbose) {
-        process.stdout.write(chalk`  {gray ${
-          props.chapters.length}} {green ->} `)
+        process.stdout.write(chalk`  {green [${
+          props.chapters.length}]} {green ->} `)
         if (props.delta) {
           process.stdout.write(chalk`{green New ${
             props.delta}}{gray ,} `)
