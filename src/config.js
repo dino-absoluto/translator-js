@@ -32,6 +32,9 @@ Usage: app.js [--output=<path>] [<URL> | <path>]
 --version, -v   Print the version and exit
 --output, -o    Set output directory
 --force, -f     Overwrite existing files
+
+--pedantic      Default=true
+                Exit on first error
 `
 
 module.exports = config

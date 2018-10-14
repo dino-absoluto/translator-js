@@ -25,7 +25,14 @@ import yargsParser from 'yargs-parser'
 import info from './config.js'
 /* -imports */
 
-let stack = false
+const report = (error) => {
+  console.error(chalk`{red ${report.stack ? error.stack : error}}`)
+  if (report.pedantic) {
+    process.exit(-1)
+  }
+}
+
+report.pedantic = true
 
 const _parseArgs = async () => {
   const argv = yargsParser(process.argv.splice(2), {
@@ -35,7 +42,7 @@ const _parseArgs = async () => {
       help: ['h'],
       force: ['f']
     },
-    boolean: [ 'version', 'stack', 'help' ]
+    boolean: [ 'version', 'stack', 'help', 'pedantic' ]
   })
   delete argv['v']
   delete argv['o']
@@ -47,9 +54,9 @@ const _parseArgs = async () => {
     'version': false,
     'stack': argv.stack,
     'output': './download/',
-    'force': false
+    'force': false,
+    'pedantic': true
   }
-  stack = !!config.stack
   for (const arg in argv) {
     if (config[arg] != null) {
       config[arg] = argv[arg]
@@ -57,19 +64,25 @@ const _parseArgs = async () => {
       throw new Error(`Unknown arguments: ${arg}`)
     }
   }
+  report.stack = !!config.stack
+  report.pedantic = !!config.pedantic
   return config
 }
 
 const _get = async (config) => {
   let output = config.output || './download/'
   for (const source of config._) {
-    let engine = getEngine({
-      source,
-      verbose: true,
-      chdir: output,
-      overwrite: config.force
-    })
-    await engine.refresh()
+    try {
+      let engine = getEngine({
+        source,
+        verbose: true,
+        chdir: output,
+        overwrite: config.force
+      })
+      await engine.refresh()
+    } catch (error) {
+      report(error)
+    }
   }
 }
 
@@ -97,4 +110,4 @@ const _main = async () => {
   await _get(config)
 }
 
-_main().catch(err => console.error(chalk`{red ${stack ? err.stack : err}}`))
+_main().catch(report)
