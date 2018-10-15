@@ -3,11 +3,9 @@ A translator's script(s).
 
 # Installation
 Requirements: [nodejs](https://nodejs.org/).
-Recommended: [gulp-cli](https://www.npmjs.com/package/gulp-cli).
 
 ```bash
-npm install
-gulp
+npm install --only=prod
 ```
 
 # Scripts

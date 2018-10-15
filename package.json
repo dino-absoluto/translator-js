@@ -2,6 +2,9 @@
   "name": "translator-js",
   "version": "3.0.0",
   "description": "Scripts to support novel translation",
+  "bin": {
+    "translator-js": "bin/app.js"
+  },
   "main": "src/index.js",
   "repository": "git@github.com:dino-absoluto/translator-js.git",
   "author": "Dino",
@@ -9,8 +12,7 @@
   "private": true,
   "scripts": {
     "standard": "standard",
-    "test": "jest",
-    "get": "node src/get.js"
+    "test": "jest"
   },
   "dependencies": {
     "chalk": "^2.3.2",
