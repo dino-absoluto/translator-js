@@ -27,15 +27,17 @@ import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import babel from 'rollup-plugin-babel'
 import del from 'del'
+import path from 'path'
 import pkg from './package.json'
 import builtinModules from 'builtin-modules'
 /* gulp */
 
 const external = Object.keys(pkg.dependencies).concat(builtinModules)
+const __tmpdir = '__tmp__/dist/'
+const __distdir = 'dist/'
 
 export const clean = async () => {
-  await del('bin/')
-  await del('__tmp__/')
+  await del(__tmpdir)
 }
 
 const _js = async (isdev = true) => {
@@ -56,7 +58,9 @@ const _js = async (isdev = true) => {
     ]
   })
   await bundle.write({
-    file: isdev ? './bin/app.js' : './bin/app.min.js',
+    file: isdev
+      ? path.join(__tmpdir, 'app.js')
+      : path.join(__distdir, 'app.min.js'),
     format: 'cjs',
     name: 'app',
     sourcemap: true
@@ -70,6 +74,8 @@ export const js = async () => {
 export const jsmin = async () => {
   return _js(false)
 }
+
+export const dist = jsmin
 
 export const watch = () => {
   gulp.watch('src/**/*.(js|mjs|jsx)', js)
