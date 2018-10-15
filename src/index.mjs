@@ -23,6 +23,8 @@ import getEngine from './get'
 import chalk from 'chalk'
 import info from './config.js'
 import yargs from 'yargs'
+import globby from 'globby'
+import path from 'path'
 /* -imports */
 
 const report = (error) => {
@@ -85,6 +87,14 @@ const _get = async (config) => {
   }
 }
 
+const _glob = async (config) => {
+  if (config._.length) {
+    return
+  }
+  let indexes = await globby(path.join(config.output, '**/index.json'))
+  config._ = indexes.map(fpath => path.dirname(fpath))
+}
+
 /**
  * Main function
  */
@@ -93,6 +103,7 @@ const _main = async () => {
   if (!config) {
     return
   }
+  await _glob(config)
   await _get(config)
 }
 
