@@ -28,7 +28,19 @@ import makeDir from 'make-dir'
 import filenamify from 'filenamify'
 import chalk from 'chalk'
 import readline from 'readline'
+import util from 'util'
 /* -imports */
+
+const clearLine = () => {
+  readline.clearLine(process.stdout, 0)
+  readline.cursorTo(process.stdout, 0)
+}
+
+const print = (...argv) => {
+  process.stdout.write(util.format(...argv))
+}
+
+const log = (...argv) => console.log(...argv)
 
 export default class Series extends Base {
   constructor (props, parsed = false) {
@@ -81,9 +93,13 @@ export default class Series extends Base {
     return path.resolve(this.props.targetDir)
   }
 
+  shouldLog (level) {
+    return this.props.verbose && this.props.verbose >= level
+  }
+
   static parseMeta (props) {
     let accepted = {
-      verbose: props.verbose,
+      verbose: props.verbose && (parseInt(props.verbose) || 1),
       overwrite: props.overwrite
     }
     try {
@@ -178,39 +194,44 @@ export default class Series extends Base {
     await makeDir(props.targetDir)
     fs.writeFileSync(fpath, JSON.stringify(this, null, 1), 'utf8')
     if (props.defers && props.defers.length) {
+      const shouldLog = this.shouldLog(1)
       const length = props.defers.length
       const shrink = props.defers.length > 16
-      if (props.verbose) {
-        process.stdout.write(chalk`  {green [${
+      if (shouldLog) {
+        print(chalk`  {green [${
           props.chapters.length}]} {green ->} `)
         if (props.delta) {
-          process.stdout.write(chalk`{green New ${
+          print(chalk`{green New ${
             props.delta}}{gray ,} `)
         }
-        console.log(chalk`{red Updated ${props.defers.length}}`)
+        log(chalk`{red Updated ${props.defers.length}}`)
       }
       if (shrink) {
         for (const [index, [, defer]] of props.defers.entries()) {
           await defer()
           await this.saveIndex()
-          readline.clearLine(process.stdout, 0)
-          readline.cursorTo(process.stdout, 0)
-          process.stdout.write(chalk`  {green ->} {gray [${index + 1}/${length}]}`)
+          if (shouldLog) {
+            clearLine()
+            print(chalk`  {green ->} {gray [${index + 1}/${length}]}`)
+          }
         }
-        readline.clearLine(process.stdout, 0)
-        readline.cursorTo(process.stdout, 0)
-        console.log(chalk`  {gray [${length}/${length}]}`)
+        if (shouldLog) {
+          clearLine()
+          log(chalk`  {gray [${length}/${length}]}`)
+        }
       } else {
         for (const [index, [ch, defer]] of props.defers.entries()) {
           void index
           await defer()
-          await ch.printInfo()
+          if (shouldLog) {
+            await ch.printInfo()
+          }
           await this.saveIndex()
         }
       }
       this.saveIndex()
-      if (props.verbose) {
-        console.log(chalk`  {green Completed}`)
+      if (shouldLog) {
+        log(chalk`  {green Completed}`)
       }
       delete props.defers
       delete props.delta
@@ -218,18 +239,17 @@ export default class Series extends Base {
   }
 
   async refresh () {
-    const { props } = this
-    if (props.verbose) {
+    if (this.shouldLog(1)) {
       const maxWidth = process.stdout.columns
       let output = path.relative('.', this.targetDir)
       let width = 2 + 4 + String(this.sourceURL).length + output.length
-      process.stdout.write(chalk`{gray #} {blue ${this.sourceURL}}`)
+      print(chalk`{gray #} {blue ${this.sourceURL}}`)
       if (width > maxWidth) {
-        console.log()
+        log()
       } else {
-        process.stdout.write(' ')
+        print(' ')
       }
-      console.log(chalk`{green ->} ${output}`)
+      log(chalk`{green ->} ${output}`)
     }
     return this.fetch()
   }
