@@ -61,7 +61,6 @@ const _get = async (config) => {
       await engine.refresh()
     } catch (error) {
       report(error)
-      process.exit(-1)
     }
   }
 }
