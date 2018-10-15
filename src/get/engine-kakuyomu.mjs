@@ -49,3 +49,5 @@ export class Series extends base.Series {
     })
   }
 }
+
+export default Series

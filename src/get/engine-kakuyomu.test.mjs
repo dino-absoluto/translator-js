@@ -20,10 +20,24 @@
  */
 /* eslint-env jest */
 /* imports */
+import Kakuyomu from './engine-kakuyomu'
+import path from 'path'
+import del from 'del'
+import makeDir from 'make-dir'
 /* -imports */
+const __tmpdir = path.resolve('__tmp__/tests')
 
-const testSource = 'https://kakuyomu.jp/works/1177354054883528580'
-
-test.skip('skip', () => {
-  console.log(testSource)
+test('skip', async () => {
+  const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
+  const prefix = `${__tmpdir}/engine-syosetu__get/`
+  await del(prefix)
+  await makeDir(prefix)
+  {
+    let source = new Kakuyomu({
+      chdir: prefix,
+      source: testURL
+    })
+    expect(source.targetDir).toBe(path.resolve(prefix, 'kakuyomu.jp!works!1177354054883528580'))
+    await source.refresh()
+  }
 })
