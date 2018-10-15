@@ -74,7 +74,7 @@ const cmdGet = async (config) => {
 
 const _parseArgs = async () => {
   return yargs.strict(true)
-    .usage('$0 get [--output=<path>] [options] [<URL> | <path> ...]')
+    .usage('$0 get [--output=<path>] [options] [<URL> | <path>..]')
     .help('help').alias('help', 'h')
     .version(info.version)
     .group([ 'help', 'version' ], 'Info:')
@@ -103,7 +103,9 @@ const _parseArgs = async () => {
     .command(
       'get [<sources>..]',
       'Get RAWs',
-      yargs => yargs.strict().argv,
+      yargs => yargs.strict()
+        .usage('$0 get [--output=<path>] [options] [<URL> | <path>..]')
+        .argv,
       cmdGet
     )
     .demandCommand(1)
