@@ -21,8 +21,8 @@
 /* imports */
 import getEngine from './get'
 import chalk from 'chalk'
-import yargsParser from 'yargs-parser'
 import info from './config.js'
+import yargs from 'yargs'
 /* -imports */
 
 const report = (error) => {
@@ -35,35 +35,34 @@ const report = (error) => {
 report.pedantic = true
 
 const _parseArgs = async () => {
-  const argv = yargsParser(process.argv.splice(2), {
-    alias: {
-      version: ['v'],
-      output: ['o'],
-      help: ['h'],
-      force: ['f']
-    },
-    boolean: [ 'version', 'stack', 'help', 'pedantic' ]
-  })
-  delete argv['v']
-  delete argv['o']
-  delete argv['h']
-  delete argv['f']
-  const config = {
-    _: [],
-    'help': false,
-    'version': false,
-    'stack': argv.stack,
-    'output': './download/',
-    'force': false,
-    'pedantic': true
-  }
-  for (const arg in argv) {
-    if (config[arg] != null) {
-      config[arg] = argv[arg]
-    } else {
-      throw new Error(`Unknown arguments: ${arg}`)
-    }
-  }
+  const config = yargs.strict(true)
+    .usage('$0 [--output=<path>] [options] [<URL> | <path>]')
+    .help('help').alias('help', 'h')
+    .version(info.version)
+    .group([ 'help', 'version' ], 'Info:')
+    .option('stack', {
+      hidden: true,
+      default: false,
+      type: 'boolean'
+    })
+    .option('output', {
+      alias: ['o'],
+      default: 'download',
+      type: 'string',
+      desc: 'Output directory'
+    })
+    .option('force', {
+      alias: ['f'],
+      default: false,
+      type: 'boolean',
+      desc: 'Overwrite untracked files'
+    })
+    .option('pedantic', {
+      default: true,
+      type: 'boolean',
+      desc: 'Exit on first error'
+    })
+    .argv
   report.stack = !!config.stack
   report.pedantic = !!config.pedantic
   return config
@@ -86,26 +85,13 @@ const _get = async (config) => {
   }
 }
 
-const _printUsage = () => {
-  return console.log(info.usage)
-}
-
 /**
  * Main function
  */
 const _main = async () => {
-  const config = await _parseArgs().catch(err => {
-    console.log(chalk`{red ${err}}`)
-    _printUsage()
-  })
+  const config = await _parseArgs()
   if (!config) {
     return
-  }
-  if (config.version) {
-    return console.log(info.version)
-  }
-  if (config.help) {
-    return console.log(info.usage)
   }
   await _get(config)
 }

@@ -24,17 +24,4 @@ const config = {
   sourceDir: __dirname
 }
 
-config.usage =
-`
-Usage: app.js [--output=<path>] [<URL> | <path>]
-
---help, -h      Print this text
---version, -v   Print the version and exit
---output, -o    Set output directory
---force, -f     Overwrite existing files
-
---pedantic      Default=true
-                Exit on first error
-`
-
 module.exports = config
