@@ -38,7 +38,7 @@ report.pedantic = true
 
 const _parseArgs = async () => {
   const config = yargs.strict(true)
-    .usage('$0 [--output=<path>] [options] [<URL> | <path>]')
+    .usage('$0 [--output=<path>] [options] [<URL> | <path> ...]')
     .help('help').alias('help', 'h')
     .version(info.version)
     .group([ 'help', 'version' ], 'Info:')
@@ -64,6 +64,10 @@ const _parseArgs = async () => {
       type: 'boolean',
       desc: 'Exit on first error'
     })
+    .fail(err => {
+      yargs.showHelp()
+      report(err)
+    })
     .argv
   report.stack = !!config.stack
   report.pedantic = !!config.pedantic
@@ -83,6 +87,7 @@ const _get = async (config) => {
       await engine.refresh()
     } catch (error) {
       report(error)
+      process.exit(-1)
     }
   }
 }
