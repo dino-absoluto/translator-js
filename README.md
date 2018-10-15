@@ -17,11 +17,17 @@ A simple DEMO can found at https://translatedino.blogspot.com/p/raw-downloader.h
 Replace the url with one of your choice.
 
 ```bash
-node bin/app.js https://ncode.syosetu.com/n6803co/
+bin/app.js get https://ncode.syosetu.com/n6803co/
 ```
 
-Update a previously downloaded folder.
+Update all previously downloaded folders.
 
 ```bash
-node bin/app.js download/some-novel
+bin/app.js get
+```
+
+Update a specific series
+
+```bash
+bin/app.js get download/some-novel
 ```
