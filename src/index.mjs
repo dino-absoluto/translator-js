@@ -33,12 +33,48 @@ const report = (error) => {
     process.exit(-1)
   }
 }
-
 report.pedantic = true
 
+const _postParse = (config) => {
+  report.stack = !!config.stack
+  report.pedantic = !!config.pedantic
+}
+
+const _glob = async (config) => {
+  if (config.sources && config.sources.length) {
+    return
+  }
+  let indexes = await globby(path.join(config.output, '**/index.json'))
+  config.sources = indexes.map(fpath => path.dirname(fpath))
+}
+
+const _get = async (config) => {
+  let output = config.output || './download/'
+  for (const source of config.sources) {
+    try {
+      let engine = getEngine({
+        source,
+        verbose: true,
+        chdir: output,
+        overwrite: config.force
+      })
+      await engine.refresh()
+    } catch (error) {
+      report(error)
+      process.exit(-1)
+    }
+  }
+}
+
+const cmdGet = async (config) => {
+  await _postParse(config)
+  await _glob(config)
+  await _get(config)
+}
+
 const _parseArgs = async () => {
-  const config = yargs.strict(true)
-    .usage('$0 [--output=<path>] [options] [<URL> | <path> ...]')
+  return yargs.strict(true)
+    .usage('$0 get [--output=<path>] [options] [<URL> | <path> ...]')
     .help('help').alias('help', 'h')
     .version(info.version)
     .group([ 'help', 'version' ], 'Info:')
@@ -64,52 +100,25 @@ const _parseArgs = async () => {
       type: 'boolean',
       desc: 'Exit on first error'
     })
+    .command(
+      'get [<sources>..]',
+      'Get RAWs',
+      yargs => yargs.strict().argv,
+      cmdGet
+    )
+    .demandCommand(1)
     .fail(err => {
       yargs.showHelp()
       report(err)
     })
     .argv
-  report.stack = !!config.stack
-  report.pedantic = !!config.pedantic
-  return config
-}
-
-const _get = async (config) => {
-  let output = config.output || './download/'
-  for (const source of config._) {
-    try {
-      let engine = getEngine({
-        source,
-        verbose: true,
-        chdir: output,
-        overwrite: config.force
-      })
-      await engine.refresh()
-    } catch (error) {
-      report(error)
-      process.exit(-1)
-    }
-  }
-}
-
-const _glob = async (config) => {
-  if (config._.length) {
-    return
-  }
-  let indexes = await globby(path.join(config.output, '**/index.json'))
-  config._ = indexes.map(fpath => path.dirname(fpath))
 }
 
 /**
  * Main function
  */
 const _main = async () => {
-  const config = await _parseArgs()
-  if (!config) {
-    return
-  }
-  await _glob(config)
-  await _get(config)
+  await _parseArgs()
 }
 
 _main().catch(report)
