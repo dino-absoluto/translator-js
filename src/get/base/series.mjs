@@ -199,7 +199,7 @@ export default class Series extends Base {
       const shrink = props.defers.length > 16
       if (shouldLog) {
         print(chalk`  {green [${
-          props.chapters.length}]} {green ->} `)
+          props.chapters.length}]} {green =>} `)
         if (props.delta) {
           print(chalk`{green New ${
             props.delta}}{gray ,} `)
@@ -212,7 +212,7 @@ export default class Series extends Base {
           await this.saveIndex()
           if (shouldLog) {
             clearLine()
-            print(chalk`  {green ->} {gray [${index + 1}/${length}]}`)
+            print(chalk`  {green =>} {gray [${index + 1}/${length}]}`)
           }
         }
         if (shouldLog) {
@@ -249,7 +249,7 @@ export default class Series extends Base {
       } else {
         print(' ')
       }
-      log(chalk`{green ->} ${output}`)
+      log(chalk`{green =>} ${output}`)
     }
     return this.fetch()
   }
