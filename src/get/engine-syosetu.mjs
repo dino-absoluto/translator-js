@@ -45,6 +45,7 @@ const hash = (buffer) => {
 export class Chapter extends base.Chapter {
   async update () {
     const { props } = this
+    const oldFiles = props.files
     delete props.files
     /* prioritize props.doc */
     if (props.buffer && !props.doc) {
@@ -101,14 +102,29 @@ export class Chapter extends base.Chapter {
     } /* -text */
     {
       let promises = imgs.map(async (url, index) => {
-        let { body: content, headers } = await got(url, { encoding: null })
-        let fname = `${
-          this.prefix
-        } image ${
-          String(index + 1).padStart(2, '0')
-        }.${
-          mime.extension(headers['content-type']) || 'jpg'
-        }`
+        const get = async () => {
+          let { body: content, headers } = await got(url, { encoding: null })
+          let fname = `${
+            this.prefix
+          } image ${
+            String(index + 1).padStart(2, '0')
+          }.${
+            mime.extension(headers['content-type']) || 'jpg'
+          }`
+          return { content, fname }
+        }
+        let old = oldFiles && oldFiles[index + 1]
+        if (old && old.fname && old.integrity && old.integrity === url) {
+          return {
+            chapter: this,
+            fname: old.fname,
+            integity: url,
+            buffer: async () => {
+              return (await get()).content
+            }
+          }
+        }
+        let { fname, content } = await get()
         return {
           chapter: this,
           fname,
