@@ -29,7 +29,7 @@ const __tmpdir = path.resolve('__tmp__/tests')
 
 test('skip', async () => {
   const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
-  const prefix = `${__tmpdir}/engine-syosetu__get/`
+  const prefix = `${__tmpdir}/engine-kakuyomu__get/`
   await del(prefix)
   await makeDir(prefix)
   {
