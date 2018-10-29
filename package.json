@@ -1,6 +1,6 @@
 {
   "name": "translator-js",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "Scripts to support novel translation",
   "bin": {
     "translator-js": "bin/app.js"
