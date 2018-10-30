@@ -162,6 +162,7 @@ export default class Series extends Patch {
         let config = (props.chapters[index] && props.chapters[index].props) || {}
         let ch = new Chapter(Object.assign(config, {
           index,
+          volume,
           base: this.targetDir,
           overwrite: props.overwrite
         }))
