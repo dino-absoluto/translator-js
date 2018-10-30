@@ -21,7 +21,7 @@
 /* imports */
 import BaseChapter from './chapter'
 import BaseVolume from './volume'
-import Base from './base'
+import Patch from './patch'
 import path from 'path'
 import fs from 'fs'
 import makeDir from 'make-dir'
@@ -42,8 +42,9 @@ const print = (...argv) => {
 
 const log = (...argv) => console.log(...argv)
 
-export default class Series extends Base {
+export default class Series extends Patch {
   constructor (props, parsed = false) {
+    parsed = parsed || (props.last && props.patch)
     const meta = parsed ? props : Series.parseMeta(props)
     super(meta)
     props = this.props
@@ -100,7 +101,9 @@ export default class Series extends Base {
   static parseMeta (props) {
     let accepted = {
       verbose: props.verbose && (parseInt(props.verbose) || 1),
-      overwrite: props.overwrite
+      overwrite: props.overwrite,
+      last: props.last,
+      patch: props.patch
     }
     try {
       let url = new URL(props.source)
@@ -127,7 +130,7 @@ export default class Series extends Base {
           targetDir
         }, accepted)
       } catch (error) {
-        throw new Error('Failed to read index.json')
+        throw error
       }
     }
   }
@@ -146,7 +149,7 @@ export default class Series extends Base {
           index,
           base: this.targetDir
         }))
-        await vol.setProps(Object.assign({}, data, {
+        vol = await vol.patch(Object.assign({}, data, {
           index
         }))
         return vol
@@ -165,13 +168,15 @@ export default class Series extends Base {
         if (!volume) {
           // Vol matching failed
         }
-        let defer = await ch.setProps(Object.assign({}, data, {
+        ch = await ch.patch(Object.assign({}, data, {
           index,
           volume,
           base: this.targetDir
-        }), true)
-        if (defer) {
-          defers.push([ch, defer])
+        }), false)
+        if (ch.isPending()) {
+          defers.push([ch, () => ch.run()])
+        } else {
+          await ch.run()
         }
         return ch
       }))
@@ -255,5 +260,6 @@ export default class Series extends Base {
   }
 
   async fetch () {
+    return this.patch({})
   }
 }

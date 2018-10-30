@@ -28,12 +28,12 @@ class Patch extends BasePatch {
 
 test('init with no data', async () => {
   let p = new Patch()
-  let r = await p.patch({})
+  let r = await p.patch({}, false)
   expect(r).not.toBe(p)
   expect(r).not.toBeUndefined()
   expect(r).toEqual(expect.any(BasePatch))
   expect(r).toEqual(expect.any(Patch))
-  expect(await r.shouldUpdate()).toBe(false)
+  expect(await r.isPending()).toBe(false)
   let spy = jest.spyOn(r, 'update')
   await r.run()
   expect(spy).not.toHaveBeenCalled()
@@ -43,12 +43,12 @@ test('init with no data', async () => {
 test('init with minimum data', async () => {
   let patch = { text: 'Hello!' }
   let p = new Patch()
-  let r = await p.patch(patch)
+  let r = await p.patch(patch, false)
   expect(r).not.toBe(p)
   expect(r).not.toBeUndefined()
   expect(r).toEqual(expect.any(BasePatch))
   expect(r).toEqual(expect.any(Patch))
-  expect(await r.shouldUpdate()).toBe(true)
+  expect(await r.isPending()).toBe(true)
   let spy = jest.spyOn(r, 'update')
   await r.run()
   expect(spy).toHaveBeenCalled()

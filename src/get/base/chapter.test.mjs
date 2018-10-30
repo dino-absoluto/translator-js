@@ -97,7 +97,7 @@ test('init with volume', async () => {
   })
 })
 
-test('setProps', async () => {
+test('patch', async () => {
   const prefix = `${__tmpdir}/chapter__simple-update/`
   await del(prefix)
   await makeDir(`${prefix}01 Chapter One`)
@@ -112,16 +112,27 @@ test('setProps', async () => {
     title: 'Prologue',
     volume
   })
-  let spies = ['update', 'willUpdate', 'didUpdate'].map(
-    name => jest.spyOn(ch, name))
-  const defer = await ch.setProps({
+  ch = await ch.patch({
     integrity: 1
-  }, true)
-  spies.forEach(spy => expect(spy).not.toHaveBeenCalled())
-  await defer()
-  spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))
-  await ch.setProps({
+  }, false)
+  {
+    let spies = ['update', 'willUpdate', 'didUpdate'].map(
+      name => jest.spyOn(ch, name))
+    expect(ch.props.patch).not.toBeUndefined()
+    expect(await ch.isPending()).toBe(true)
+    spies.forEach(spy => expect(spy).not.toHaveBeenCalled())
+    await ch.run()
+    spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))
+  }
+  ch = await ch.patch({
     integrity: 1
-  })
-  spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1))
+  }, false)
+  {
+    let spies = ['update', 'willUpdate', 'didUpdate'].map(
+      name => jest.spyOn(ch, name))
+    expect(ch.props.patch).not.toBeUndefined()
+    expect(await ch.isPending()).toBe(false)
+    await ch.run()
+    spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(0))
+  }
 })

@@ -19,12 +19,12 @@
  *
  */
 /* imports */
-import Base from './base'
+import Patch from './patch'
 import path from 'path'
 import filenamify from 'filenamify'
 /* -imports */
 
-export default class Volume extends Base {
+export default class Volume extends Patch {
   constructor (props) {
     super(props)
     Object.defineProperties(this, {

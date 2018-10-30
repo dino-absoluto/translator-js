@@ -22,31 +22,36 @@
 /* -imports */
 
 export default class Patch {
-  constructor (props = {}, last, patch) {
+  constructor (props = {}) {
     props = Object.assign({}, props)
     Object.defineProperties(this, {
-      props: { writable: true, value: props },
-      _last: { writable: true, value: last },
-      _patch: { writable: true, value: patch }
+      props: { writable: true, value: props }
     })
   }
 
-  patch (patch) {
+  async patch (patch, run = true) {
     if (typeof patch !== 'object') {
       return
     }
     let last = this
-    return new this.constructor(last.props, last, patch)
+    let copy = new this.constructor(Object.assign({}, last.props, {
+      last, patch
+    }))
+    if (run) {
+      await copy.run()
+    }
+    return copy
   }
 
   async run () {
-    const { _last: last, _patch: patch } = this
-    this._last = undefined
-    this._patch = undefined
+    const { props } = this
+    const { last, patch } = props
+    delete props.last
+    delete props.patch
     if (!patch) {
       return
     }
-    if (await this.shouldUpdate(patch)) {
+    if (await this.shouldUpdate(last, patch)) {
       await this.willUpdate(last, patch)
       this.props = Object.assign({}, this.props, patch)
       await this.update(last)
@@ -56,7 +61,12 @@ export default class Patch {
     }
   }
 
-  shouldUpdate (patch = this._patch) {
+  async isPending () {
+    const { props } = this
+    return !!(props.patch && await this.shouldUpdate(props.last, props.patch))
+  }
+
+  shouldUpdate (last, patch) {
     return !!(patch && Object.getOwnPropertyNames(patch).length !== 0)
   }
 

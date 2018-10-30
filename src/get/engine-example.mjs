@@ -69,7 +69,7 @@ export class Series extends base.Series {
         volume: 1
       }
     ]
-    await this.setProps({
+    return this.patch({
       volumes,
       chapters
     })

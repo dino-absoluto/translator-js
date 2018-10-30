@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import Base from './base'
+import Patch from './patch'
 import path from 'path'
 import fs from 'fs'
 import filenamify from 'filenamify'
@@ -75,7 +75,7 @@ export class FileInfo {
   }
 }
 
-export default class Chapter extends Base {
+export default class Chapter extends Patch {
   constructor (props) {
     super(props)
     this.props.files = props.files && props.files.map((data, index) => {

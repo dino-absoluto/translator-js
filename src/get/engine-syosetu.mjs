@@ -245,7 +245,7 @@ export class Series extends base.Series {
     }
     chapters[0].integrity = hash(description)
     chapters = chapters.concat(await Promise.all(chaptersAsync))
-    await this.setProps({
+    return this.patch({
       volumes,
       chapters
     })
