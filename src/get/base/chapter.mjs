@@ -182,21 +182,23 @@ export default class Chapter extends Base {
   update () {
     const { props } = this
     const files = [
-      new FileInfo({
-        chapter: this,
+      {
         fname: this.getName(`${props.title}.txt`),
         integrity: undefined
-      })
+      }
     ]
     props.files = files
   }
 
   async didUpdate () {
     const { props } = this
-    const { files } = props
-    if (!files) {
+    if (!props.files) {
       return
     }
+    props.files = props.files.map(info => new FileInfo(Object.assign({}, info, {
+      chapter: this
+    }, info)))
+    const { files } = props
     makeDir.sync(this.dirAbsolute)
     let promises = Promise.all(files.map(info => {
       if (info.buffer) {

@@ -26,12 +26,11 @@ export class Chapter extends base.Chapter {
   update () {
     const { props } = this
     const files = [
-      new base.FileInfo({
-        chapter: this,
+      {
         fname: this.getName(`${props.title}.txt`),
         integrity: undefined,
         buffer: async () => `${props.title}\n---\n\nHello World!\n`
-      })
+      }
     ]
     props.files = files
   }

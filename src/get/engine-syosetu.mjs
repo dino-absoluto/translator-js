@@ -50,12 +50,11 @@ export class Chapter extends base.Chapter {
     /* prioritize props.doc */
     if (props.buffer && !props.doc) {
       props.files = [
-        new base.FileInfo({
-          chapter: this,
+        {
           fname: this.getName(`${props.title}.txt`),
           integity: undefined,
           buffer: props.buffer
-        })
+        }
       ]
       return
     }
@@ -93,12 +92,11 @@ export class Chapter extends base.Chapter {
           text += node.textContent + '\n\n-----\n\n'
         }
       }
-      files.push(new base.FileInfo({
-        chapter: this,
+      files.push({
         fname: this.getName(`${props.title}.txt`),
         integity: undefined,
         buffer: text
-      }))
+      })
     } /* -text */
     {
       let promises = imgs.map(async (url, index) => {
@@ -116,7 +114,6 @@ export class Chapter extends base.Chapter {
         let old = oldFiles && oldFiles[index + 1]
         if (old && old.fname && old.integrity && old.integrity === url) {
           return {
-            chapter: this,
             fname: old.fname,
             integrity: url,
             buffer: async () => {
@@ -126,7 +123,6 @@ export class Chapter extends base.Chapter {
         }
         let { fname, content } = await get()
         return {
-          chapter: this,
           fname,
           integrity: url,
           buffer: content
@@ -134,7 +130,7 @@ export class Chapter extends base.Chapter {
       })
       imgs = await Promise.all(promises)
       for (const info of imgs) {
-        files.push(new base.FileInfo(info))
+        files.push(info)
       }
     } /* -images */
     props.files = files

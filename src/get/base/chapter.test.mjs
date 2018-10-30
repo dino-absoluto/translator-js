@@ -30,13 +30,14 @@ import makeDir from 'make-dir'
 
 const __tmpdir = path.resolve('__tmp__/tests')
 
-test('init with minimum data', () => {
+test('init with minimum data', async () => {
   let ch = new Chapter({
     index: 2,
     title: 'Prologue'
   })
   expect(ch.prefix).toBe('002')
-  ch.update()
+  await ch.update()
+  await ch.didUpdate()
   expect(ch.index).toBe(2)
   expect(ch.files.length).toBe(1)
   {
@@ -57,7 +58,7 @@ test('init with minimum data', () => {
   })
 })
 
-test('init with volume', () => {
+test('init with volume', async () => {
   let volume = new Volume({
     index: 1,
     title: 'Chapter One',
@@ -71,7 +72,8 @@ test('init with volume', () => {
   })
   expect(volume.index).toBe(1)
   expect(ch.prefix).toBe('002')
-  ch.update()
+  await ch.update()
+  await ch.didUpdate()
   expect(ch.index).toBe(2)
   expect(ch.integrity).toBe('prologue')
   expect(ch.files.length).toBe(1)
