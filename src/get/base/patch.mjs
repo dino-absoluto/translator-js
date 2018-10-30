@@ -31,7 +31,7 @@ export default class Patch {
     })
   }
 
-  async patch (patch) {
+  patch (patch) {
     if (typeof patch !== 'object') {
       return
     }
