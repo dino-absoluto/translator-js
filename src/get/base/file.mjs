@@ -24,24 +24,37 @@ import path from 'path'
 import fs from 'fs'
 /* -imports */
 
-export default class FileInfo extends Patch {
+export const toGetter = (value, willCache = false) => {
+  if (typeof wrap === 'function') {
+    if (!willCache) {
+      return value
+    } else {
+      let cache
+      return () => {
+        if (!cache) {
+          cache = value()
+        }
+        return cache
+      }
+    }
+  } else {
+    return () => value
+  }
+}
+
+export default class File extends Patch {
   constructor (props) {
     super(props)
-    const { chapter } = props
     Object.defineProperties(this, {
-      chapter: { value: chapter },
+      targetDir: { get: toGetter(this.props.targetDir) },
       integrity: { enumerable: true, get: () => this.props.integrity },
       fname: { enumerable: true, get: () => this.props.fname },
-      buffer: { writable: true, get: () => this.props.buffer }
+      buffer: { writable: true, value: toGetter(() => this.props.buffer, true) }
     })
   }
 
-  get relative () {
-    return path.join(this.chapter.dirRelative, this.fname)
-  }
-
   get absolute () {
-    return path.join(this.chapter.dirAbsolute, this.fname)
+    return path.join(this.targetDir, this.fname)
   }
 
   exists () {
@@ -57,17 +70,14 @@ export default class FileInfo extends Patch {
     if (!this.buffer) {
       return
     }
-    if (typeof this.buffer === 'function') {
-      this.buffer = await this.buffer()
-    }
-    fs.writeFileSync(this.absolute, await this.buffer, {
+    fs.writeFileSync(this.absolute, await this.buffer(), {
       flag: force ? 'w' : 'wx'
     })
   }
 
   remove (force = false) {
-    const { relative } = this
-    if (relative.length > 0 && typeof relative === 'string') {
+    const { fname } = this
+    if (typeof fname === 'string' && fname.length > 0) {
       fs.unlinkSync(this.absolute)
     }
   }
