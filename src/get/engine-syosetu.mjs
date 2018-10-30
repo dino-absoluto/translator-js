@@ -118,7 +118,7 @@ export class Chapter extends base.Chapter {
           return {
             chapter: this,
             fname: old.fname,
-            integity: url,
+            integrity: url,
             buffer: async () => {
               return (await get()).content
             }
