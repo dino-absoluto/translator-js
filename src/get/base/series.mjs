@@ -174,7 +174,7 @@ export default class Series extends Patch {
           volume,
           base: this.targetDir
         }), false)
-        if (ch.isPending()) {
+        if (await ch.isPending()) {
           defers.push([ch, () => ch.run()])
         } else {
           await ch.run()
