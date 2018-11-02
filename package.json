@@ -35,7 +35,6 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
-    "babel-plugin-dynamic-import-node": "^2.2.0",
     "builtin-modules": "^3.0.0",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
@@ -70,8 +69,7 @@
     "plugins": [
       "@babel/plugin-syntax-dynamic-import",
       "@babel/plugin-syntax-import-meta",
-      "@babel/plugin-proposal-class-properties",
-      "dynamic-import-node"
+      "@babel/plugin-proposal-class-properties"
     ]
   },
   "jest": {

@@ -19,7 +19,6 @@
  *
  */
 /* imports */
-import getEngine from './get'
 import chalk from 'chalk'
 import info from './config.js'
 import yargs from 'yargs'
@@ -49,6 +48,7 @@ const _glob = async (config) => {
 }
 
 const _get = async (config) => {
+  const getEngine = await import('./get')
   let output = config.output || './download/'
   for (const source of config.sources) {
     try {

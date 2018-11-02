@@ -27,7 +27,6 @@ import commonjs from 'rollup-plugin-commonjs'
 import json from 'rollup-plugin-json'
 import babel from 'rollup-plugin-babel'
 import del from 'del'
-import path from 'path'
 import pkg from './package.json'
 import builtinModules from 'builtin-modules'
 /* gulp */
@@ -44,6 +43,7 @@ const _js = async (isdev = true) => {
   const bundle = await rollup({
     input: './src/index.mjs',
     external,
+    experimentalCodeSplitting: true,
     plugins: [
       resolve({
         preferBuiltins: true,
@@ -58,9 +58,12 @@ const _js = async (isdev = true) => {
     ]
   })
   await bundle.write({
-    file: isdev
-      ? path.join(__tmpdir, 'app.js')
-      : path.join(__distdir, 'app.min.js'),
+    entryFileNames: isdev
+      ? 'app.js'
+      : 'app.min.js',
+    dir: isdev
+      ? __tmpdir
+      : __distdir,
     format: 'cjs',
     name: 'app',
     sourcemap: true
