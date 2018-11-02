@@ -43,7 +43,7 @@ const _glob = async (config) => {
   if (config.sources && config.sources.length) {
     return
   }
-  let indexes = await globby(path.join(config.output, '**/index.json'))
+  let indexes = await globby(path.join(config.output, '*/index.json'))
   config.sources = indexes.map(fpath => path.dirname(fpath))
 }
 
