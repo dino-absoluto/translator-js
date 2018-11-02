@@ -20,24 +20,15 @@
  */
 /* eslint-env jest */
 /* imports */
-import Series from './series'
+import Series from '../series'
 import makeDir from 'make-dir'
 import del from 'del'
 import fs from 'fs'
 import path from 'path'
+import * as utils from 'test-utils'
 /* -imports */
 
-{
-  const __rootDir = process.cwd()
-  const __tmpdir = path.resolve('__tmp__/tests/base-series')
-  beforeEach(() => {
-    makeDir.sync(__tmpdir)
-    process.chdir(__tmpdir)
-  })
-  afterEach(() => {
-    process.chdir(__rootDir)
-  })
-}
+utils.setupChdir('__tmp__/tests/base-series')
 
 test('init with url', () => {
   const sourceURL = new URL('https://www.example.com')

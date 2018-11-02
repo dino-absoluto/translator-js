@@ -1,0 +1,427 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get twice 1`] = `
+Array [
+  Object {
+    "content": "zBdiF3Z9kLJB+NU4lTzUMobnHtjLmlDKPgmvCI21OgIFwRe8OS1AFFQzHYOmHrLq6xOORP5/7c8DM8Y9BUq4jA==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/000 Description.txt",
+  },
+  Object {
+    "content": "nuH3KKLzpyjMZTm7MpOhwetPbUgxTd8zyq0sMcTM+jxMzvN/eewQCCT5+wXYWZd/65nNPkjI6ZEesn8rOhih0g==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/001 戦慄の灰かぶり.txt",
+  },
+  Object {
+    "content": "ZvLCN3IDaaukNYJ2b8lndvCRR2v1VCRNbs1pQqGXU0E2eImhKSFvPxtKw9Cq6UilXNjD2CmquR0v1/UyczleYg==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/002 三柱の子神.txt",
+  },
+  Object {
+    "content": "xiX5fNaU7sFElUGZ2p0YC27nhzyI5gaNztQee0dSORpGTst2pv7iTRguSDsu3OjwjY6dCsehFK1VHeJo8Sb6Mw==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/003 スノーホワイト・ブラックアイズ.txt",
+  },
+  Object {
+    "content": "VNaNHxLXjp3Akx/WyB0o8djmxHNDdhaZCp9H0W+rDQqlkEiOrlTB6MzIJANWI99b1jhchK9kPO2XjeIXWe0Y+A==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/004 怠惰と鈍足.txt",
+  },
+  Object {
+    "content": "/xEB5OR2Mk8HzX4XItcs4WZqLrQ02l8H4VYQJ220sJIXISyVZcAu0eYM1iMniT+m54OlFaWiT245Ul0IHEzd+g==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/005 北風と豪雨と火山.txt",
+  },
+  Object {
+    "content": "12X+al+7h3fdrhYlOloZwtsM89FCz+g/Zf91Bk9NsfjOM2+pjHiA/6xFf1/6ISezFEHARGZcJZ7Dethcew4irQ==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/006 転移マッチ.txt",
+  },
+  Object {
+    "content": "/yfEniPX1EO3fMQHg6j/inrsvxzkFojTi0Y4LgG40wdVQk/oebIxBlCPbQw/LzR5Ss3JnIaHGEHwb/HMBWwTIg==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/007 アンリとヒモ.txt",
+  },
+  Object {
+    "content": "5Vde0/Xm+v/8TZ8Re049DRrxCgrbDsHHFc7SlgfqIJFRLmXLt5wQreufW7B8ms2tI5vlyw2FghlgRhTWKBGLCg==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/008 魔法使いへの道は遠い.txt",
+  },
+  Object {
+    "content": "ACVouUmKvxy4ps3tgQyK/IfroZ160EmihvKGnMCv9sWAG2HsZ1tdK4Miqlyae0TweY8MABPWaDotUK8u2A11WQ==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/009 神アンリと人アンリ.txt",
+  },
+  Object {
+    "content": "BFG8eDBgTP8bhd2C0CdE/57kM4Bqh5YKj8RLAe3fDtgU2AidPo8eC7CMX4cB+bUXLAcbM1kea0JvrCfX3NrNQg==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/010 邪神様の耳は…….txt",
+  },
+  Object {
+    "content": "6hu+jqoTKukbTaUeE5yEpznKJI8SLGU6Kj8YNpgx0+ae0Oh9eoVbCebiGYUf5c7fryYOxkYxWghtfdYSSVHNQA==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/011 リーメルの笛吹き.txt",
+  },
+  Object {
+    "content": "egjfEMBmmmnKZ7h4/mYEfCTXFFI6+F0wrWSAmh09F3gGqBY2XNyRdOfprRg3Ay9GGSDnjxQQquK+ROFIHHFZ1A==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/012 アンリと豆の木.txt",
+  },
+  Object {
+    "content": "WYx9ahv31vm+DbPWbtrkXKRwKxtLcR7FL409Tbilqx4oDa3SUOLHJ7Syd+AwYnt9+BduKPDiNk50TvM5JJ4Saw==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/013 リトルマーメイドの悲恋.txt",
+  },
+  Object {
+    "content": "JVRF2vzvRbl/7lUw3NS7+R1aCDhwV8M3DEatQiNTQkSpMYWS9x8MHaSm//oUkk1M+fCuSBjtkphLLtiFQLxajA==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/014 戦慄の人魚姫.txt",
+  },
+  Object {
+    "content": "U+vkfasU5mZ0RFL+kmZXe7Gki9OQAB+A0ybfRFKwyA4KdyCWPGPy6MY8jjhisIQCROZzRw6rKgks8aK6dKdFBw==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/015 不思議の国の邪神様１　～今は無理だけどそのうち～.txt",
+  },
+  Object {
+    "content": "Y8mSqViHokYEHU4Hqs2srvLnHSHuIt327FjJC/V+YGH2/j9UM3bOcp9G2W8/43undRxXzPlXaGuXHBCDZvu30A==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/016 不思議の国の邪神様２　～大きくなれ大きくなれ～.txt",
+  },
+  Object {
+    "content": "/WbCYolyOL8qHkZhYf3aT8sDfID446wqahfwc/PQIo9Q2XJgjyW/TVJE/e1qc2AmqdsMlypaVG2q4tLuMGkmXg==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/017 不思議の国の邪神様３　～大きければ良いというものでも～.txt",
+  },
+  Object {
+    "content": "/fNF87pPQKk5U9nvs1/eYTAIF48Lc99SqZwDZDibhucBEM0gb89o8hHlfMAemGiKTSDlAoCKora4pEk2SlhF0g==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/018 不思議の国の邪神様４　～圧倒的な戦力差にひれ伏せ～.txt",
+  },
+  Object {
+    "content": "/ZenL2Fm7z/RmyBHNR2ByWeSmwoMiQB+miDGFh3xOYqZsfFIJwzVQ0h1jz4Ih6plJiKh3O5AOLSOx7N5K2EBrw==",
+    "fname": "double-get/ncode.syosetu.com!n8201cq/index.json",
+  },
+]
+`;
+
+exports[`get long series 1`] = `
+Array [
+  Object {
+    "content": "1o9kjfnql8JRbPeV99TfI4vDMHRB/2qnQEUl1drJWHKtR+2n9UgMcdtkLsnyYLIpJ0MsQY365CN4SiiJbp6HNQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/001 01：些細な願い.txt",
+  },
+  Object {
+    "content": "ylPaMoUjzj3UnPyB6VzGEjUJdnjin2xyL5CYVNcPqB225Xa+JkHlFWehCTcPbM8mAL1CwTG/hN36SUgD0DMhdg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/002 02：平均的な結果.txt",
+  },
+  Object {
+    "content": "3WnALJ4mRHgNqmnybkQnv/z7IrYmtvddwnlj9mMix44s3qhD+Bt9fzH2GDF/FAbCHAnK0oCjKJJxIM9v9AL4ig==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/003 03：よくある出来事.txt",
+  },
+  Object {
+    "content": "57UKNJ5zixjUA0H0BtuMGH9DLTKPRkzJ/mBxJ7tw3hJuefcCZwTtwMg6sqK8Kdwjop+KpKXgT1omMy6OZeCKwg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/004 04：人心地.txt",
+  },
+  Object {
+    "content": "ay/zx4IZZne3Xj+6Z6x1rqLy9X0YOnIstSYuL7eHHSKJ74zOqUU+WtVucd+td5AhBr47HX5sdWzfi7mV2k66cg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/005 05：聖なる場所.txt",
+  },
+  Object {
+    "content": "wdx1fv2AcZ2/BL6bAABjzQmW33ci8kG5MO5VbOPxjUAus5OzkiigFbqNE/DteD9bSnwjPc9fG3uIXATqLVcVLA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/006 06：お約束.txt",
+  },
+  Object {
+    "content": "zooh7HTvRTpo7MRwaU7Fhi73jiUBlId6YUEGj09BSvpfI7S8JN2a48jlambVWmlNM2QqBP7A56GyAQTVpZnK6A==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/007 07：転職？.txt",
+  },
+  Object {
+    "content": "YvwRs0JkI2DKPV1/L0FWh7Ul0eW3WAed6oz1qIO4DINQCNe19/YwiefU8xLL5bgLvBBaX1raQV4+nXA+Qq1L8w==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/008 08：お引越し.txt",
+  },
+  Object {
+    "content": "WdJkTDlOT8WPWY9f6QshXdrtmGaVxwRp+5fWWd6VqROLKF/XUn+OMzcHUCeIZK2HYcZZECjRFt9/hja/mDE4Ug==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/009 09：はじめてのおかいもの.txt",
+  },
+  Object {
+    "content": "8fmlOUD0Y/Imlq7Pv8G8Eiw5LtdVuM4g2+D1BxfkZg/CmbSVD9NzxGfUvslZTEyPfQXJkRevyzy3ae8WWcdL+w==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/010 10：引き籠もり生活開始.txt",
+  },
+  Object {
+    "content": "gm43v25tkJ7hi/4mvoAfNC2c8KtcZm5s/Wjjg5xE+UdlstwN7FkSZ7Lp8Um7oy9kBrxSbPbrzoz3AHDqcOixkQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/011 11：注文の少ない迷宮.txt",
+  },
+  Object {
+    "content": "c3K4Lf7VRFWLAcX5EJUP7zHr7BqrwjuHcS3wKzV9fJZOv0B3VuMrFy1IsW411DExvuLuLg80rPwv4NocTsCaBA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/012 12：邪神の追剥.txt",
+  },
+  Object {
+    "content": "968CkCeXQhbvtKjJPCoc47AJVC83T42WOxUmz0Ba5fkuw7JMI5raQ2E5fbTQNi9Y/5ydvkvWQfDnChfIUb5PMA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/013 13：絶体絶命.txt",
+  },
+  Object {
+    "content": "SjZy25VD1j3G8KqREfxfZ8r2O1XpTW7zuxQrfAs5wOnPy5hqOUugPoFSYlK6POM1iK3WAEnM+jeaMUYzF0XHbA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/014 14：天敵.txt",
+  },
+  Object {
+    "content": "1WAJpAOF4YlXxgVuqTSGUpluDTXO+PkZZDRPgHLCc8PWCDnqnjiJEGz5xlxoaGkLXIGZNo+to3HTqs9l8xQNfg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/015 15：ラスボス戦.txt",
+  },
+  Object {
+    "content": "sKT9t/sGz4apt1ER5O+VJsDoIBDfiVCAmKoyttfjMP97DYgHnCXuK6saSpFr342nIQgqxOjYKODHtXv9No7vaA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/016 16：賠償請求.txt",
+  },
+  Object {
+    "content": "I9kASULAf2mWPVXqspIFJdgqdFjCRSf8UJLUjnSzwKCuBhdhHKO2uEkQ667T2ixHGpmBWAH/p/jiiOfoaHXx7g==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/017 17：ガールズトーク.txt",
+  },
+  Object {
+    "content": "AoWUQd5vY9asRBr9o3s8oP1hq0aPxWdrzZpctD9FhHNKMkQoSA5SkCtDYqUpsO5Y4oNk+Lo3lVkWKlWRhVtoBg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/018 18：狂宴.txt",
+  },
+  Object {
+    "content": "A0dy+vdmEyLNa411/mlSGN6cgDTQPJF+9maUvyW0LLziJyiVYpw1lfhn3O+eiLzovOgTHfEcBPFb4yowKfZypQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/019 19：兵糧攻め.txt",
+  },
+  Object {
+    "content": "Tkbf8xt3dvGoGs/wPWojrKp4ljvcA4alBZcDGDSJ3sdWhX9LnuPKOh7ofm5di8D6PZwiA4PbE1OiFr4pobJYMA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/020 20：神殿戦争.txt",
+  },
+  Object {
+    "content": "cjFXxJiRc2IFKEQMUAMWzHaB/TgkNqDcR9TbySAK5NgcOwJBnZxCSS7t6rM07IEdGoHSWz4DrgoyggXKpLsgQg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/00 【前篇～邪之章～】/021 21：邪神アベレージ.txt",
+  },
+  Object {
+    "content": "37uwAX2H8bo0yJDiiIW2K6waTLKBBSGzesAFJQcDm3UT0k4TFOBmmRyUHhE/CYKNz8RBebmaPi5qH3A+plD29Q==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/000 Description.txt",
+  },
+  Object {
+    "content": "SH1jUzl/isEfz0h0pMGPZUsZdXQHn9iryZfhCJsL3LVRP4zzkT39KFs8DKmAF/NAAOughuZNVgMg5ydno/8MUA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/022 外伝01：ある女将の接客.txt",
+  },
+  Object {
+    "content": "J3ziMOQTvg689rheTxLtrs9LVcimWANRleg93trl+12HP1XduDbkWCka3tzmOERJ8N3e+sm613meg2F52D7+2A==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/023 外伝02：あるシスターの恐怖.txt",
+  },
+  Object {
+    "content": "bOH6g73wjjrnJxQnqgpXuQrj35aXVWr1lGErUzSiwk30JQxkxgqg/jqQNUARFuZoTuSM7RbpWQEpGIwQyN4Dhw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/024 外伝03：ある冒険者の災難.txt",
+  },
+  Object {
+    "content": "56FdLFz1Ir5gRGZuyWfoF/KGUXqXQJ5MYnVyY8ysUIHMHrlY86Hq2wq8NugdTgQIog6KbJDNOsZNA153pyEuuQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/025 外伝04：ある奴隷の救済.txt",
+  },
+  Object {
+    "content": "q19CtBAeICi05NfJfIy33L5ujLQ2E8PJS5GG1RLsOA3hpaUXy8fBGsZ9Rx6T4kboZToZDhXrMZhgyoc3meC38g==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/026 外伝05：あるギルドマスターの憂鬱.txt",
+  },
+  Object {
+    "content": "Bp+ty8mhGXwl7havzlABxk22+0aer1ZsxIgXXJhApO50ud5K4iv4d2Hyk8Uf3nMOBHNn9+WJx0+LWeuLVGj3cQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/027 外伝06：ある魔導士の嘆息.txt",
+  },
+  Object {
+    "content": "MfLu+Yycus5ks+uXZFI5hBo48B3i5kDPaIf3+atS0xUP5gJpKww93r+fL5dJnPDX1gSTGA995fzKb6hW4sF1QA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/028 外伝07：ある不死王の忠誠.txt",
+  },
+  Object {
+    "content": "BH02uoUvLSMmF671b7V6GC9PqysBGQsHc7JCbRKVn8kY8HvP5/yRjq8wVSysfwlP9O97yRme/WgM2pCNAHBcxA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/029 外伝08：ある魔王姫の交友.txt",
+  },
+  Object {
+    "content": "v3k3vJyg86/zowhcfRCEeFl6USixB1f+3/3g7jPko/TEKmSH6Kt54xKFfNjjoLs7vkMmfueAywqdKlJmhgZPfw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/030 外伝09：ある教主の信仰.txt",
+  },
+  Object {
+    "content": "4TUtOr3Jiq2+Ws34I5xyXEStIphm4jTlfzCcM/nYPadHtXWzs9boeuTK+haMH5dsrRkMm5maQyvVjF1z0slTyA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/031 外伝10：ある王子の絶望.txt",
+  },
+  Object {
+    "content": "w/+sP5jcz2NYqMoaAskOqw8WPVLHsA2Bv6OkABZPlv+SwO8JkoB0afJQL+iVubWvreikx1MNSQOv2AY6rv3raA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/01 【邪之章外伝】/032 外伝11：ある邪神の嘲笑.txt",
+  },
+  Object {
+    "content": "F7RAlOE1ywkfHkl5svfeM8R54T98ZMDAhhptKbIQbWBI66MN8NL2Gl2Bu44/Ag/Dk4/Vk3x/JBwJVh82W0SwYg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/033 01：黒き歴史の始まり.txt",
+  },
+  Object {
+    "content": "JOSLNAGlxfmS3Uv+WNyhpptiwHcnApSdEUJTFDF8rKx6Om/R0QzQnt0Iu2JbYoVZ90/9Yk/29A9Wlr9Nm64E3Q==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/034 02：各国模様.txt",
+  },
+  Object {
+    "content": "MQYz6eRBRkJI9+BMdnVnma402gb6UxnCL1t9+uIYO+ETDz4N9OyaSY1GSxnkwIvF/MBpQ6mKyQMnnKrftxuHrg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/035 03：邪教のすゝめ.txt",
+  },
+  Object {
+    "content": "h8FXEGSydbjvu22fqBbpwOYXtmpExX4nRTNgWlZA32dtT96ODRWM+3EhrzJN4QwEUYMIZCTYoEnXWuPxJ1j2ag==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/036 04：光と闇.txt",
+  },
+  Object {
+    "content": "R3OsQ4TnHUeNuBiGbsIw1S+S+38cZzOAfeYivuQ56VPajIIkcpnB/du9PklN/UpcdDV7e+Jt7onLuI2zFxAe0A==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/037 05：会議は踊る.txt",
+  },
+  Object {
+    "content": "GB62FGqohJHeXQC9Xqbh7y0rUfBa6Ic+sqeRZ1a0ZzykrcbOka9P80kl7WXAWmSIJd2K5oCWbV3COXnHbgnMdg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/038 06：その日世界が震撼した.txt",
+  },
+  Object {
+    "content": "mcbgq2nxsYW6dZxzy3g2u0wfZsj9LoTgN5DIclZn8G18zTOlAugCzw6Q74+Q2xHWWJU9dXN9l0UO2M2sRFwWRw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/039 07：ダンジョン再始動.txt",
+  },
+  Object {
+    "content": "DnEOV755VRwujfPe2VtBMYFintE2PigLTz5JWBKdr4+UZ1rsm44xlWYgdmFK92hGDEu5Amquop0c84QU207zPA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/040 08：侵入者改めお客様.txt",
+  },
+  Object {
+    "content": "6FAMW/OpBk+7A2d5+bKllhL9vgZ87vxmLMj5Lq3FCypNOYh8MaKvSK7U3mpbjs86sjds0ERznggeauvqu6NG4A==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/041 09：彼らが帰ってきた.txt",
+  },
+  Object {
+    "content": "B8oUADZLpVLKx/xFLRCj9E5oSsst6B2+pTyBRXYnoGp/HDRc8dLbIpbKSoB23u+xJDAaMtgtbb/idva/J+eWuA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/042 10：黒き暴君.txt",
+  },
+  Object {
+    "content": "grHjhrZ52S9eI2lYkTnCezKK5DjMP00OiIAKleXsigoncQEpafwjBKLtRya68yZWlzVE3WtHEACcPNKCmHtOzw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/043 11：四の天に座す王.txt",
+  },
+  Object {
+    "content": "2U5XNWS1dBUpvCigp95aDNvFhC5FCp4iqu9jDtSKKw0emngyCawsLeuKGxbDsMlvF8fnxb+SAs04l6EgoKfB+w==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/044 12：嵐の前の一時.txt",
+  },
+  Object {
+    "content": "RNAXZeRwcy/K1ovx+51uFXEuZkFiT7X3dSwtYniE5n213O9oIl+5h6ohE3HRqVcnFcq4Rwv75gt+W18SXTaylA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/045 13：大人げない.txt",
+  },
+  Object {
+    "content": "LYeHay1N0p+dMI1VlulEDSJ1NeY7pJzI3l6Hh1rNxvivQHIDsE23jg9uYJC8MRTWRsbDxzPXvkxegGQhts+KBw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/046 14：謎解き地獄.txt",
+  },
+  Object {
+    "content": "Hjg2UT/On0TNqzIGODeTrRoaa4rIaayJjSB6GL7yM4VPo7gElZqGAWrVAaDcGxlQot11pv/A84UqJw5hjXMyXQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/047 15：邪神の鎧.txt",
+  },
+  Object {
+    "content": "77EHpv8JH1ZVLiRZGVk/toh+QbohXRowfvBsUcxvFg0tQzaBQ0oGShhUkVsvre2VVttMQB9a5omHJofpb6TIjA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/048 16：ボスラッシュ.txt",
+  },
+  Object {
+    "content": "Sb/5M4Mirl1wA7WDfcGqQyyb9sAiesigBrWD8CHa0FBKdkbcd2d9qkzUmQSD5Xh6960vceQtIHYWOjyZZwAHYw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/049 17：インペリアル・デス.txt",
+  },
+  Object {
+    "content": "Zw5gC3Qj+YHixFpiDWSXK5KE1kkB7l08VWJndLVSQcqE81zZyD9kJ5l9rlxFN3CTkvEbwZ6gbWEWznn01yfIFg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/050 18：決着.txt",
+  },
+  Object {
+    "content": "YsK2QIYVunlWRlfpwM92kqaT1eCUDCSfhZS8Zjvpf9E305JcaD7TjPLg8WAD761kb0WpIMKNF3E2P3j6mTCavg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/051 19：邪神の誘惑.txt",
+  },
+  Object {
+    "content": "Xebvwsd1M17RHOUas9h7ZCxDJkioGhVUd66sHxpVSjwMCEWkfDB2Jcx8YlvbOktnijQOWToqOEUaLO5/lBheqw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/02 【後篇～神之章～】/052 20：普通のアンリ.txt",
+  },
+  Object {
+    "content": "iEvdDoOBY0V46BmsPrZ4mOgWu/4V/VVDFplyNjsK53pL3raOWhtysKVBndcJMPAgLbO9opg3j5xOxD+zhfdBvw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/053 外伝01：ある宗教の転落模様.txt",
+  },
+  Object {
+    "content": "bgKpYxguqAXIKDUqdrgVxGV2i+xn96kHo0utwyY7WEtj3FsoOzFeebKii6rBoozUKI40bwfAhFH+MGOGdZrnQg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/054 外伝02：ある経典のパンデミック.txt",
+  },
+  Object {
+    "content": "jaO0B2BpvXNeIUKohHKlV3JmKoQjLEFiOqsR9Kj6ew4+IK5RNaYm8mvAMdpvqpcYunTZiosYVgKufykKVRwzXA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/055 外伝03：ある主従のおさんぽ.txt",
+  },
+  Object {
+    "content": "npWNNYrvrN7ddk5wuiqlgbsCfDw6tJo/MP7CNgnfeu0CAutRMYRwIDIFmn9Nl2VGtj6eL155sKPu5AyWhC4W0Q==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/056 外伝04：ある勇者達の労働.txt",
+  },
+  Object {
+    "content": "DJ63OGkzc1MeZ/GH9ooU6m220RDpORaXlxNUGIOC6FqSEDBn4n8CtPur+vGlsfbAQNa73uz1W1y37z/ANwcGLA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/057 外伝05：ある従者の里帰り.txt",
+  },
+  Object {
+    "content": "JNKR+iqQAf0dC1J5E9SWp4zLmCx73clMdNpeC42p8F/ntFPi6UpthfxtDapYPa/wRaffMn7pAYnCXeLH8+BPYg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/058 外伝06：ある魔王の会食.txt",
+  },
+  Object {
+    "content": "Rgz35Ds/4SH7mYIeQ1nXzy6GunBPgGzC1c1Dp0DtLn1/flp6gwTvo2RfgFa09rXxLJ7itkeBdmiart7amxzCVw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/059 外伝07：ある教皇の企み.txt",
+  },
+  Object {
+    "content": "0d/REzZ3wasSkG3Cored0HuVx879RQ8iOnVb2YqiNPJpwVCc8/XCYq4GgyIDQJd96V4ZQQee+gCHawVGyRDu3g==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/03 【神之章外伝】/060 外伝08：ある不死のバトラー.txt",
+  },
+  Object {
+    "content": "sg+frLBN9t/uLBz5/A2n9E/FwJ2r8odor4WYpFuofQQH9HXj9y9Gjsz3NNBzpSV7Znj7SaTKTs7+13XCVA8DIg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/04 【外の理】/061 記念SS：自伝「アンリと愉快な仲間達」.txt",
+  },
+  Object {
+    "content": "sNbWwwNOcrDsQWNx+u7h0JaNjbUaiIKX3XKY81gXpJX8xo6wD0lEjDM8Oj5F8XtssyL5ZLOFLnRL1P77Aih+xg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/04 【外の理】/062 記念SS：まんぷくアンリさん.txt",
+  },
+  Object {
+    "content": "eZgKHl/UcQ9As3pnZjA6EwJGxXcBAWdaE/TX4O7uei4f9b1lFxb114Z1KLk9nQQHGP6n7A+JykE08bSJEDiRNw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/04 【外の理】/063 記念SS：異伝「クリスマス禁止令」.txt",
+  },
+  Object {
+    "content": "A/JlRdQDiBX8xJfHKO+AqVz7YVUoA/H+IYZmVBPKhzhUkP0yxAB5YEhexjJxImn5qiPdLmkXEbbC4C7ZJ1m2KA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/04 【外の理】/064 記念SS：謎伝「明けまして同文化交流」.txt",
+  },
+  Object {
+    "content": "8nbclz3B7SIRpB5po+g+UBwZx54MdIkZPThsdZHwO+PD5F3koPaWJwb1tpzqMXCV34lsEcJc3SmEGCMVC42SCA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/04 【外の理】/065 記念SS：他伝「崇高なる我が神」.txt",
+  },
+  Object {
+    "content": "0uuLu+G7nOtki5CVkBSx2/ZqFM9tn0PWpdJ/LaP2iKLjg61GbxBzZYhXJH7bTOx0VBLLOfwTZa2JzdLt6XDjzA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/066 01：危険な邪神像.txt",
+  },
+  Object {
+    "content": "/+ql7y97Z5VfIWKQGPMiMMQBxiDxbsxSYF/UIQ+9tUXlizoX8bdRXoXCPX2m4rxPLrcS17j9G3nK+S1FLB+HaQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/067 02：邪神像起動！.txt",
+  },
+  Object {
+    "content": "bmD1b46Br1AllWyMiB0PDBkzIPiJNffKKfnVVOddqu4GSVQ/wfQNYkKzu+QdIQaqzWqgS6lPN0R5GEQNqHDIcQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/068 03：蹂躙される世界.txt",
+  },
+  Object {
+    "content": "C+WpQ3s3NmGjKDPilvGwYPU4td82oNW+0NCpyoK+q4ZtULYmsqHJc8187KudnrrSvqGJwJxTkNxIW09m3yfncQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/069 04：三柱査問会.txt",
+  },
+  Object {
+    "content": "gZScKVJ7ZBAL/6T5GFxJn37Ww14FfN0NZAct4X8gC7K0TkNLV++unF51BlZ1qUy+GVDicKIHZHGKWRDSR25CQQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/070 05：選抜メンバー.txt",
+  },
+  Object {
+    "content": "kezv9Ss0Vnmnai1mTz/fMBRHgU2VmBwfPevYD3OOFhSUJ4wBtmPDAF3C4g45WOi/ec1QwFYYyXkyK4Rw9Azgsw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/071 06：対策会議.txt",
+  },
+  Object {
+    "content": "JqOWRyYwuQcguDNH6yJKrhMdHCOXC5howCXQ9+UW7o1sbrO8FDP/449GPfdSg1lk+i2mDg74Mj9VThGtfI4AYA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/072 07：トラップ.txt",
+  },
+  Object {
+    "content": "TNIjmXE78bfz82oMjawqSwjzqJ8cLWtUkNQ+2IhmIXK+gJs4PTAYPuoVpPbN9znQZ21NKMo8nOIdIK3UpJ8R2g==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/073 08：撤退.txt",
+  },
+  Object {
+    "content": "fhLR3iTQRHKBfcjXuulFyKw7xI5Cmr7HLjdLAFyYLLkRPqGv4Ut+LmeM59S/CB1eqrTmiE42+8tV4+gXoK7NLw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/074 09：対策会議、再び.txt",
+  },
+  Object {
+    "content": "0+RHlvCLKLVE81Wq5dhm/mlAPPXK+FJhKhGDccKvf58Mc4fCKIkvgHG6zcQ2lcKGDizlYS5jTQRWf5Z66Mg8yg==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/075 10：大切なもの.txt",
+  },
+  Object {
+    "content": "IW1x0+8uHDDf4Crv8h16f1jnzq1Utgg+ny6fJeY4XkCn5DbryeOZJdAHeC+wi6vt0+nHni3wsOZQOCEZP+Jwpw==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/076 11：封印.txt",
+  },
+  Object {
+    "content": "6p1gxbSyST+UNlQxf1d0mkCLleR1wJTvnr+Soclv5flHWPWcauNWCn+K73jxxkD4Gs8PcHB5d43rOiDDTW27AQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/077 12：後始末.txt",
+  },
+  Object {
+    "content": "ECG0XAgbRiumkrk4WoAAgdqoHm11TDSG31IRTglmixCY8QNByqcbLaoJYgIh6rImZCQCmw5grc8NKemjuGx6bA==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/05 【付篇～平均之章～】/078 13：戦慄の結末.txt",
+  },
+  Object {
+    "content": "bRRO4Uvv8bTyLx1mJ8X6z3YP3esKNOLwEUiBfbX2ZMkIrP1CVwnKfrIsdTJrShOvI5/wDICsUHu+0Fnu1TrJ9Q==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/06 【特典之章】/079 アンリ様のダイエット.txt",
+  },
+  Object {
+    "content": "7LvvpyEIEH17CRkhPD5tzUtD2crRbCRHEb6XJzjf4wi1GEeloF+HWnbeQNTSEW+8Vvl8XVpTSF4zhtWRPPAmrQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/06 【特典之章】/080 テナとカルチャーギャップ.txt",
+  },
+  Object {
+    "content": "Qh7EMjbTYqHawgvUghfnhUHefDz4hfsn3K8OcTjg5nCv+6dOI1uS3Y3OXwnOJKt2ykjDLRbv9XwBuxKiy24fTQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/06 【特典之章】/081 教えてレオノーラ先生！.txt",
+  },
+  Object {
+    "content": "l2+/ntoRU5OTsyr6w5dhNTCaxa5qw1MdYzQ7skBgXYPjgaIvezi9CJwOvrLNtxlR08uAYPvQTFWmyuojd5hCbQ==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/06 【特典之章】/082 不死王様の退屈しのぎ.txt",
+  },
+  Object {
+    "content": "fIo2IfHngGkRUpHY/XLnwE8ab/AsXRl8mnuR7j6S0oZdJp0uvc0VUmwKwocemD3OPI6tC4p/lvhblJ1M6NxZ4g==",
+    "fname": "get-long/ncode.syosetu.com!n0537cm/index.json",
+  },
+]
+`;

@@ -20,25 +20,16 @@
  */
 /* eslint-env jest */
 /* imports */
-import Syosetu from './engine-syosetu'
+import Syosetu from '../engine-syosetu'
 import path from 'path'
 import del from 'del'
 import makeDir from 'make-dir'
+import * as utils from 'test-utils'
 /* -imports */
 
-{
-  const __rootDir = process.cwd()
-  const __tmpdir = path.resolve('__tmp__/tests/syosetu')
-  beforeEach(() => {
-    makeDir.sync(__tmpdir)
-    process.chdir(__tmpdir)
-  })
-  afterEach(() => {
-    process.chdir(__rootDir)
-  })
-}
+utils.setupChdir('__tmp__/tests/syosetu')
 
-test('double get', async () => {
+test('get twice', async () => {
   const testURL = 'https://ncode.syosetu.com/n8201cq/'
   const prefix = 'double-get/'
   await del(prefix)
@@ -57,7 +48,9 @@ test('double get', async () => {
       source: testURL
     })
     expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
-    await source.refresh()
+    source = await source.refresh()
+    expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
+    expect(await utils.globshot(prefix)).toMatchSnapshot()
   }
 }, 60000 * 2)
 
@@ -71,5 +64,7 @@ test('get long series', async () => {
     source: testURL
   })
   expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n0537cm'))
-  await source.refresh()
+  source = await source.refresh()
+  expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n0537cm'))
+  expect(await utils.globshot(prefix)).toMatchSnapshot()
 }, 60000 * 5)

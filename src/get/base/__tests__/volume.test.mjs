@@ -20,7 +20,7 @@
  */
 /* eslint-env jest */
 /* imports */
-import Volume from './volume'
+import Volume from '../volume'
 import path from 'path'
 /* -imports */
 

@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`get 1`] = `
+Array [
+  Object {
+    "content": "nsm4/mzl0wgfBIBFyiqwqrIGCZI1p0tdufKSTjk5IkVt8TdJ2kqIuo2qP4YRIJWYzyhH2NrAvPUmAlXZ9CeE0g==",
+    "fname": "get/kakuyomu.jp!works!1177354054883528580/index.json",
+  },
+]
+`;

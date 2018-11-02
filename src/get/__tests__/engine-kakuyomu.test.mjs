@@ -20,14 +20,30 @@
  */
 /* eslint-env jest */
 /* imports */
-import Syosetu from './engine-syosetu'
-import getEngine from './'
+import Kakuyomu from '../engine-kakuyomu'
+import path from 'path'
+import del from 'del'
+import makeDir from 'make-dir'
+import * as utils from 'test-utils'
 /* -imports */
 
-test('get engine', () => {
-  const testURL = 'https://ncode.syosetu.com/n8201cq/'
-  let engine = getEngine({
-    source: testURL
-  })
-  expect(engine).toEqual(expect.any(Syosetu))
+utils.setupChdir('__tmp__/tests/kakuyomu')
+
+test('get', async () => {
+  const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
+  const prefix = 'get/'
+  await del(prefix)
+  await makeDir(prefix)
+  {
+    let source = new Kakuyomu({
+      chdir: prefix,
+      source: testURL
+    })
+    expect(source.targetDir).toBe(path.resolve(prefix,
+      'kakuyomu.jp!works!1177354054883528580'))
+    source = await source.refresh()
+    expect(source.targetDir).toBe(path.resolve(prefix,
+      'kakuyomu.jp!works!1177354054883528580'))
+    expect(await utils.globshot(prefix)).toMatchSnapshot()
+  }
 })

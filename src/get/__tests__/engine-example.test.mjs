@@ -20,24 +20,15 @@
  */
 /* eslint-env jest */
 /* imports */
-import * as Engine from './engine-example'
+import * as Engine from '../engine-example'
 import fs from 'fs'
 import del from 'del'
 import path from 'path'
 import makeDir from 'make-dir'
+import * as utils from 'test-utils'
 /* -imports */
 
-{
-  const __rootDir = process.cwd()
-  const __tmpdir = path.resolve('__tmp__/tests/example')
-  beforeEach(() => {
-    makeDir.sync(__tmpdir)
-    process.chdir(__tmpdir)
-  })
-  afterEach(() => {
-    process.chdir(__rootDir)
-  })
-}
+utils.setupChdir('__tmp__/tests/example')
 
 const initData = async (prefix) => {
   await del(prefix)
@@ -71,8 +62,10 @@ const initData = async (prefix) => {
 test('simple', async () => {
   const prefix = 'simple'
   await initData(prefix)
-  const series = new Engine.Series({
+  let series = new Engine.Series({
     source: prefix
   })
-  await series.refresh()
+  series = await series.refresh()
+  expect(series.targetDir).toBe(path.resolve(prefix))
+  expect(await utils.globshot(prefix)).toMatchSnapshot()
 })

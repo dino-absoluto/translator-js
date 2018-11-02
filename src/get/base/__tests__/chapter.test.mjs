@@ -20,25 +20,16 @@
  */
 /* eslint-env jest */
 /* imports */
-import Chapter from './chapter'
-import Volume from './volume'
+import Chapter from '../chapter'
+import Volume from '../volume'
 import path from 'path'
 import fs from 'fs'
 import del from 'del'
 import makeDir from 'make-dir'
+import * as utils from 'test-utils'
 /* -imports */
 
-{
-  const __rootDir = process.cwd()
-  const __tmpdir = path.resolve('__tmp__/tests/base-chapter')
-  beforeEach(() => {
-    makeDir.sync(__tmpdir)
-    process.chdir(__tmpdir)
-  })
-  afterEach(() => {
-    process.chdir(__rootDir)
-  })
-}
+utils.setupChdir('__tmp__/tests/base-chapter')
 
 test('init with minimum data', async () => {
   let ch = new Chapter({

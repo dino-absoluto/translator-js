@@ -20,7 +20,7 @@
  */
 /* eslint-env jest */
 /* imports */
-import BasePatch from './patch'
+import BasePatch from '../patch'
 /* -imports */
 
 class Patch extends BasePatch {
