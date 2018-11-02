@@ -25,11 +25,22 @@ import path from 'path'
 import del from 'del'
 import makeDir from 'make-dir'
 /* -imports */
-const __tmpdir = path.resolve('__tmp__/tests')
 
-test('skip', async () => {
+{
+  const __rootDir = process.cwd()
+  const __tmpdir = path.resolve('__tmp__/tests/kakuyomu')
+  beforeEach(() => {
+    makeDir.sync(__tmpdir)
+    process.chdir(__tmpdir)
+  })
+  afterEach(() => {
+    process.chdir(__rootDir)
+  })
+}
+
+test('get', async () => {
   const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
-  const prefix = `${__tmpdir}/engine-kakuyomu__get/`
+  const prefix = 'get/'
   await del(prefix)
   await makeDir(prefix)
   {

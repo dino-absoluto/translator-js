@@ -25,11 +25,22 @@ import path from 'path'
 import del from 'del'
 import makeDir from 'make-dir'
 /* -imports */
-const __tmpdir = path.resolve('__tmp__/tests')
+
+{
+  const __rootDir = process.cwd()
+  const __tmpdir = path.resolve('__tmp__/tests/syosetu')
+  beforeEach(() => {
+    makeDir.sync(__tmpdir)
+    process.chdir(__tmpdir)
+  })
+  afterEach(() => {
+    process.chdir(__rootDir)
+  })
+}
 
 test('double get', async () => {
   const testURL = 'https://ncode.syosetu.com/n8201cq/'
-  const prefix = `${__tmpdir}/engine-syosetu__get/`
+  const prefix = 'double-get/'
   await del(prefix)
   await makeDir(prefix)
   {
@@ -52,7 +63,7 @@ test('double get', async () => {
 
 test('get long series', async () => {
   const testURL = 'https://ncode.syosetu.com/n0537cm/'
-  const prefix = `${__tmpdir}/engine-syosetu__get2/`
+  const prefix = `get-long/`
   // await del(prefix)
   await makeDir(prefix)
   let source = new Syosetu({

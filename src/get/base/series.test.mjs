@@ -27,7 +27,17 @@ import fs from 'fs'
 import path from 'path'
 /* -imports */
 
-const __tmpdir = path.resolve('__tmp__/tests')
+{
+  const __rootDir = process.cwd()
+  const __tmpdir = path.resolve('__tmp__/tests/base-series')
+  beforeEach(() => {
+    makeDir.sync(__tmpdir)
+    process.chdir(__tmpdir)
+  })
+  afterEach(() => {
+    process.chdir(__rootDir)
+  })
+}
 
 test('init with url', () => {
   const sourceURL = new URL('https://www.example.com')
@@ -52,7 +62,7 @@ test('init chdir', () => {
 })
 
 test('init with path', async () => {
-  const prefix = `${__tmpdir}/series__simple`
+  const prefix = 'with-path/'
   await del(prefix)
   await makeDir(prefix)
   const sourceURL = new URL('https://www.example.com')
@@ -70,7 +80,7 @@ test('init with path', async () => {
 })
 
 test('init with data', async () => {
-  const prefix = `${__tmpdir}/series__with-data`
+  const prefix = 'with-data/'
   await del(prefix)
   await makeDir(prefix)
   const sourceURL = new URL('https://www.example.com')

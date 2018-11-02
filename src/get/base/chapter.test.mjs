@@ -28,7 +28,17 @@ import del from 'del'
 import makeDir from 'make-dir'
 /* -imports */
 
-const __tmpdir = path.resolve('__tmp__/tests')
+{
+  const __rootDir = process.cwd()
+  const __tmpdir = path.resolve('__tmp__/tests/base-chapter')
+  beforeEach(() => {
+    makeDir.sync(__tmpdir)
+    process.chdir(__tmpdir)
+  })
+  afterEach(() => {
+    process.chdir(__rootDir)
+  })
+}
 
 test('init with minimum data', async () => {
   let ch = new Chapter({
@@ -59,7 +69,7 @@ test('init with minimum data', async () => {
 })
 
 test('init with volume', async () => {
-  const prefix = `${__tmpdir}/chapter__with-volume/`
+  const prefix = `with-volume/`
   let volume = new Volume({
     index: 1,
     title: 'Chapter One',
@@ -99,7 +109,7 @@ test('init with volume', async () => {
 })
 
 test('patch', async () => {
-  const prefix = `${__tmpdir}/chapter__simple-update/`
+  const prefix = `patch/`
   await del(prefix)
   await makeDir(`${prefix}01 Chapter One`)
   fs.writeFileSync(`${prefix}01 Chapter One/002 Prologue.txt`, '')

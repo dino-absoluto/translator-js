@@ -27,13 +27,23 @@ import path from 'path'
 import makeDir from 'make-dir'
 /* -imports */
 
-const __tmpdir = path.resolve('__tmp__/tests')
+{
+  const __rootDir = process.cwd()
+  const __tmpdir = path.resolve('__tmp__/tests/example')
+  beforeEach(() => {
+    makeDir.sync(__tmpdir)
+    process.chdir(__tmpdir)
+  })
+  afterEach(() => {
+    process.chdir(__rootDir)
+  })
+}
 
 const initData = async () => {
-  const prefix = `${__tmpdir}/engine-example__simple/`
-  const sourceURL = new URL('https://www.example.com')
+  const prefix = 'simple'
   await del(prefix)
   await makeDir(`${prefix}/00 Chapter One`)
+  const sourceURL = new URL('https://www.example.com')
   const write = (fname, data) => {
     fs.writeFileSync(`${prefix}/${fname}`, data)
   }
@@ -60,7 +70,7 @@ const initData = async () => {
 }
 
 test('simple', async () => {
-  const prefix = `${__tmpdir}/engine-example__simple/`
+  const prefix = 'simple'
   await initData()
   const series = new Engine.Series({
     source: prefix
