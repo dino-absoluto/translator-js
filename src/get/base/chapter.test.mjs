@@ -59,10 +59,11 @@ test('init with minimum data', async () => {
 })
 
 test('init with volume', async () => {
+  const prefix = `${__tmpdir}/chapter__with-volume/`
   let volume = new Volume({
     index: 1,
     title: 'Chapter One',
-    base: 'test'
+    base: prefix
   })
   let ch = new Chapter({
     index: 2,
@@ -82,7 +83,7 @@ test('init with volume', async () => {
     expect(f.fname).toBe('002 Prologue.txt')
     expect(f.integrity).toBe(undefined)
     expect(f.relative).toBe('01 Chapter One/002 Prologue.txt')
-    expect(f.absolute).toBe(path.resolve('test/01 Chapter One/002 Prologue.txt'))
+    expect(f.absolute).toBe(path.resolve(`${prefix}01 Chapter One/002 Prologue.txt`))
   }
   ch = JSON.parse(JSON.stringify(ch))
   expect(ch).toEqual({
