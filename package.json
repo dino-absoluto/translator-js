@@ -27,10 +27,15 @@
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
     "builtin-modules": "^3.0.0",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
@@ -45,6 +50,7 @@
     "standard": "^12.0.1"
   },
   "eslintConfig": {
+    "parser": "babel-eslint",
     "extends": [
       "standard"
     ]
@@ -60,6 +66,12 @@
           }
         }
       ]
+    ],
+    "plugins": [
+      "@babel/plugin-syntax-dynamic-import",
+      "@babel/plugin-syntax-import-meta",
+      "@babel/plugin-proposal-class-properties",
+      "dynamic-import-node"
     ]
   },
   "jest": {
