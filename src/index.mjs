@@ -22,7 +22,6 @@
 import chalk from 'chalk'
 import info from './config.js'
 import yargs from 'yargs'
-import globby from 'globby'
 import path from 'path'
 /* -imports */
 
@@ -40,6 +39,7 @@ const _postParse = (config) => {
 }
 
 const _glob = async (config) => {
+  const globby = await import('globby')
   if (config.sources && config.sources.length) {
     return
   }
