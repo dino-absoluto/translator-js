@@ -39,8 +39,7 @@ import makeDir from 'make-dir'
   })
 }
 
-const initData = async () => {
-  const prefix = 'simple'
+const initData = async (prefix) => {
   await del(prefix)
   await makeDir(`${prefix}/00 Chapter One`)
   const sourceURL = new URL('https://www.example.com')
@@ -71,7 +70,7 @@ const initData = async () => {
 
 test('simple', async () => {
   const prefix = 'simple'
-  await initData()
+  await initData(prefix)
   const series = new Engine.Series({
     source: prefix
   })
