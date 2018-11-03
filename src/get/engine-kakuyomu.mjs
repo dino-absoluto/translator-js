@@ -90,6 +90,10 @@ export class Volume extends base.Volume {
 }
 
 export class Series extends base.Series {
+  static test (url) {
+    return /^((http|https):\/\/|)kakuyomu.jp\/works\/[^/]+\/?$/.test(url)
+  }
+
   get Chapter () { return Chapter }
   get Volume () { return Volume }
 

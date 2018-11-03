@@ -52,7 +52,7 @@ const _get = async (config) => {
   let output = config.output || './download/'
   for (const source of config.sources) {
     try {
-      let engine = getEngine({
+      let engine = await getEngine({
         source,
         verbose: true,
         chdir: output,
