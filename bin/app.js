@@ -20,13 +20,18 @@
  *
  */
 /* imports */
+const chalk = require('chalk')
+
 const isDev = process.env.NODE_ENV !== 'production'
 if (isDev) {
   try {
     require('../__tmp__/dist/app')
   } catch (err) {
-    // require('../dist/app.min')
-    throw err
+    if (err.code !== 'MODULE_NOT_FOUND') {
+      console.error(chalk`{red ${err.stack}}`)
+    }
+    console.log(chalk`{blue Development mode: fallback}`)
+    require('../dist/app.min')
   }
 } else {
   require('../dist/app.min')
