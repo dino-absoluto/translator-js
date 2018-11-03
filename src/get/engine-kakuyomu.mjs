@@ -82,7 +82,12 @@ export class Chapter extends base.Chapter {
         buffer: text
       })
     }
-    await getExternal(oldFiles, files, imgs)
+    await getExternal({
+      prefix: this.prefix,
+      oldFiles,
+      files,
+      urls: imgs
+    })
   }
 }
 

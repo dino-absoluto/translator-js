@@ -23,13 +23,15 @@ import got from 'got'
 import mime from 'mime-types'
 /* -imports */
 
-const getExternal = async (oldFiles, files, urls) => {
+const getExternal = async ({
+  prefix, oldFiles, files, urls
+}) => {
   const offset = files.length
   let promises = urls.map(async (url, index) => {
     const get = async () => {
       let { body: content, headers } = await got(url, { encoding: null })
       let fname = `${
-        this.prefix
+        prefix
       } image ${
         String(index + 1).padStart(2, '0')
       }.${
