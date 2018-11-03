@@ -24,9 +24,9 @@ import Syosetu from '../engine-syosetu'
 import getEngine from '../'
 /* -imports */
 
-test('get engine', () => {
+test('get engine', async () => {
   const testURL = 'https://ncode.syosetu.com/n8201cq/'
-  let engine = getEngine({
+  let engine = await getEngine({
     source: testURL
   })
   expect(engine).toEqual(expect.any(Syosetu))

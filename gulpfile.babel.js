@@ -28,6 +28,7 @@ import json from 'rollup-plugin-json'
 import babel from 'rollup-plugin-babel'
 import del from 'del'
 import pkg from './package.json'
+import clone from 'clone'
 import builtinModules from 'builtin-modules'
 /* gulp */
 
@@ -40,7 +41,17 @@ export const clean = async () => {
 }
 
 const _js = async (isdev = true) => {
+  const babelrc = clone(pkg.babel)
+  Object.assign(babelrc, {
+    babelrc: false,
+    exclude: 'node_modules/**',
+    plugins:
+      babelrc.plugins.filter(mod => mod !== 'babel-plugin-dynamic-import-node')
+  })
   const bundle = await rollup({
+    onwarn: function (warn) {
+      console.warn(warn)
+    },
     input: './src/index.mjs',
     external,
     experimentalCodeSplitting: true,
@@ -51,13 +62,14 @@ const _js = async (isdev = true) => {
       }),
       commonjs(),
       json(),
-      babel({
-        exclude: 'node_modules/**'
-      }),
+      babel(babelrc),
       (isdev ? undefined : terser())
     ]
   })
   await bundle.write({
+    output: {
+      exports: 'named'
+    },
     entryFileNames: isdev
       ? 'app.js'
       : 'app.min.js',

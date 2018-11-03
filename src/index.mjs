@@ -48,7 +48,7 @@ const _glob = async (config) => {
 }
 
 const _get = async (config) => {
-  const getEngine = await import('./get')
+  const getEngine = (await import('./get')).default
   let output = config.output || './download/'
   for (const source of config.sources) {
     try {
