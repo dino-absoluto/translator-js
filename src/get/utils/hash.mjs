@@ -18,32 +18,15 @@
  * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-/* eslint-env jest */
 /* imports */
-import Kakuyomu from '../engine-kakuyomu'
-import path from 'path'
-import del from 'del'
-import makeDir from 'make-dir'
-import * as utils from 'test-utils'
+import crypto from 'crypto'
 /* -imports */
 
-utils.setupChdir('__tmp__/tests/kakuyomu')
+const hash = (buffer) => {
+  const integrity = crypto.createHash('sha256')
+    .update(buffer, 'utf8')
+    .digest('base64')
+  return integrity
+}
 
-test('get', async () => {
-  const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
-  const prefix = 'get/'
-  await del(prefix)
-  await makeDir(prefix)
-  {
-    let source = new Kakuyomu({
-      chdir: prefix,
-      source: testURL
-    })
-    expect(source.targetDir).toBe(path.resolve(prefix,
-      'kakuyomu.jp!works!1177354054883528580'))
-    source = await source.refresh()
-    expect(source.targetDir).toBe(path.resolve(prefix,
-      'kakuyomu.jp!works!1177354054883528580'))
-    expect(await utils.globshot(prefix)).toMatchSnapshot()
-  }
-}, 60000)
+export default hash
