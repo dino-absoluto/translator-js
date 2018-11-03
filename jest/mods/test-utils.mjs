@@ -20,12 +20,13 @@
 /* eslint-env jest */
 /* imports */
 import path from 'path'
-import globby from 'globby'
-import hasha from 'hasha'
 import makeDir from 'make-dir'
+import del from 'del'
 /* -imports */
 
-export const globshot = async (...argv) => {
+export const hashDir = async (...argv) => {
+  const globby = (await import('globby')).default
+  const hasha = (await import('hasha')).default
   let files = await globby(...argv)
   files = files.sort()
   files = files.map(async fname => {
@@ -41,14 +42,22 @@ export const globshot = async (...argv) => {
   return files
 }
 
-export const setupChdir = (fname) => {
-  const __rootDir = process.cwd()
-  const __tmpdir = path.resolve(fname)
-  beforeEach(() => {
-    makeDir.sync(__tmpdir)
-    process.chdir(__tmpdir)
-  })
-  afterEach(() => {
-    process.chdir(__rootDir)
-  })
+export const setupEnvironment = (options = {}) => {
+  if (typeof options !== 'object') {
+    throw new Error('Env options is invalid')
+  }
+  if (options.chdir) {
+    const __rootDir = process.cwd()
+    const __tmpdir = path.resolve(options.chdir)
+    beforeEach(async () => {
+      if (options.clean) {
+        await del(__tmpdir)
+      }
+      makeDir.sync(__tmpdir)
+      process.chdir(__tmpdir)
+    })
+    afterEach(() => {
+      process.chdir(__rootDir)
+    })
+  }
 }

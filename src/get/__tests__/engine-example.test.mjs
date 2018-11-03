@@ -22,16 +22,17 @@
 /* imports */
 import * as Engine from '../engine-example'
 import fs from 'fs'
-import del from 'del'
 import path from 'path'
 import makeDir from 'make-dir'
 import * as utils from 'test-utils'
 /* -imports */
 
-utils.setupChdir('__tmp__/tests/example')
+utils.setupEnvironment({
+  chdir: '__tmp__/tests/example',
+  clean: true
+})
 
 const initData = async (prefix) => {
-  await del(prefix)
   await makeDir(`${prefix}/00 Chapter One`)
   const sourceURL = new URL('https://www.example.com')
   const write = (fname, data) => {
@@ -67,5 +68,5 @@ test('simple', async () => {
   })
   series = await series.refresh()
   expect(series.targetDir).toBe(path.resolve(prefix))
-  expect(await utils.globshot(prefix)).toMatchSnapshot()
+  expect(await utils.hashDir(prefix)).toMatchSnapshot()
 })

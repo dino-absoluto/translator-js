@@ -28,7 +28,9 @@ import path from 'path'
 import * as utils from 'test-utils'
 /* -imports */
 
-utils.setupChdir('__tmp__/tests/base-series')
+utils.setupEnvironment({
+  chdir: '__tmp__/tests/base-series'
+})
 
 test('init with url', () => {
   const sourceURL = new URL('https://www.example.com')

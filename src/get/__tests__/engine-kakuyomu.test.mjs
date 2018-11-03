@@ -27,7 +27,9 @@ import makeDir from 'make-dir'
 import * as utils from 'test-utils'
 /* -imports */
 
-utils.setupChdir('__tmp__/tests/kakuyomu')
+utils.setupEnvironment({
+  chdir: '__tmp__/tests/kakuyomu'
+})
 
 test('get', async () => {
   const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
@@ -44,6 +46,6 @@ test('get', async () => {
     source = await source.refresh()
     expect(source.targetDir).toBe(path.resolve(prefix,
       'kakuyomu.jp!works!1177354054883528580'))
-    expect(await utils.globshot(prefix)).toMatchSnapshot()
+    expect(await utils.hashDir(prefix)).toMatchSnapshot()
   }
 }, 60000)

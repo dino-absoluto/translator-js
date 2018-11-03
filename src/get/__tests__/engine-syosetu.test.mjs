@@ -27,7 +27,9 @@ import makeDir from 'make-dir'
 import * as utils from 'test-utils'
 /* -imports */
 
-utils.setupChdir('__tmp__/tests/syosetu')
+utils.setupEnvironment({
+  chdir: '__tmp__/tests/syosetu'
+})
 
 test('get twice', async () => {
   const testURL = 'https://ncode.syosetu.com/n8201cq/'
@@ -50,7 +52,7 @@ test('get twice', async () => {
     expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
     source = await source.refresh()
     expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
-    expect(await utils.globshot(prefix)).toMatchSnapshot()
+    expect(await utils.hashDir(prefix)).toMatchSnapshot()
   }
 }, 60000 * 2)
 
@@ -66,5 +68,5 @@ test('get long series', async () => {
   expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n0537cm'))
   source = await source.refresh()
   expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n0537cm'))
-  expect(await utils.globshot(prefix)).toMatchSnapshot()
+  expect(await utils.hashDir(prefix)).toMatchSnapshot()
 }, 60000 * 5)

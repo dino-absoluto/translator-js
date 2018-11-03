@@ -29,7 +29,9 @@ import makeDir from 'make-dir'
 import * as utils from 'test-utils'
 /* -imports */
 
-utils.setupChdir('__tmp__/tests/base-chapter')
+utils.setupEnvironment({
+  chdir: '__tmp__/tests/base-chapter'
+})
 
 test('init with minimum data', async () => {
   let ch = new Chapter({
