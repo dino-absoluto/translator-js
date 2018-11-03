@@ -21,10 +21,10 @@
 /* imports */
 import gotBase from 'got'
 import cookie from 'cookie'
-import mime from 'mime-types'
 import { JSDOM } from 'jsdom'
-import crypto from 'crypto'
 import * as base from './base'
+import hash from './utils/hash'
+import getExternal from './utils/get-external'
 /* -imports */
 
 const got = (url, config = {}) => {
@@ -33,13 +33,6 @@ const got = (url, config = {}) => {
     config.headers.cookie = cookie.serialize('over18', 'yes')
   }
   return gotBase(url, config)
-}
-
-const hash = (buffer) => {
-  const integrity = crypto.createHash('sha256')
-    .update(buffer, 'utf8')
-    .digest('base64')
-  return integrity
 }
 
 export class Chapter extends base.Chapter {
@@ -98,41 +91,7 @@ export class Chapter extends base.Chapter {
         buffer: text
       })
     } /* -text */
-    {
-      let promises = imgs.map(async (url, index) => {
-        const get = async () => {
-          let { body: content, headers } = await got(url, { encoding: null })
-          let fname = `${
-            this.prefix
-          } image ${
-            String(index + 1).padStart(2, '0')
-          }.${
-            mime.extension(headers['content-type']) || 'jpg'
-          }`
-          return { content, fname }
-        }
-        let old = oldFiles && oldFiles[index + 1]
-        if (old && old.fname && old.integrity && old.integrity === url) {
-          return {
-            fname: old.fname,
-            integrity: url,
-            buffer: async () => {
-              return (await get()).content
-            }
-          }
-        }
-        let { fname, content } = await get()
-        return {
-          fname,
-          integrity: url,
-          buffer: content
-        }
-      })
-      imgs = await Promise.all(promises)
-      for (const info of imgs) {
-        files.push(info)
-      }
-    } /* -images */
+    await getExternal(oldFiles, files, imgs)
     props.files = files
   }
 }
