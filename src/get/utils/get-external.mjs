@@ -24,6 +24,7 @@ import mime from 'mime-types'
 /* -imports */
 
 const getExternal = async (oldFiles, files, urls) => {
+  const offset = files.length
   let promises = urls.map(async (url, index) => {
     const get = async () => {
       let { body: content, headers } = await got(url, { encoding: null })
@@ -36,7 +37,7 @@ const getExternal = async (oldFiles, files, urls) => {
       }`
       return { content, fname }
     }
-    let old = oldFiles && oldFiles[index + 1]
+    let old = oldFiles && oldFiles[index + offset]
     if (old && old.fname && old.integrity && old.integrity === url) {
       return {
         fname: old.fname,
