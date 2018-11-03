@@ -87,6 +87,7 @@ export const js = async () => {
 }
 
 export const jsmin = async () => {
+  await del(__distdir)
   return _js(false)
 }
 
@@ -96,4 +97,4 @@ export const watch = () => {
   gulp.watch('src/**/*.(js|mjs|jsx)', js)
 }
 
-export default js
+export default gulp.series(clean, js)
