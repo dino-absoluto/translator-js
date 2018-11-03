@@ -25,7 +25,8 @@ if (isDev) {
   try {
     require('../__tmp__/dist/app')
   } catch (err) {
-    require('../dist/app.min')
+    // require('../dist/app.min')
+    throw err
   }
 } else {
   require('../dist/app.min')
