@@ -28,6 +28,7 @@ import getExternal from './utils/get-external'
 /* -imports */
 
 const got = (url, config = {}) => {
+  url = new URL(url)
   config.headers = Object.assign({}, config.headers)
   if (/^novel18./.test(url.hostname)) {
     config.headers.cookie = cookie.serialize('over18', 'yes')
