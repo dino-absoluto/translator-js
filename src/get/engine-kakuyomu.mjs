@@ -23,70 +23,41 @@ import * as base from './base'
 import { JSDOM } from 'jsdom'
 import got from 'got'
 import hash from './utils/hash'
-import getExternal from './utils/get-external'
+import toFiles from './utils/to-files'
 /* -imports */
 
 export class Chapter extends base.Chapter {
   async update () {
     const { props } = this
-    const oldFiles = props.files
-    delete props.files
-    /* prioritize props.doc */
-    if (props.buffer && !props.doc) {
-      props.files = [
-        {
+    const options = Object.assign({}, props, {
+      prefix: this.prefix,
+      got
+    })
+    props.files = await toFiles(options, async (doc, utils) => {
+      let files = []
+      let imgs = utils.getImages('#contentMain-inner img')
+      let rootNode = doc.getElementById('contentMain-inner')
+      {
+        const buffer = await props.buffer
+        let text = buffer ? (
+          typeof buffer === 'function' ? await buffer() : buffer.toString()
+        ) : ''
+        const selectors = [
+          'widget-episodeTitle',
+          'widget-episode'
+        ]
+        for (const sel of selectors) {
+          for (const node of rootNode.getElementsByClassName(sel)) {
+            text += node.textContent + '\n\n-----\n\n'
+          }
+        }
+        files.push({
           fname: this.getName(`${props.title}.txt`),
           integity: undefined,
-          buffer: props.buffer
-        }
-      ]
-      return
-    }
-    let doc = props.doc
-    if (!doc) {
-      if (!props.sourceURL) {
-        return
+          buffer: text
+        })
       }
-      doc = await (async () => {
-        let { window: { document: doc } } =
-        new JSDOM((await got(props.sourceURL)).body, { url: props.sourceURL })
-        return doc
-      })()
-    }
-    let files = []
-    let imgs = []
-    let rootNode = doc.getElementById('contentMain-inner')
-    for (const img of rootNode.getElementsByTagName('img')) {
-      let node = doc.createTextNode(`![](${img.src})`)
-      img.parentNode.replaceChild(node, img)
-      imgs.push(img.src)
-    }
-    props.files = files
-    {
-      const buffer = await props.buffer
-      let text = buffer ? (
-        typeof buffer === 'function' ? await buffer() : buffer.toString()
-      ) : ''
-      const selectors = [
-        'widget-episodeTitle',
-        'widget-episode'
-      ]
-      for (const sel of selectors) {
-        for (const node of rootNode.getElementsByClassName(sel)) {
-          text += node.textContent + '\n\n-----\n\n'
-        }
-      }
-      files.push({
-        fname: this.getName(`${props.title}.txt`),
-        integity: undefined,
-        buffer: text
-      })
-    }
-    await getExternal({
-      prefix: this.prefix,
-      oldFiles,
-      files,
-      urls: imgs
+      return [ files, imgs ]
     })
   }
 }

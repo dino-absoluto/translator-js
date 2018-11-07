@@ -19,14 +19,25 @@
  *
  */
 /* imports */
-import got from 'got'
+import gotBase from 'got'
 import mime from 'mime-types'
+import { JSDOM } from 'jsdom'
 /* -imports */
 
-const getExternal = async ({
-  prefix, oldFiles, files, urls
-}) => {
+const replaceImages = (doc, selector) => {
+  let imgs = []
+  for (const img of doc.querySelectorAll(selector)) {
+    let node = doc.createTextNode(`![](${img.src})`)
+    img.parentNode.replaceChild(node, img)
+    imgs.push(img.src)
+  }
+  return imgs
+}
+
+const getExternal = async (options = {}) => {
+  const { prefix, oldFiles, files, urls } = options
   const offset = files.length
+  const got = options.got || gotBase
   let promises = urls.map(async (url, index) => {
     const get = async () => {
       let { body: content, headers } = await got(url, { encoding: null })
@@ -62,4 +73,39 @@ const getExternal = async ({
   }
 }
 
-export default getExternal
+export default async (options, handleDoc) => {
+  const got = options.got || gotBase
+  const oldFiles = options.files
+  /* prioritize props.doc */
+  if (options.buffer && !options.doc) {
+    return [
+      {
+        fname: `${options.prefix} ${options.title}.txt`,
+        integity: undefined,
+        buffer: options.buffer
+      }
+    ]
+  }
+  let doc = options.doc
+  if (!doc) {
+    if (!options.sourceURL) {
+      return
+    }
+    doc = await (async () => {
+      let { window: { document: doc } } =
+      new JSDOM((await got(options.sourceURL)).body, { url: options.sourceURL })
+      return doc
+    })()
+  }
+  let [ files, urls ] = await handleDoc(doc, {
+    getImages: replaceImages.bind(null, doc)
+  })
+  await getExternal({
+    prefix: options.prefix,
+    oldFiles,
+    files,
+    urls,
+    got
+  })
+  return files
+}

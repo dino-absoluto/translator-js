@@ -24,7 +24,7 @@ import cookie from 'cookie'
 import { JSDOM } from 'jsdom'
 import * as base from './base'
 import hash from './utils/hash'
-import getExternal from './utils/get-external'
+import toFiles from './utils/to-files'
 /* -imports */
 
 const got = (url, config = {}) => {
@@ -39,66 +39,37 @@ const got = (url, config = {}) => {
 export class Chapter extends base.Chapter {
   async update () {
     const { props } = this
-    const oldFiles = props.files
-    delete props.files
-    /* prioritize props.doc */
-    if (props.buffer && !props.doc) {
-      props.files = [
-        {
+    const options = Object.assign({}, props, {
+      prefix: this.prefix,
+      got
+    })
+    props.files = await toFiles(options, async (doc, utils) => {
+      let files = []
+      let imgs = await utils.getImages('#novel_color img')
+      {
+        const buffer = await props.buffer
+        let text = buffer ? (
+          typeof buffer === 'function' ? await buffer() : buffer.toString()
+        ) : ''
+        const selectors = [
+          '.novel_subtitle',
+          '#novel_p',
+          '#novel_honbun',
+          '#novel_a'
+        ]
+        for (const sel of selectors) {
+          for (const node of doc.querySelectorAll(sel)) {
+            text += node.textContent + '\n\n-----\n\n'
+          }
+        }
+        files.push({
           fname: this.getName(`${props.title}.txt`),
           integity: undefined,
-          buffer: props.buffer
-        }
-      ]
-      return
-    }
-    let doc = props.doc
-    if (!doc) {
-      if (!props.sourceURL) {
-        return
-      }
-      doc = await (async () => {
-        let { window: { document: doc } } =
-        new JSDOM((await got(props.sourceURL)).body, { url: props.sourceURL })
-        return doc
-      })()
-    }
-    let files = []
-    let imgs = []
-    for (const img of doc.querySelectorAll('#novel_color img')) {
-      let node = doc.createTextNode(`![](${img.src})`)
-      img.parentNode.replaceChild(node, img)
-      imgs.push(img.src)
-    }
-    {
-      const buffer = await props.buffer
-      let text = buffer ? (
-        typeof buffer === 'function' ? await buffer() : buffer.toString()
-      ) : ''
-      const selectors = [
-        '.novel_subtitle',
-        '#novel_p',
-        '#novel_honbun',
-        '#novel_a'
-      ]
-      for (const sel of selectors) {
-        for (const node of doc.querySelectorAll(sel)) {
-          text += node.textContent + '\n\n-----\n\n'
-        }
-      }
-      files.push({
-        fname: this.getName(`${props.title}.txt`),
-        integity: undefined,
-        buffer: text
-      })
-    } /* -text */
-    await getExternal({
-      prefix: this.prefix,
-      oldFiles,
-      files,
-      urls: imgs
+          buffer: text
+        })
+      } /* -text */
+      return [ files, imgs ]
     })
-    props.files = files
   }
 }
 
