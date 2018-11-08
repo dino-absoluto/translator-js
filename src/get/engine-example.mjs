@@ -23,16 +23,15 @@ import * as base from './base'
 /* -imports */
 
 export class Chapter extends base.Chapter {
-  update () {
+  updateFiles () {
     const { props } = this
-    const files = [
+    return [
       {
         fname: this.getName(`${props.title}.txt`),
         integrity: undefined,
         buffer: async () => `${props.title}\n---\n\nHello World!\n`
       }
     ]
-    props.files = files
   }
 }
 

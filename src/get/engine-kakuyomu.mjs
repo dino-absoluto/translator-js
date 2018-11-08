@@ -27,13 +27,13 @@ import toFiles from './utils/to-files'
 /* -imports */
 
 export class Chapter extends base.Chapter {
-  async update () {
+  async updateFiles () {
     const { props } = this
     const options = Object.assign({}, props, {
       prefix: this.prefix,
       got
     })
-    props.files = await toFiles(options, async (doc, utils) => {
+    return toFiles(options, async (doc, utils) => {
       let files = []
       let imgs = utils.getImages('#contentMain-inner img')
       let rootNode = doc.getElementById('contentMain-inner')

@@ -37,13 +37,13 @@ const got = (url, config = {}) => {
 }
 
 export class Chapter extends base.Chapter {
-  async update () {
+  async updateFiles () {
     const { props } = this
     const options = Object.assign({}, props, {
       prefix: this.prefix,
       got
     })
-    props.files = await toFiles(options, async (doc, utils) => {
+    return toFiles(options, async (doc, utils) => {
       let files = []
       let imgs = await utils.getImages('#novel_color img')
       {

@@ -179,15 +179,19 @@ export default class Chapter extends Patch {
     }))
   }
 
-  update () {
+  updateFiles () {
     const { props } = this
-    const files = [
+    return [
       {
         fname: this.getName(`${props.title}.txt`),
         integrity: undefined
       }
     ]
-    props.files = files
+  }
+
+  async update () {
+    const { props } = this
+    props.files = await this.updateFiles()
   }
 
   async didUpdate () {
