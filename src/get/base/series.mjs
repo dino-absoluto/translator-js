@@ -29,6 +29,7 @@ import filenamify from 'filenamify'
 import chalk from 'chalk'
 import readline from 'readline'
 import util from 'util'
+import cliTrunctate from 'cli-truncate'
 /* -imports */
 
 const clearLine = () => {
@@ -204,6 +205,7 @@ export default class Series extends Patch {
       const length = props.defers.length
       const shrink = props.defers.length > 16
       if (shouldLog) {
+        log() /* new line */
         print(chalk`  {green [${
           props.chapters.length}]} {green =>} `)
         if (props.delta) {
@@ -241,6 +243,8 @@ export default class Series extends Patch {
       }
       delete props.defers
       delete props.delta
+    } else {
+      clearLine()
     }
   }
 
@@ -248,14 +252,9 @@ export default class Series extends Patch {
     if (this.shouldLog(1)) {
       const maxWidth = process.stdout.columns
       let output = path.relative('.', this.targetDir)
-      let width = 2 + 4 + String(this.sourceURL).length + output.length
-      print(chalk`{gray #} {blue ${this.sourceURL}}`)
-      if (width > maxWidth) {
-        log()
-      } else {
-        print(' ')
-      }
-      log(chalk`{green =>} ${output}`)
+      let text = chalk`{gray #} {blue ${this.sourceURL}} {green =>} ${output}`
+      print(cliTrunctate(text, maxWidth))
+    } else if (this.shouldLog(2)) {
     }
     return this.fetch()
   }

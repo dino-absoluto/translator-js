@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "chalk": "^2.3.2",
+    "cli-truncate": "^1.1.0",
     "cookie": "^0.3.1",
     "filenamify": "^2.1.0",
     "globby": "^8.0.1",
