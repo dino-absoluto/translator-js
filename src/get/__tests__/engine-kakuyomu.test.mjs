@@ -34,6 +34,8 @@ utils.setupEnvironment({
 test('get', async () => {
   const testURL = 'https://kakuyomu.jp/works/1177354054883528580'
   const prefix = 'get/'
+  const suffix = 'kakuyomu.jp!works!1177354054883528580'
+  const absolute = path.resolve(prefix, suffix)
   await del(prefix)
   await makeDir(prefix)
   {
@@ -41,11 +43,9 @@ test('get', async () => {
       chdir: prefix,
       source: testURL
     })
-    expect(source.targetDir).toBe(path.resolve(prefix,
-      'kakuyomu.jp!works!1177354054883528580'))
+    expect(source.targetDir).toBe(absolute)
     source = await source.refresh()
-    expect(source.targetDir).toBe(path.resolve(prefix,
-      'kakuyomu.jp!works!1177354054883528580'))
+    expect(source.targetDir).toBe(absolute)
     expect(await utils.hashDir(prefix)).toMatchSnapshot()
   }
 }, 60000)

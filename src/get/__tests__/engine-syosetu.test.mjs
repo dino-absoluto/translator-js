@@ -34,6 +34,8 @@ utils.setupEnvironment({
 test('get twice', async () => {
   const testURL = 'https://ncode.syosetu.com/n8201cq/'
   const prefix = 'double-get/'
+  const suffix = 'ncode.syosetu.com!n8201cq'
+  const absolute = path.resolve(prefix, suffix)
   await del(prefix)
   await makeDir(prefix)
   {
@@ -41,7 +43,7 @@ test('get twice', async () => {
       chdir: prefix,
       source: testURL
     })
-    expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
+    expect(source.targetDir).toBe(absolute)
     await source.refresh()
   }
   {
@@ -49,9 +51,9 @@ test('get twice', async () => {
       chdir: prefix,
       source: testURL
     })
-    expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
+    expect(source.targetDir).toBe(absolute)
     source = await source.refresh()
-    expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n8201cq'))
+    expect(source.targetDir).toBe(absolute)
     expect(await utils.hashDir(prefix)).toMatchSnapshot()
   }
 }, 60000 * 2)
@@ -59,14 +61,16 @@ test('get twice', async () => {
 test('get long series', async () => {
   const testURL = 'https://ncode.syosetu.com/n0537cm/'
   const prefix = `get-long/`
+  const suffix = 'ncode.syosetu.com!n0537cm'
+  const absolute = path.resolve(prefix, suffix)
   // await del(prefix)
   await makeDir(prefix)
   let source = new Syosetu({
     chdir: prefix,
     source: testURL
   })
-  expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n0537cm'))
+  expect(source.targetDir).toBe(absolute)
   source = await source.refresh()
-  expect(source.targetDir).toBe(path.resolve(prefix, 'ncode.syosetu.com!n0537cm'))
+  expect(source.targetDir).toBe(absolute)
   expect(await utils.hashDir(prefix)).toMatchSnapshot()
 }, 60000 * 5)
