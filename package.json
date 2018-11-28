@@ -43,6 +43,7 @@
     "gulp": "^4.0.0",
     "hasha": "^3.0.0",
     "jest": "^23.6.0",
+    "json-stringify-safe": "^5.0.1",
     "rollup": "^0.67.3",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
