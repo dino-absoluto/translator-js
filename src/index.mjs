@@ -20,7 +20,7 @@
  */
 /* imports */
 import chalk from 'chalk'
-import info from './config.js'
+import info from './config'
 import yargs from 'yargs'
 import path from 'path'
 /* -imports */

@@ -20,17 +20,19 @@
  */
 /* imports */
 import { Series } from './base'
+import eSyosetu from './engine-syosetu'
+import eKakuyomu from './engine-kakuyomu'
 /* -imports */
 
-const engines = Promise.all([
-  import('./engine-syosetu'),
-  import('./engine-kakuyomu')
-].map(engine => engine.then(e => e.default)))
+const engines = [
+  eSyosetu,
+  eKakuyomu
+]
 
 export default async (options) => {
   const meta = Series.parseMeta(options)
   const engine = (async () => {
-    for (const Engine of await engines) {
+    for (const Engine of engines) {
       if (Engine.test(meta.sourceURL)) {
         return new Engine(meta, true)
       }

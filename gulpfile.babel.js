@@ -54,7 +54,6 @@ const _js = async (isdev = true) => {
     },
     input: './src/index.mjs',
     external,
-    experimentalCodeSplitting: true,
     plugins: [
       resolve({
         preferBuiltins: true,

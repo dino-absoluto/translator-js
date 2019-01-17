@@ -19,9 +19,8 @@
  *
  */
 /* config */
-const config = {
-  version: require('../package.json').version,
-  sourceDir: __dirname
-}
+import { version } from '../package.json'
 
-module.exports = config
+export default {
+  version
+}
