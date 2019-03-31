@@ -24,7 +24,12 @@ import * as path from 'path'
 import { promises as fsPromises } from 'fs'
 /* -imports */
 
-const cmdKeywords = async options => {
+interface CommandOptions {
+  output?: string,
+  multiplier?: number
+}
+
+const cmdKeywords = async (options: CommandOptions) => {
   const output = path.join(options.output || './download/', 'keywords.json')
   const sum = (await import('./keywords')).default
   const MULTIPLIER = Math.max(1, options.multiplier || 0)

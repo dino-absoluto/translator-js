@@ -24,8 +24,10 @@ import * as cookie from 'cookie'
 import { JSDOM } from 'jsdom'
 /* -imports */
 
-const got = (url, config = { headers: null }) => {
-  url = new URL(url)
+const got = (
+  href: string,
+  config: { headers?: { cookie?: string} } = {}) => {
+  let url = new URL(href)
   config.headers = Object.assign({}, config.headers)
   if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
     config.headers.cookie = cookie.serialize('over18', 'yes')
@@ -33,7 +35,7 @@ const got = (url, config = { headers: null }) => {
   return gotBase(url, config)
 }
 
-const getURL = (page, subdomain = 'yomou') => {
+const getURL = (page: number, subdomain = 'yomou') => {
   if (subdomain !== 'yomou') {
     return `https://${subdomain}.syosetu.com/search/search/search.php?` +
       `&order_former=search&order=monthlypoint&all4=1&all3=1&all2=1&p=${page}`
@@ -42,26 +44,33 @@ const getURL = (page, subdomain = 'yomou') => {
   `&order_former=search&order=monthlypoint&notnizi=1&p=${page}`
 }
 
-const fetch = async (url, map = {}) => {
-  const body = (await got(url)).body
-  const procLink = links => {
+interface KeywordsMap {
+  [id: string]: number;
+}
+
+const fetch = async (href: string, map: KeywordsMap = {}) => {
+  const body = (await got(href)).body
+  const procLink = (links: NodeListOf<Node>) => {
     for (const node of links) {
-      const text = node.textContent.trim()
+      const text = (node.textContent || '').trim()
       map[text] = (map[text] || 0) + 1
     }
   }
-  let { window: { document: doc } } = new JSDOM(body, { url: url })
-  if (url.indexOf('https://mid.') >= 0) {
+  let { window: { document: doc } } = new JSDOM(body, { url: href })
+  if (href.indexOf('https://mid.') >= 0) {
     procLink(doc.querySelectorAll('.keyword a'))
   } else {
     for (const ex of doc.querySelectorAll('.searchkekka_box .ex')) {
-      procLink(ex.parentNode.parentNode.querySelectorAll('a'))
+      let node = ex.parentNode && ex.parentNode.parentNode
+      if (node) {
+        procLink(node.querySelectorAll('a'))
+      }
     }
   }
   return map
 }
 
-const sort = data => {
+const sort = (data: KeywordsMap) => {
   const array = [...Object.entries(data)]
   array.sort((a, b) => {
     let A = a[1]
@@ -74,7 +83,7 @@ const sort = data => {
     }
     return 0
   })
-  const obj = {}
+  const obj: KeywordsMap = {}
   for (const [key, value] of array) {
     obj[key] = value
   }

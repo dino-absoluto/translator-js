@@ -37,6 +37,8 @@
     "@types/cookie": "^0.3.2",
     "@types/got": "^9.4.1",
     "@types/jsdom": "^12.2.3",
+    "@types/webpack": "^4.4.26",
+    "@types/webpack-node-externals": "^1.6.3",
     "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.5.0",
