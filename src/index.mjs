@@ -23,7 +23,10 @@ import chalk from 'chalk'
 import info from './config'
 import yargs from 'yargs'
 import path from 'path'
+import fs from 'fs'
 /* -imports */
+
+const { promises: fsPromises } = fs
 
 const report = (error) => {
   console.error(chalk`{red ${report.stack ? error.stack : error}}`)
@@ -71,6 +74,18 @@ const cmdGet = async (config) => {
   await _get(config)
 }
 
+const cmdKeywords = async options => {
+  const output = path.join(options.output || './download/', 'keywords.json')
+  const sum = (await import('./keywords')).default
+  const MULTIPLIER = Math.max(1, options.multiplier)
+  fsPromises.writeFile(output, JSON.stringify(await sum([
+    [ 'yomou', 4 * MULTIPLIER ],
+    [ 'noc', 2 * MULTIPLIER ],
+    [ 'mnlt', 1 * MULTIPLIER ],
+    [ 'mid', 1 * MULTIPLIER ]
+  ]), null, 1))
+}
+
 const _parseArgs = async () => {
   return yargs.strict(true)
     .usage('$0 get [--output=<path>] [options] [<URL> | <path>..]')
@@ -106,6 +121,19 @@ const _parseArgs = async () => {
         .usage('$0 get [--output=<path>] [options] [<URL> | <path>..]')
         .argv,
       cmdGet
+    )
+    .command(
+      'keywords',
+      'Generate keywords',
+      yargs => yargs.strict()
+        .usage('$0 keywords')
+        .option('multiplier', {
+          default: 10,
+          number: true,
+          desc: 'Sample size'
+        })
+        .argv,
+      cmdKeywords
     )
     .demandCommand(1)
     .fail(err => {
