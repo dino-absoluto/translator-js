@@ -1,5 +1,5 @@
 /**
- * @file index.js
+ * @file index.ts
  * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
@@ -19,12 +19,12 @@
  *
  */
 /* config */
-import gotBase from 'got'
-import cookie from 'cookie'
+import * as gotBase from 'got'
+import * as cookie from 'cookie'
 import { JSDOM } from 'jsdom'
 /* -imports */
 
-const got = (url, config = {}) => {
+const got = (url, config = { headers: null }) => {
   url = new URL(url)
   config.headers = Object.assign({}, config.headers)
   if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
@@ -55,7 +55,7 @@ const fetch = async (url, map = {}) => {
     procLink(doc.querySelectorAll('.keyword a'))
   } else {
     for (const ex of doc.querySelectorAll('.searchkekka_box .ex')) {
-      procLink(ex.parentNode.parentNode.getElementsByTagName('a'))
+      procLink(ex.parentNode.parentNode.querySelectorAll('a'))
     }
   }
   return map
@@ -64,12 +64,12 @@ const fetch = async (url, map = {}) => {
 const sort = data => {
   const array = [...Object.entries(data)]
   array.sort((a, b) => {
-    a = a[1]
-    b = b[1]
-    if (a > b) {
+    let A = a[1]
+    let B = b[1]
+    if (A > B) {
       return -1
     }
-    if (a < b) {
+    if (A < B) {
       return 1
     }
     return 0
@@ -81,7 +81,7 @@ const sort = data => {
   return obj
 }
 
-const defaultBatches = [
+const defaultBatches : [string, number][] = [
   [ 'yomou', 4 ],
   [ 'noc', 2 ],
   [ 'mnlt', 1 ],
