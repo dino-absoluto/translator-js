@@ -4,8 +4,6 @@
     "strict": true,
     "module": "commonjs",
     "moduleResolution": "node"
-  }
-}
   },
   "include": [
     "./src/**/*.ts"

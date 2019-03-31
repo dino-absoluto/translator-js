@@ -27,8 +27,9 @@ module.exports = {
   target: 'node',
   entry: './src/index.ts',
   output: {
+    pathinfo: false,
     filename: 'index.js',
-    path: path.resolve(__dirname, 'dist/new')
+    path: path.resolve(__dirname, '__tmp__/new')
   },
   devtool: 'source-map',
   resolve: {
@@ -38,7 +39,13 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'awesome-typescript-loader'
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+            experimentalWatchApi: true
+          }
+        }
       }, {
         test: /\.js$/,
         use: ['source-map-loader'],
@@ -48,5 +55,10 @@ module.exports = {
   },
   externals: [
     nodeExternals()
-  ]
+  ],
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false,
+  }
 }
