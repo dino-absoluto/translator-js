@@ -24,44 +24,46 @@ import { WordMap } from '../words';
 import * as path from 'path'
 import { promises as fs } from 'fs'
 
-test('coverage', async () => {
-  const keywords = await import('./keywords.json')
-  const outMap: WordMap = {}
-  let mapped = 0
-  let sum = 0
-  for (const [key, count] of Object.entries(keywords)) {
-    sum += count
-    const mappedKey = mapKeyword(key)
-    outMap[key] = mappedKey
-    if (key !== mappedKey) {
-      mapped += count
-    }
-  }
-  await fs.writeFile(path.join(__dirname, 'keywords-mapped.json'),
-    JSON.stringify(outMap, null, 1)
-  )
-  expect(mapped).toBeGreaterThan(0)
-  expect(sum).toBeGreaterThan(0)
-  console.log(`Coverage: ${Math.round(mapped / sum * 10000)/100}% of ${sum}`)
-})
+interface TestOptions {
+  lax?: boolean,
+  outputFile: string
+}
 
-test('coverage relaxed', async () => {
+const testKeywords = async (options: TestOptions) => {
   const keywords = await import('./keywords.json')
-  const outMap: WordMap = {}
-  let mapped = 0
-  let sum = 0
-  for (const [key, count] of Object.entries(keywords)) {
-    sum += count
-    const mappedKey = mapKeyword(key, true)
-    outMap[key] = mappedKey
-    if (key !== mappedKey) {
-      mapped += count
-    }
+  const outMap: { [id: string]: WordMap } = {
+    yomou: {},
+    noc: {},
+    mnlt: {},
+    mid: {}
   }
-  await fs.writeFile(path.join(__dirname, 'keywords-mapped-relaxed.json'),
+  for (const [subdomain, map] of Object.entries(keywords)) {
+    let mapped = 0
+    let sum = 0
+    const subMap = outMap[subdomain]
+    for (const [key, count] of Object.entries(map)) {
+      sum += count
+      const mappedKey = mapKeyword(key, options.lax)
+      subMap[key] = mappedKey
+      if (key !== mappedKey) {
+        mapped += count
+      }
+    }
+    expect(mapped).toBeGreaterThan(0)
+    expect(sum).toBeGreaterThan(0)
+    console.log(`Coverage [${subdomain}]: ${
+      Math.round(mapped / sum * 10000)/100}% of ${sum}`)
+  }
+  await fs.writeFile(path.join(__dirname, options.outputFile),
     JSON.stringify(outMap, null, 1)
   )
-  expect(mapped).toBeGreaterThan(0)
-  expect(sum).toBeGreaterThan(0)
-  console.log(`Coverage: ${Math.round(mapped / sum * 10000)/100}% of ${sum}`)
-})
+}
+
+test('coverage', () => testKeywords({
+  outputFile: 'keywords-mapped.json'
+}))
+
+test('coverage relaxed', () => testKeywords({
+  lax: true,
+  outputFile: 'keywords-mapped-relaxed.json'
+}))

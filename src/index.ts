@@ -33,17 +33,12 @@ const cmdKeywords = async (options: CommandOptions) => {
   const output = path.join(options.output || './download/', 'keywords.json')
   const sum = (await import('./keywords')).default
   const MULTIPLIER = Math.max(1, options.multiplier || 0)
-  fsPromises.writeFile(output, JSON.stringify(await sum([
-    [ 'yomou', 4 * MULTIPLIER ],
-    [ 'noc', 2 * MULTIPLIER ],
-    [ 'mnlt', 1 * MULTIPLIER ],
-    [ 'mid', 1 * MULTIPLIER ]
-  ]), null, 1))
+  fsPromises.writeFile(output, JSON.stringify(await sum(MULTIPLIER), null, 1))
 }
 
 console.log(chalk`{blueBright Generating keywords!}`)
 
-cmdKeywords({}).then(() => {
+cmdKeywords({ multiplier: 50 }).then(() => {
   console.log(chalk`{green Done!}`)
 }).catch(err => {
   console.error(err)

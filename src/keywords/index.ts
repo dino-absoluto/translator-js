@@ -89,23 +89,39 @@ const sort = (data: KeywordsMap) => {
   return obj
 }
 
-const defaultBatches : [string, number][] = [
-  [ 'yomou', 4 ],
-  [ 'noc', 2 ],
-  [ 'mnlt', 1 ],
-  [ 'mid', 1 ]
+enum SubDomain {
+  yomou = 'yomou',
+  noc = 'noc',
+  mnlt = 'mnlt',
+  mid = 'mid'
+}
+
+const batches : [SubDomain, number][] = [
+  [ SubDomain.yomou, 2 ],
+  [ SubDomain.noc, 1 ],
+  [ SubDomain.mnlt, 1 ],
+  [ SubDomain.mid, 1 ]
 ]
 
-const generate = async (batches = defaultBatches) => {
-  const map = {}
+const generate = async (multiplier = 10) => {
+  const map: { [id: string]: KeywordsMap } = {
+    yomou: {},
+    noc: {},
+    mnlt: {},
+    mid: {}
+  }
   for (const [subdomain, pages] of batches) {
-    for (let i = 1; i <= pages; ++i) {
+    const MAX = multiplier * pages
+    for (let i = 1; i <= MAX; ++i) {
       console.log(`Fetching from ${subdomain}/page ${i}`)
       const url = getURL(i, subdomain)
-      await fetch(url, map)
+      await fetch(url, map[subdomain])
     }
   }
-  return sort(map)
+  for (const [subdomain, subMap] of Object.entries(map)) {
+    map[subdomain] = sort(subMap)
+  }
+  return map
 }
 
 export default generate
