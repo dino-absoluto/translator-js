@@ -20,7 +20,7 @@
  */
 /* imports */
 /* exports */
-export const map: { [id: string]: string } = {
+export const phrases: { [id: string]: string } = {
   /* priorities */
   'r15': 'R15',
   /* genres */

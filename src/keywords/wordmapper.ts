@@ -19,15 +19,13 @@
  *
  */
 /* imports */
-import { map } from './words'
+import { phrases } from './words'
 
-const ws = (word: string) => map[word] || word
+const ms = (word: string) => phrases[word] || word
 
-const wm = (word: string) => {
-  if (map[word]) {
-    return map[word]
+export const mapKeyword = (word: string) => {
+  if (phrases[word]) {
+    return phrases[word]
   }
-  return word.split(/[・、]/g).map(ws).join('·')
+  return word.split(/[・、]/g).map(ms).join('·')
 }
-
-export default wm

@@ -19,8 +19,19 @@
  *
  */
 /* imports */
-// import * as keywords from './keywords.json'
+import * as keywords from './keywords.json'
+import { mapKeyword } from '../wordmapper'
 
 test('empty test', () => {
-  expect(0).toBe(0)
+  let mapped = 0
+  let sum = 0
+  for (const [key, count] of Object.entries(keywords)) {
+    sum += count
+    if (key !== mapKeyword(key)) {
+      mapped += count
+    }
+  }
+  expect(mapped).toBeGreaterThan(0)
+  expect(sum).toBeGreaterThan(0)
+  console.log(`Coverage: ${Math.round(mapped / sum * 10000)/100}% of ${sum}`)
 })
