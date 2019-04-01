@@ -32,10 +32,15 @@ const createState = (word: string): MapState =>
   ({ word, remain: word.length })
 
 const replaceSymbols = (() => {
-  const keys = Object.getOwnPropertyNames(symbols).sort().reverse()
+  const set  = new Set(Object.getOwnPropertyNames(symbols))
+  set.delete('(')
+  set.delete(')')
+  set.add('\\(')
+  set.add('\\)')
+  const keys = [...set].sort().reverse()
   const exp = new RegExp(keys.join('|'), 'gu')
   return (w: MapState) => {
-    w.word = w.word.replace(/[\uFF01-\uFF5E]/gu, (tok) =>
+    w.word = w.word.replace(/[\uFF01-\uFF5E]/gu, (tok: string) =>
       (w.remain -= tok.length, String.fromCharCode(tok.charCodeAt(0) - 0xFEE0)))
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, symbols[tok]))

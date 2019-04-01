@@ -30,8 +30,10 @@ export interface WordMapFn<T> {
 
 export const symbols: WordMap = {
   '？': '?',
-  '\\(': ' )',
-  '\\)': ')'
+  '(': ' (',
+  ')': ')',
+  '（': ' (',
+  '）': ')'
 }
 
 export const separators: WordMap = {
