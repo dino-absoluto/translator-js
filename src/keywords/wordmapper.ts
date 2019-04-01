@@ -67,7 +67,7 @@ const replacePhrases = (() => {
 
 const replacePrefixes = (() => {
   const keys = Object.getOwnPropertyNames(prefixes).sort().reverse()
-  const exp = new RegExp(`^(${keys.join('|')})`, 'gu')
+  const exp = new RegExp(`^(${keys.join('|')})\s*`, 'gu')
   return (w: MapState) => {
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, prefixes[tok]))
@@ -76,7 +76,7 @@ const replacePrefixes = (() => {
 
 const replaceSuffixes = (() => {
   const keys = Object.getOwnPropertyNames(suffixes).sort().reverse()
-  const exp = new RegExp(`(${keys.join('|')})$`, 'gu')
+  const exp = new RegExp(`\s*(${keys.join('|')})$`, 'gu')
   return (w: MapState) => {
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, suffixes[tok]))
@@ -85,7 +85,7 @@ const replaceSuffixes = (() => {
 
 const processParticles = (() => {
   const keys = Object.getOwnPropertyNames(particles).sort().reverse()
-  const exp = new RegExp(`(${keys.join('|')})`, 'gu')
+  const exp = new RegExp(`(?<=\\s|\\w)(${keys.join('|')})(?=\\s|\\w)`, 'gu')
   return (w: MapState) => {
     const [left, key] = w.word.split(exp, 2)
     if (!key) {
@@ -110,7 +110,7 @@ const splitFragments = (() => {
 })()
 
 const trim = (word: string) =>
-  word.trim().replace(/\s+/gu, ' ')
+  word.trim().replace(/\s+/gu, ' ').replace('- ', '-')
 
 export const mapKeyword = (word: string, lax?: boolean) => {
   word = word.trim().toLowerCase()
@@ -122,9 +122,9 @@ export const mapKeyword = (word: string, lax?: boolean) => {
     const state = createState(word)
     replaceSymbols(state)
     replaceLetters(state)
+    replaceSuffixes(state)
     replacePhrases(state)
     replacePrefixes(state)
-    replaceSuffixes(state)
     processParticles(state)
     state.word = trim(state.word)
     if (!lax && state.remain > 0) {
