@@ -36,6 +36,7 @@ export const symbols: WordMap = {
 
 export const separators: WordMap = {
   '・': '·',
+  '/': '/',
   '\u3000': '-'
 }
 
@@ -49,7 +50,7 @@ export const particles: WordMapFn<ParticleFn> =  {
   'な': ' '
 }
 
-export const prefix: WordMap = {
+export const prefixes: WordMap = {
   'ド': 'extreme ',
   '男': 'male ',
   '女': 'female ',
@@ -59,7 +60,7 @@ export const prefix: WordMap = {
   'お': '',
 }
 
-export const suffix: WordMap = {
+export const suffixes: WordMap = {
   '風': ' style',
   '攻め': ' top',
   '受け': ' bottom',

@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { phrases, symbols, prefix } from './words'
+import { phrases, symbols, prefixes, suffixes } from './words'
 
 const ms = (word: string) => phrases[word] || word
 
@@ -56,6 +56,24 @@ const replacePhrases = (() => {
   }
 })()
 
+const replacePrefixes = (() => {
+  const keys = Object.getOwnPropertyNames(prefixes).sort().reverse()
+  const exp = new RegExp(`^(${keys.join('|')})`, 'gu')
+  return (w: MapState) => {
+    w.word = w.word.replace(exp, tok =>
+      (w.remain -= tok.length, prefixes[tok]))
+  }
+})()
+
+const replaceSuffixes = (() => {
+  const keys = Object.getOwnPropertyNames(suffixes).sort().reverse()
+  const exp = new RegExp(`(${keys.join('|')})$`, 'gu')
+  return (w: MapState) => {
+    w.word = w.word.replace(exp, tok =>
+      (w.remain -= tok.length, suffixes[tok]))
+  }
+})()
+
 const trim = (word: string) =>
   word.trim().replace(/\s+/gu, ' ')
 
@@ -69,6 +87,8 @@ export const mapKeyword = (word: string, lax?: boolean) => {
   replaceSymbols(state)
   replaceLetters(state)
   replacePhrases(state)
+  replacePrefixes(state)
+  replaceSuffixes(state)
   state.word = trim(state.word)
   if (!lax && state.remain > 0) {
     return word
@@ -81,6 +101,8 @@ export const mapKeyword = (word: string, lax?: boolean) => {
   replaceSymbols(state)
   replaceLetters(state)
   replacePhrases(state)
+  replacePrefixes(state)
+  replaceSuffixes(state)
   state.word = trim(state.word)
   console.log(state)
 }
