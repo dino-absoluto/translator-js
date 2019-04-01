@@ -52,9 +52,12 @@ const replacePhrases = (() => {
   const exp = new RegExp(keys.join('|'), 'gu')
   return (w: MapState) => {
     w.word = w.word.replace(exp, tok =>
-      (w.remain -= tok.length, ` ${ms(tok)}`)).trimLeft()
+      (w.remain -= tok.length, ` ${ms(tok)}`))
   }
 })()
+
+const trim = (word: string) =>
+  word.trim().replace(/\s+/gu, ' ')
 
 export const mapKeyword = (word: string, lax?: boolean) => {
   word = word.trim().toLowerCase()
@@ -66,6 +69,7 @@ export const mapKeyword = (word: string, lax?: boolean) => {
   replaceSymbols(state)
   replaceLetters(state)
   replacePhrases(state)
+  state.word = trim(state.word)
   if (!lax && state.remain > 0) {
     return word
   }
@@ -77,5 +81,6 @@ export const mapKeyword = (word: string, lax?: boolean) => {
   replaceSymbols(state)
   replaceLetters(state)
   replacePhrases(state)
+  state.word = trim(state.word)
   console.log(state)
 }
