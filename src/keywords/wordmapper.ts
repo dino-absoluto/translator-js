@@ -19,13 +19,63 @@
  *
  */
 /* imports */
-import { phrases } from './words'
+import { phrases, symbols, prefix } from './words'
 
 const ms = (word: string) => phrases[word] || word
 
-export const mapKeyword = (word: string) => {
+interface MapState {
+  word: string,
+  remain: number
+}
+
+const createState = (word: string): MapState =>
+  ({ word, remain: word.length })
+
+const replaceSymbols = (() => {
+  const keys = Object.getOwnPropertyNames(symbols).sort().reverse()
+  const exp = new RegExp(keys.join('|'), 'gu')
+  return (w: MapState) => {
+    w.word = w.word.replace(/[\uFF01-\uFF5E]/gu, (tok) =>
+      (w.remain -= tok.length, String.fromCharCode(tok.charCodeAt(0) - 0xFEE0)))
+    w.word = w.word.replace(exp, tok =>
+      (w.remain -= tok.length, symbols[tok]))
+  }
+})()
+
+const replaceLetters = (w: MapState) => {
+  w.word = w.word.replace(/\w+/gu, tok =>
+    (w.remain -= tok.length, ` ${tok.toUpperCase()}`))
+}
+
+const replacePhrases = (() => {
+  const keys = Object.getOwnPropertyNames(phrases).sort().reverse()
+  const exp = new RegExp(keys.join('|'), 'gu')
+  return (w: MapState) => {
+    w.word = w.word.replace(exp, tok =>
+      (w.remain -= tok.length, ` ${ms(tok)}`)).trimLeft()
+  }
+})()
+
+export const mapKeyword = (word: string, lax?: boolean) => {
+  word = word.trim().toLowerCase()
   if (phrases[word]) {
     return phrases[word]
   }
-  return word.split(/[・、]/g).map(ms).join('·')
+  // Keep original romaji letters
+  const state = createState(word)
+  replaceSymbols(state)
+  replaceLetters(state)
+  replacePhrases(state)
+  if (!lax && state.remain > 0) {
+    return word
+  }
+  return state.word
+}
+
+{
+  let state = createState('俺ＴＵＥＥＥ'.toLowerCase())
+  replaceSymbols(state)
+  replaceLetters(state)
+  replacePhrases(state)
+  console.log(state)
 }
