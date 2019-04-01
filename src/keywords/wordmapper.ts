@@ -19,7 +19,11 @@
  *
  */
 /* imports */
-import { phrases, symbols, prefixes, suffixes } from './words'
+import {
+  phrases, symbols,
+  prefixes, suffixes,
+  separators
+} from './words'
 
 const ms = (word: string) => phrases[word] || word
 
@@ -79,6 +83,13 @@ const replaceSuffixes = (() => {
   }
 })()
 
+const splitFragments = (() => {
+  const keys = Object.getOwnPropertyNames(separators).sort().reverse()
+  const exp = new RegExp(`(${keys.join('|')})`, 'gu')
+  return (word: string) =>
+    word.split(exp)
+})()
+
 const trim = (word: string) =>
   word.trim().replace(/\s+/gu, ' ')
 
@@ -87,27 +98,33 @@ export const mapKeyword = (word: string, lax?: boolean) => {
   if (phrases[word]) {
     return phrases[word]
   }
-  // Keep original romaji letters
-  const state = createState(word)
-  replaceSymbols(state)
-  replaceLetters(state)
-  replacePhrases(state)
-  replacePrefixes(state)
-  replaceSuffixes(state)
-  state.word = trim(state.word)
-  if (!lax && state.remain > 0) {
-    return word
+  const frs = splitFragments(word)
+  if (frs.length === 1) {
+    const state = createState(word)
+    replaceSymbols(state)
+    replaceLetters(state)
+    replacePhrases(state)
+    replacePrefixes(state)
+    replaceSuffixes(state)
+    state.word = trim(state.word)
+    if (!lax && state.remain > 0) {
+      return word
+    }
+    return state.word
+  } else {
+    const MAX = Math.ceil(frs.length / 2)
+    let text = ''
+    for (let i = 0; i < MAX; i++) {
+      const word = frs[i*2]
+      const sep = frs[i*2 + 1]
+      text += mapKeyword(word)
+      if (sep) {
+        text += separators[sep] || sep
+      }
+    }
+    return text
   }
-  return state.word
 }
 
 {
-  let state = createState('俺ＴＵＥＥＥ'.toLowerCase())
-  replaceSymbols(state)
-  replaceLetters(state)
-  replacePhrases(state)
-  replacePrefixes(state)
-  replaceSuffixes(state)
-  state.word = trim(state.word)
-  console.log(state)
 }
