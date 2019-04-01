@@ -44,3 +44,24 @@ test('coverage', async () => {
   expect(sum).toBeGreaterThan(0)
   console.log(`Coverage: ${Math.round(mapped / sum * 10000)/100}% of ${sum}`)
 })
+
+test('coverage relaxed', async () => {
+  const keywords = await import('./keywords.json')
+  const outMap: WordMap = {}
+  let mapped = 0
+  let sum = 0
+  for (const [key, count] of Object.entries(keywords)) {
+    sum += count
+    const mappedKey = mapKeyword(key, true)
+    outMap[key] = mappedKey
+    if (key !== mappedKey) {
+      mapped += count
+    }
+  }
+  await fs.writeFile(path.join(__dirname, 'keywords-mapped-relaxed.json'),
+    JSON.stringify(outMap, null, 1)
+  )
+  expect(mapped).toBeGreaterThan(0)
+  expect(sum).toBeGreaterThan(0)
+  console.log(`Coverage: ${Math.round(mapped / sum * 10000)/100}% of ${sum}`)
+})
