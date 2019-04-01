@@ -18,11 +18,10 @@
  * along with translator-js.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-/* config */
+/* imports */
 import * as gotBase from 'got'
 import * as cookie from 'cookie'
 import { JSDOM } from 'jsdom'
-/* -imports */
 
 const got = (
   href: string,

@@ -3,7 +3,11 @@
     "target": "es2017",
     "strict": true,
     "module": "commonjs",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true
   },
   "include": [
     "./src/**/*.ts"

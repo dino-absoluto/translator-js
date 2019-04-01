@@ -25,6 +25,7 @@
     "jsdom": "^14.0.0",
     "make-dir": "^2.1.0",
     "mime-types": "^2.1.22",
+    "ts-jest": "^24.0.1",
     "yargs": "^13.2.2"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "@babel/register": "^7.4.0",
     "@types/cookie": "^0.3.2",
     "@types/got": "^9.4.1",
+    "@types/jest": "^24.0.11",
     "@types/jsdom": "^12.2.3",
     "@types/webpack": "^4.4.26",
     "@types/webpack-node-externals": "^1.6.3",
@@ -100,16 +102,18 @@
       "<rootDir>/jest/mods"
     ],
     "transform": {
-      "^.+\\.(js|mjs|jsx)$": "babel-jest"
+      "^.+\\.(js|mjs|jsx)$": "babel-jest",
+      "^.+\\.(ts|tsx)$": "ts-jest"
     },
     "testMatch": [
-      "**/?(*.)+(spec|test).(js|mjs|jsx)"
+      "**/?(*.)+(spec|test).(js|mjs|jsx)",
+      "**/?(*.)+(spec|test).(ts|tsx)"
     ],
     "moduleFileExtensions": [
       "js",
-      "mjs",
+      "ts",
+      "tsx",
       "json",
-      "jsx",
       "node"
     ]
   }
