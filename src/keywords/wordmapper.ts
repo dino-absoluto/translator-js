@@ -22,7 +22,7 @@
 import {
   phrases, symbols,
   prefixes, suffixes,
-  separators
+  separators, particles
 } from './words'
 
 const ms = (word: string) => phrases[word] || word
@@ -83,6 +83,25 @@ const replaceSuffixes = (() => {
   }
 })()
 
+const processParticles = (() => {
+  const keys = Object.getOwnPropertyNames(particles).sort().reverse()
+  const exp = new RegExp(`(${keys.join('|')})`, 'gu')
+  return (w: MapState) => {
+    const [left, key] = w.word.split(exp, 2)
+    if (!key) {
+      return
+    }
+    const right = w.word.substring(left.length + key.length)
+    w.remain -= key.length
+    const particle = particles[key]
+    if (typeof particle === 'string') {
+      w.word = left + particle + right
+    } else {
+      w.word = particle(key, left, right)
+    }
+  }
+})()
+
 const splitFragments = (() => {
   const keys = Object.getOwnPropertyNames(separators).sort().reverse()
   const exp = new RegExp(`(${keys.join('|')})`, 'gu')
@@ -106,6 +125,7 @@ export const mapKeyword = (word: string, lax?: boolean) => {
     replacePhrases(state)
     replacePrefixes(state)
     replaceSuffixes(state)
+    processParticles(state)
     state.word = trim(state.word)
     if (!lax && state.remain > 0) {
       return word
