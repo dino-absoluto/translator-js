@@ -110,7 +110,7 @@ const splitFragments = (() => {
 })()
 
 const trim = (word: string) =>
-  word.trim().replace(/\s+/gu, ' ').replace('- ', '-')
+  word.trim().replace(/\s+/gu, ' ').replace(/(?<=[\-(])\s/g, '')
 
 export const mapKeyword = (word: string, lax?: boolean) => {
   word = word.trim().toLowerCase()
