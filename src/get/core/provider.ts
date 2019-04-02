@@ -50,6 +50,7 @@ export interface Novel {
   author?: string
   description?: string
   keywords?: string[]
+  genre?: string
   status?: {
     completed: boolean
     size: number

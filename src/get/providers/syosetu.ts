@@ -31,6 +31,7 @@ export class WebNovel implements Novel {
   author?: string
   description?: string
   keywords?: string[]
+  genre?: string
   status?: {
     completed: boolean
     size: number
@@ -70,15 +71,68 @@ export class WebNovel implements Novel {
       new JSDOM((await got(url)).body, { url })
     const main = doc.getElementById('contents_main')
     if (!main) {
-      throw new Error('Content\'s not found')
+      throw new Error('Failed to find contents')
     }
     {
       // get title
       const h1 = main.getElementsByTagName('h1')[0]
       if (!h1) {
-        throw new Error('Header\'s not found')
+        throw new Error('Failed to parse header')
       }
       this.name = h1.textContent || undefined
+    }
+    {
+      // parse table
+      const lines = main.querySelectorAll('#noveltable1 > tbody > tr > td')
+      if (lines.length !== 4) {
+        throw new Error('Failed to parse table')
+      }
+      let text = lines[0].textContent
+      if (text) {
+        this.description = text.trim()
+      }
+      text = lines[1].textContent
+      if (text) {
+        this.author = text.trim()
+      }
+      text = lines[2].textContent
+      if (text) {
+        this.keywords = text.trim().split(/\s+/g)
+      }
+      text = lines[3].textContent
+      if (text) {
+        this.genre = text.trim().split('〔', 1)[0]
+      }
+    }
+    {
+      // status
+      let completed = true
+      let size = 0
+      let type = main.querySelector('#noveltype_notend')
+      if (type) {
+        completed = false
+      } else {
+        type = main.querySelector('#noveltype')
+      }
+      if (!type || !type.textContent) {
+        throw new Error('Failed to detect novel type')
+      }
+      if (type.textContent.trim() === '短編') {
+        size = 1
+      } else {
+        let node = type.nextSibling
+        if (!node || !node.textContent) {
+          throw new Error('Failed to detect novel size')
+        }
+        let text = node.textContent.match(/(?<=全)\d+(?=部分)/)
+        if (text && text[0]) {
+          size = parseInt(text[0], 10)
+        }
+      }
+      this.status = {
+        completed,
+        size
+      }
     }
     return
   }

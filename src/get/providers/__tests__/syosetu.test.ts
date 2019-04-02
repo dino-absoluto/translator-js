@@ -34,6 +34,11 @@ describe('WebNovel', () => {
     expect(wn.indexURL).toBe('https://ncode.syosetu.com/n0537cm/')
     expect(wn.name).toBeUndefined()
     await wn.fetch()
-    expect(wn.name).toBe('邪神アベレージ')
+    expect(wn).toEqual(expect.objectContaining({
+      name: '邪神アベレージ',
+      author: '北瀬野ゆなき',
+      genre: 'ハイファンタジー',
+      status: { completed: true, size: 82 }
+    }))
   })
 })
