@@ -19,20 +19,8 @@
  *
  */
 /* imports */
-import * as gotBase from 'got'
-import * as cookie from 'cookie'
 import { JSDOM } from 'jsdom'
-
-const got = (
-  href: string,
-  config: { headers?: { cookie?: string} } = {}) => {
-  let url = new URL(href)
-  config.headers = Object.assign({}, config.headers)
-  if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
-    config.headers.cookie = cookie.serialize('over18', 'yes')
-  }
-  return gotBase(url, config)
-}
+import got from '../utils/syosetu-got'
 
 const getURL = (page: number, subdomain = 'yomou') => {
   if (subdomain !== 'yomou') {
