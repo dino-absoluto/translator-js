@@ -19,20 +19,38 @@
  *
  */
 /* imports */
-import { WebNovel } from '../syosetu'
+import { SyosetuNovel } from '../syosetu'
 import { URL } from 'url'
+import { back as nockBack, NockBackContext } from 'nock'
+import * as path from 'path'
 /* code */
 
-describe('WebNovel', () => {
+nockBack.setMode('record')
+nockBack.fixtures = path.resolve(__dirname, '__tmp__/nock-fixtures/')
+
+let nock: { nockDone: () => void; context: NockBackContext }
+
+beforeAll(async () => {
+  nock = (await nockBack('syosetu.json'))
+})
+
+afterAll(async () => {
+  return nock.nockDone()
+})
+
+describe('SyosetuNovel', () => {
+  const href = 'http://ncode.syosetu.com/n0537cm/'
   test('constructor', async () => {
-    const href = 'http://ncode.syosetu.com/n0537cm/'
-    const wn = new WebNovel(new URL(href))
+    const wn = new SyosetuNovel(new URL(href))
     expect(wn.over18).toBeFalsy()
     expect(wn.id).toBe('n0537cm')
     expect(wn.rootURL).toBe('https://ncode.syosetu.com/')
     expect(wn.infoURL).toBe('https://ncode.syosetu.com/novelview/infotop/ncode/n0537cm/')
     expect(wn.indexURL).toBe('https://ncode.syosetu.com/n0537cm/')
     expect(wn.name).toBeUndefined()
+  })
+  test('fetch()', async () => {
+    const wn = new SyosetuNovel(new URL(href))
     await wn.fetch()
     expect(wn).toEqual(expect.objectContaining({
       name: '邪神アベレージ',
@@ -40,5 +58,10 @@ describe('WebNovel', () => {
       genre: 'ハイファンタジー',
       status: { completed: true, size: 82 }
     }))
+  })
+  test('fetchIndex()', async () => {
+    const wn = new SyosetuNovel(new URL(href))
+    let indexes = await wn.fetchIndex()
+    expect(indexes.length).toBe(82)
   })
 })

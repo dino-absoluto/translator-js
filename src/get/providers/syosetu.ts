@@ -19,12 +19,53 @@
  *
  */
 /* imports */
-import { Provider, Novel } from '../core/provider'
+import { Provider, Novel, Chapter, Content } from '../core/provider'
 import got from '../../utils/syosetu-got'
 import { JSDOM } from 'jsdom'
 /* code */
 
-export class WebNovel implements Novel {
+const ifStr = (text: string | void | null, fn?: (v: string) => any) => {
+  if (!text) {
+    return
+  }
+  text = text.trim()
+  if (!text.length) {
+    return
+  }
+  return fn ? fn(text) : text
+}
+
+const ifTrue = <T>(value: T | void | null, fn: (v: T) => any): any => {
+  if (!value) {
+    return
+  }
+  return fn(value)
+}
+
+export class SyosetuChapter implements Chapter {
+  private url: URL
+  group?: string
+  name: string
+  updateId?: string
+  content?: Content
+  constructor (options: {
+    url: URL
+    group?: string
+    name: string
+    updateId?: string
+  }) {
+    this.url = options.url
+    this.group = options.group
+    this.name = options.name
+    this.updateId = options.updateId
+  }
+
+  async fetch () {
+    return
+  }
+}
+
+export class SyosetuNovel implements Novel {
   readonly id: string
   readonly over18: boolean
   name?: string
@@ -87,22 +128,12 @@ export class WebNovel implements Novel {
       if (lines.length !== 4) {
         throw new Error('Failed to parse table')
       }
-      let text = lines[0].textContent
-      if (text) {
-        this.description = text.trim()
-      }
-      text = lines[1].textContent
-      if (text) {
-        this.author = text.trim()
-      }
-      text = lines[2].textContent
-      if (text) {
-        this.keywords = text.trim().split(/\s+/g)
-      }
-      text = lines[3].textContent
-      if (text) {
-        this.genre = text.trim().split('〔', 1)[0]
-      }
+      this.description = ifStr(lines[0].textContent)
+      this.author = ifStr(lines[1].textContent)
+      this.keywords = ifStr(lines[2].textContent,
+        s => s.split(/\s+/g))
+      this.genre = ifStr(lines[3].textContent,
+        s => s.split('〔', 1)[0])
     }
     {
       // status
@@ -136,11 +167,64 @@ export class WebNovel implements Novel {
     }
     return
   }
+
+  async fetchIndex () {
+    const url = this.indexURL
+    let { window: { document: doc } } =
+      new JSDOM((await got(url)).body, { url })
+    let indexBox = doc.getElementsByClassName('index_box')[0]
+    if (!indexBox) {
+      throw new Error('Failed to get index_box')
+    }
+    const chapters = []
+    let group: string | undefined
+    for (const node of indexBox.children) {
+      if (node.classList.contains('chapter_title')) {
+        group = ifStr(node.textContent)
+        continue
+      } else if (node.classList.contains('novel_sublist2')) {
+        if (node.children.length < 2) {
+          continue
+        }
+        let name: string | undefined
+        let url: URL | undefined
+        let timestamp: string | undefined
+        {
+          const col = node.children[0]
+          const a = col.firstElementChild
+          if (a && a.tagName === 'A') {
+            let link = a as HTMLLinkElement
+            name = ifStr(a.textContent)
+            url = new URL(link.href)
+          }
+        }
+        {
+          const col = node.children[1]
+          const span = col.firstElementChild
+          if (span) {
+            timestamp = ifStr(span.getAttribute('title'))
+          } else {
+            timestamp = ifStr(col.textContent)
+          }
+        }
+        if (name && url) {
+          let chapter = new SyosetuChapter({
+            url,
+            group,
+            name,
+            updateId: timestamp
+          })
+          chapters.push(chapter)
+        }
+      }
+    }
+    return chapters
+  }
 }
 
 const fromURL = (url: URL) => {
   try {
-    return new WebNovel(url)
+    return new SyosetuNovel(url)
   } catch {
     return
   }

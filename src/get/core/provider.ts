@@ -35,7 +35,7 @@ export interface Content {
 }
 
 export interface Chapter {
-  group: string
+  group?: string
   name: string
   updateId?: string
   content?: Content
@@ -55,8 +55,8 @@ export interface Novel {
     completed: boolean
     size: number
   }
-  fetch?: () => Promise<void>
-  fetchIndex?: () => Promise<Index>
+  fetch: () => Promise<void>
+  fetchIndex: () => Promise<Index>
 }
 
 export interface Provider {
