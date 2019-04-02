@@ -61,7 +61,30 @@ export class SyosetuChapter implements Chapter {
   }
 
   async fetch () {
-    return
+    const { url } = this
+    let { window: { document: doc } } =
+      new JSDOM((await got(url)).body, { url: url.toString() })
+    const main = doc.getElementById('novel_contents')
+    if (!main) {
+      return
+    }
+    ifTrue(main.querySelector('.novel_subtitle'), node => {
+      this.name = ifStr(node.textContent)
+    })
+    const nodes: Element[] = []
+    ;[
+      '#novel_p',
+      '#novel_honbun',
+      '#novel_a'
+    ].forEach(id => ifTrue(main.querySelector(id), node => {
+      nodes.push(node)
+    }))
+    this.content = {
+      content: (fmt) => {
+        return nodes.map(node => fmt.parseNode(node).trim()).join('\n\n---\n\n')
+      },
+      resources: []
+    }
   }
 }
 

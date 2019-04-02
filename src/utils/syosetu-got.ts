@@ -32,8 +32,8 @@ interface GotOptions {
 
 const limit = pLimit(1)
 
-const got = (href: string, config: GotOptions = {}) => {
-  let url = new URL(href)
+const got = (href: gotBase.GotUrl, config: GotOptions = {}) => {
+  let url = new URL(href.toString())
   config.headers = Object.assign({}, config.headers)
   if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
     config.headers.cookie = cookie.serialize('over18', 'yes')
