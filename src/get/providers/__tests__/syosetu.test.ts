@@ -1,5 +1,5 @@
 /**
- * @file provider.ts
+ * @file index.ts
  * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
@@ -19,46 +19,21 @@
  *
  */
 /* imports */
+import { WebNovel } from '../syosetu'
+import { URL } from 'url'
 /* code */
 
-export interface Formatter {
-  requestFile: (name: string) => string
-  parseNode: (node: Node) => string
-}
-
-export interface Content {
-  content: (fmt: Formatter) => string
-  resources: {
-    name: string
-    data: Buffer
-  }[]
-}
-
-export interface Chapter {
-  group: string
-  name: string
-  updateId?: string
-  content?: Content
-  fetch: () => Promise<void>
-}
-
-export type Index = Chapter[]
-
-export interface Novel {
-  readonly id: string
-  name?: string
-  author?: string
-  description?: string
-  keywords?: string[]
-  status?: {
-    completed: boolean
-    size: number
-  }
-  fetch?: () => Promise<void>
-  fetchIndex?: () => Promise<Index>
-}
-
-export interface Provider {
-  acceptDomains: string[]
-  fromURL: (href: URL) => Novel | void
-}
+describe('WebNovel', () => {
+  test('constructor', async () => {
+    const href = 'http://ncode.syosetu.com/n0537cm/'
+    const wn = new WebNovel(new URL(href))
+    expect(wn.over18).toBeFalsy()
+    expect(wn.id).toBe('n0537cm')
+    expect(wn.rootURL).toBe('https://ncode.syosetu.com/')
+    expect(wn.infoURL).toBe('https://ncode.syosetu.com/novelview/infotop/ncode/n0537cm/')
+    expect(wn.indexURL).toBe('https://ncode.syosetu.com/n0537cm/')
+    expect(wn.name).toBeUndefined()
+    await wn.fetch()
+    expect(wn.name).toBe('邪神アベレージ')
+  })
+})

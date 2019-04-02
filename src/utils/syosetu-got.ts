@@ -1,5 +1,5 @@
 /**
- * @file provider.ts
+ * @file index.mjs
  * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
@@ -19,46 +19,26 @@
  *
  */
 /* imports */
-/* code */
+import cookie = require('cookie')
+import gotBase = require('got')
+import pLimit from 'p-limit'
+/* -imports */
 
-export interface Formatter {
-  requestFile: (name: string) => string
-  parseNode: (node: Node) => string
-}
-
-export interface Content {
-  content: (fmt: Formatter) => string
-  resources: {
-    name: string
-    data: Buffer
-  }[]
-}
-
-export interface Chapter {
-  group: string
-  name: string
-  updateId?: string
-  content?: Content
-  fetch: () => Promise<void>
-}
-
-export type Index = Chapter[]
-
-export interface Novel {
-  readonly id: string
-  name?: string
-  author?: string
-  description?: string
-  keywords?: string[]
-  status?: {
-    completed: boolean
-    size: number
+interface GotOptions {
+  headers?: {
+    cookie?: string
   }
-  fetch?: () => Promise<void>
-  fetchIndex?: () => Promise<Index>
 }
 
-export interface Provider {
-  acceptDomains: string[]
-  fromURL: (href: URL) => Novel | void
+const limit = pLimit(1)
+
+const got = (href: string, config: GotOptions = {}) => {
+  let url = new URL(href)
+  config.headers = Object.assign({}, config.headers)
+  if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
+    config.headers.cookie = cookie.serialize('over18', 'yes')
+  }
+  return limit(() => gotBase(url, config))
 }
+
+export default got

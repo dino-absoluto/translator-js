@@ -24,6 +24,7 @@
     "jsdom": "^14.0.0",
     "make-dir": "^3.0.0",
     "mime-types": "^2.1.22",
+    "p-limit": "^2.2.0",
     "yargs": "^13.2.2"
   },
   "devDependencies": {
