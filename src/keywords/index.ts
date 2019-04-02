@@ -44,7 +44,7 @@ const getURL = (page: number, subdomain = 'yomou') => {
 }
 
 interface KeywordsMap {
-  [id: string]: number;
+  [id: string]: number
 }
 
 const fetch = async (href: string, map: KeywordsMap = {}) => {
@@ -96,7 +96,7 @@ enum SubDomain {
   mid = 'mid'
 }
 
-const batches : [SubDomain, number][] = [
+const batches: [SubDomain, number][] = [
   [ SubDomain.yomou, 2 ],
   [ SubDomain.noc, 1 ],
   [ SubDomain.mnlt, 1 ],

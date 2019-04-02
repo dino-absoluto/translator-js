@@ -25,7 +25,7 @@ import { promises as fsPromises } from 'fs'
 /* -imports */
 
 interface CommandOptions {
-  output?: string,
+  output?: string
   multiplier?: number
 }
 

@@ -28,7 +28,7 @@ import {
 const ms = (word: string) => phrases[word] || word
 
 interface MapState {
-  word: string,
+  word: string
   remain: number
 }
 
@@ -36,7 +36,7 @@ const createState = (word: string): MapState =>
   ({ word, remain: word.length })
 
 const replaceSymbols = (() => {
-  const set  = new Set(Object.getOwnPropertyNames(symbols))
+  const set = new Set(Object.getOwnPropertyNames(symbols))
   set.delete('(')
   set.delete(')')
   set.add('\\(')
@@ -44,7 +44,7 @@ const replaceSymbols = (() => {
   const keys = [...set].sort().reverse()
   const exp = new RegExp(keys.join('|'), 'gu')
   return (w: MapState) => {
-    w.word = w.word.replace(/[\uFF01-\uFF5E]/gu, (tok: string) =>
+    w.word = w.word.replace(/[\uFF01-\uFF5E]/g, (tok: string) =>
       (w.remain -= tok.length, String.fromCharCode(tok.charCodeAt(0) - 0xFEE0)))
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, symbols[tok]))
@@ -52,13 +52,13 @@ const replaceSymbols = (() => {
 })()
 
 const replaceLetters = (w: MapState) => {
-  w.word = w.word.replace(/\w+/gu, tok =>
+  w.word = w.word.replace(/\w+/g, tok =>
     (w.remain -= tok.length, ` ${tok.toUpperCase()}`))
 }
 
 const replacePhrases = (() => {
   const keys = Object.getOwnPropertyNames(phrases).sort().reverse()
-  const exp = new RegExp(keys.join('|'), 'gu')
+  const exp = new RegExp(keys.join('|'), 'g')
   return (w: MapState) => {
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, ` ${ms(tok)}`))
@@ -67,7 +67,7 @@ const replacePhrases = (() => {
 
 const replacePrefixes = (() => {
   const keys = Object.getOwnPropertyNames(prefixes).sort().reverse()
-  const exp = new RegExp(`^(${keys.join('|')})\s*`, 'gu')
+  const exp = new RegExp(`^(${keys.join('|')})\s*`, 'g')
   return (w: MapState) => {
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, prefixes[tok]))
@@ -76,7 +76,7 @@ const replacePrefixes = (() => {
 
 const replaceSuffixes = (() => {
   const keys = Object.getOwnPropertyNames(suffixes).sort().reverse()
-  const exp = new RegExp(`\s*(${keys.join('|')})$`, 'gu')
+  const exp = new RegExp(`\s*(${keys.join('|')})$`, 'g')
   return (w: MapState) => {
     w.word = w.word.replace(exp, tok =>
       (w.remain -= tok.length, suffixes[tok]))
@@ -85,7 +85,7 @@ const replaceSuffixes = (() => {
 
 const processParticles = (() => {
   const keys = Object.getOwnPropertyNames(particles).sort().reverse()
-  const exp = new RegExp(`(?<=\\s|\\w)(${keys.join('|')})(?=\\s|\\w)`, 'gu')
+  const exp = new RegExp(`(?<=\\s|\\w)(${keys.join('|')})(?=\\s|\\w)`, 'g')
   return (w: MapState) => {
     const [left, key] = w.word.split(exp, 2)
     if (!key) {
@@ -104,13 +104,13 @@ const processParticles = (() => {
 
 const splitFragments = (() => {
   const keys = Object.getOwnPropertyNames(separators).sort().reverse()
-  const exp = new RegExp(`(${keys.join('|')})`, 'gu')
+  const exp = new RegExp(`(${keys.join('|')})`, 'g')
   return (word: string) =>
     word.split(exp)
 })()
 
 const trim = (word: string) =>
-  word.trim().replace(/\s+/gu, ' ').replace(/(?<=[\-(])\s/g, '')
+  word.trim().replace(/\s+/g, ' ').replace(/(?<=[\-(])\s/g, '')
 
 export const mapKeyword = (word: string, lax?: boolean) => {
   word = word.trim().toLowerCase()
@@ -135,8 +135,8 @@ export const mapKeyword = (word: string, lax?: boolean) => {
     const MAX = Math.ceil(frs.length / 2)
     let text = ''
     for (let i = 0; i < MAX; i++) {
-      const word = frs[i*2]
-      const sep = frs[i*2 + 1]
+      const word = frs[i * 2]
+      const sep = frs[i * 2 + 1]
       text += mapKeyword(word)
       if (sep) {
         text += separators[sep] || sep
@@ -144,7 +144,4 @@ export const mapKeyword = (word: string, lax?: boolean) => {
     }
     return text
   }
-}
-
-{
 }

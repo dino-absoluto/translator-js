@@ -44,7 +44,7 @@ export const separators: WordMap = {
 
 type ParticleFn = (key: string, left: string, right: string) => string
 
-export const particles: WordMapFn<ParticleFn> =  {
+export const particles: WordMapFn<ParticleFn> = {
   'の': (_, left, right) => `${right} of ${left}`,
   '×': ' × ',
   'が': (_, left, right) => `${left}'s ${right}'`,
