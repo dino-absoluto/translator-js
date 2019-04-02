@@ -63,5 +63,17 @@ describe('SyosetuNovel', () => {
     const wn = new SyosetuNovel(new URL(href))
     let indexes = await wn.fetchIndex()
     expect(indexes.length).toBe(82)
+    expect(indexes[0]).toEqual({
+      url: new URL('https://ncode.syosetu.com/n0537cm/1/'),
+      group: '【前篇～邪之章～】',
+      name: '01：些細な願い',
+      updateId: '2015/02/17 21:30 改稿'
+    })
+    expect(indexes[40]).toEqual({
+      url: new URL('https://ncode.syosetu.com/n0537cm/41/'),
+      group: '【後篇～神之章～】',
+      name: '09：彼らが帰ってきた',
+      updateId: '2015/03/26 23:00'
+    })
   })
 })
