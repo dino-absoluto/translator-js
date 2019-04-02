@@ -19,7 +19,8 @@
  *
  */
 /* imports */
-import { SyosetuNovel } from '../syosetu'
+import { SyosetuNovel, SyosetuChapter } from '../syosetu'
+import { Content } from '../../core/provider'
 import { URL } from 'url'
 import { back as nockBack, NockBackContext } from 'nock'
 import * as path from 'path'
@@ -75,5 +76,31 @@ describe('SyosetuNovel', () => {
       name: '09：彼らが帰ってきた',
       updateId: '2015/03/26 23:00'
     })
+  })
+})
+
+describe('SyosetuChapter', () => {
+  const href = 'https://ncode.syosetu.com/n0537cm/63/'
+  test('fetch()', async () => {
+    const chapter = new SyosetuChapter({
+      name: '',
+      url: new URL(href)
+    })
+    expect(chapter.name).toBe('')
+    await chapter.fetch()
+    expect(chapter.name).toBe('記念SS：異伝「クリスマス禁止令」')
+    const content = chapter.content
+    expect(content).not.toBeNull()
+    let data = (content as Content).content({
+      requestFile: (name: string) => {
+        return name
+      },
+      parseNode: (node: Node) => {
+        return node.textContent || ''
+      }
+    })
+    expect(data.length).toBeGreaterThan(3000)
+    expect(data).toContain('　違うらしい。')
+    expect(data).toContain('　──よし、決めた。')
   })
 })
