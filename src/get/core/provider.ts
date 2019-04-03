@@ -43,7 +43,7 @@ export interface Chapter {
   name: string
   updateId?: string
   content?: Content
-  fetch: () => Promise<void>
+  fetch (): Promise<void>
 }
 
 export type Index = Chapter[]
@@ -59,11 +59,11 @@ export interface Novel {
     completed: boolean
     size: number
   }
-  fetch: () => Promise<void>
-  fetchIndex: () => Promise<Index>
+  fetch (): Promise<void>
+  fetchIndex (): Promise<Index>
 }
 
 export interface Provider {
-  acceptDomains: string[]
-  fromURL: (href: URL) => Novel | void
+  readonly acceptDomains: string[]
+  fromURL (href: URL): Novel | void
 }
