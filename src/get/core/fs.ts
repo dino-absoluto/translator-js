@@ -24,6 +24,21 @@ import * as path from 'path'
 import * as fs from 'fs'
 import makeDir = require('make-dir')
 /* code */
+
+const sanitizeName = (name?: string) => {
+  return flow(trim(name))
+    .then(path.normalize)
+    .then(name => {
+      if (path.basename(name) !== name) {
+        return
+      }
+      if (name.startsWith('..')) {
+        return
+      }
+      return name
+    }).get()
+}
+
 interface ContainerOptions {
   outputDir: string
   canRename?: boolean
@@ -32,7 +47,7 @@ interface ContainerOptions {
 
 export class Container implements ContainerOptions {
   readonly outputDir: string
-  canRename: boolean
+  readonly canRename: boolean
   private _name?: string
   constructor (options: ContainerOptions) {
     this.outputDir = path.resolve(options.outputDir)
@@ -43,7 +58,7 @@ export class Container implements ContainerOptions {
     } catch {
       // no name
       if (!this.canRename) {
-        throw new Error('No name yet cann\'t be renamed')
+        throw new Error('No name yet can\'t be renamed')
       }
     }
   }
@@ -55,42 +70,95 @@ export class Container implements ContainerOptions {
       return
     }
     oldName = path.resolve(this.outputDir, oldName)
-    return fs.renameSync(oldName, newName)
+    if (oldName === newName) {
+      return
+    }
+    fs.renameSync(oldName, newName)
   }
 
-  get name () {
-    return this._name
-  }
-
+  get name () { return this._name }
   set name (name) {
     if (!this.canRename && this.name != null) {
-      throw new Error('Can\'t be rename')
+      throw new Error('Can\'t be renamed')
     }
-    const newName = flow(trim(name))
-      .then(path.normalize)
-      .then(name => {
-        if (path.basename(name) !== name) {
-          return
-        }
-        if (name.startsWith('..')) {
-          return
-        }
-        return name
-      }).get()
-    if (newName) {
-      const oldName = this._name
-      this.rename(oldName, newName)
-      this._name = newName
-    } else {
+    const newName = sanitizeName(name)
+    if (!newName) {
       throw new Error('Setting invalid dirname')
     }
+    const oldName = this._name
+    this.rename(oldName, newName)
+    this._name = newName
   }
 
-  get rootDir () {
+  get path () {
     const { name } = this
     if (!name) {
       throw new Error('rootDir is undefined')
     }
     return path.resolve(this.outputDir, name)
+  }
+}
+
+interface FileOptions {
+  readonly container: Container
+  canRename?: boolean
+  name?: string
+}
+
+export class File implements FileOptions {
+  readonly container: Container
+  readonly canRename: boolean
+  private _name?: string
+  private _synced?: boolean = false
+  constructor (options: FileOptions) {
+    this.container = options.container
+    this.canRename = !!options.canRename
+    this.name = options.name
+  }
+
+  private rename (oldName: string, newName: string) {
+    if (oldName === newName) {
+      return
+    }
+    newName = path.resolve(this.dirname, newName)
+    oldName = path.resolve(this.dirname, oldName)
+    fs.renameSync(oldName, newName)
+  }
+
+  get name () { return this._name }
+  set name (name: string | undefined) {
+    const newName = sanitizeName(name)
+    if (!newName) {
+      throw new Error('Setting invalid dirname')
+    }
+    if (!this.canRename) {
+      throw new Error('Can\'t be rename')
+    }
+    const oldName = this._name
+    if (oldName) {
+      this.rename(oldName, newName)
+    }
+    this._name = newName
+  }
+
+  get dirname () {
+    return this.container.path
+  }
+
+  get path () {
+    const { name } = this
+    if (!name) {
+      throw new Error('rootDir is undefined')
+    }
+    return path.resolve(this.dirname, name)
+  }
+
+  get synced () { return this._synced }
+  set data (content: Buffer) {
+    // this._synced = true
+  }
+
+  remove () {
+    return
   }
 }
