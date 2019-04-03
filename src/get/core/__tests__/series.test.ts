@@ -19,16 +19,17 @@
  *
  */
 /* imports */
-import { Novel } from '../providers'
+import { Series } from '../series'
+import { getNovel } from '../../providers'
 /* code */
 
-export class Series {
-  readonly novel: Novel
-  constructor (novel: Novel) {
-    this.novel = novel
-  }
-
-  serialize () {
-    return JSON.stringify(this, null, 1)
-  }
-}
+describe('Series', () => {
+  test('serialize', async () => {
+    const href = new URL('http://ncode.syosetu.com/n0537cm/')
+    const novel = await getNovel(href)
+    const series = new Series(novel)
+    const text = series.serialize()
+    expect(text).toContain('"id": "n0537cm"')
+    expect(text).toContain('"over18": false')
+  })
+})
