@@ -45,18 +45,19 @@ describe('Series', () => {
       id: 'n0537cm',
       name: '邪神アベレージ'
     })
-    expect(series.novel.name).toBe('邪神アベレージ')
+    expect(series.data.name).toBe('邪神アベレージ')
   })
   test('serialize()', async () => {
     const series = new Series(await getNovel(href))
-    const text = series.serialize()
-    expect(text).toContain('"id": "n0537cm"')
-    expect(text).toContain('"over18": false')
+    expect(series.data).toEqual(expect.objectContaining({
+      id: 'n0537cm',
+      over18: false
+    }))
   })
   test('update()', async () => {
     const series = new Series(await getNovel(href))
     await series.update()
-    expect(series.novel).toEqual(expect.objectContaining({
+    expect(series.data).toEqual(expect.objectContaining({
       name: '邪神アベレージ',
       author: '北瀬野ゆなき',
       genre: 'ハイファンタジー',

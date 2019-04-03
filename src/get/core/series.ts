@@ -22,41 +22,30 @@
 import { Novel, NovelData } from '../providers/common'
 /* code */
 
-export interface SeriesData {
-  readonly novel?: NovelData
-}
-
-export class Series implements SeriesData {
-  readonly novel: Novel
+export class Series {
+  private readonly novel: Novel
+  readonly data: NovelData
   constructor (novel: Novel, data?: NovelData) {
-    if (data) {
-      if (data.id !== novel.id) {
-        throw new Error('Novel and data don\'t match')
-      }
-      Object.assign(novel, data)
-    }
+    this.data = Object.assign({}, novel, data)
     this.novel = novel
   }
 
-  serialize () {
-    return JSON.stringify(this.novel, null, 1)
-  }
-
   hasMeta (): boolean {
-    const { novel } = this
-    return !!(novel.name &&
-       novel.author &&
-      novel.description &&
-      novel.genre &&
-      novel.keywords &&
-      novel.status)
+    const { data } = this
+    return !!(data.name &&
+      data.author &&
+      data.description &&
+      data.genre &&
+      data.keywords &&
+      data.status)
   }
 
   async update () {
-    const { novel } = this
+    const { novel, data } = this
     if (!this.hasMeta()) {
       await novel.fetch()
     }
+    Object.assign(data, novel)
     return
   }
 }
