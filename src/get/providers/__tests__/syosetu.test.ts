@@ -20,7 +20,7 @@
  */
 /* imports */
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
-import { Content, Formatter } from '../../core/provider'
+import { Content, Formatter } from '../common'
 import { back as nockBack, NockBackContext } from 'nock'
 import { URL } from 'url'
 import * as path from 'path'

@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { Provider, Novel, Chapter, Content } from '../core/provider'
+import { Provider, Novel, Chapter, Content } from './common'
 import got from '../../utils/syosetu-got'
 import { JSDOM } from 'jsdom'
 /* code */
