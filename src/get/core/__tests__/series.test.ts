@@ -21,24 +21,46 @@
 /* imports */
 import { Series } from '../series'
 import { getNovel } from '../../providers'
+import { back as nockBack, NockBackContext } from 'nock'
+import * as path from 'path'
 /* code */
 
+nockBack.setMode('record')
+nockBack.fixtures = path.resolve(__dirname, '__tmp__/nock-fixtures/')
+
+let nock: { nockDone: () => void; context: NockBackContext }
+
+beforeAll(async () => {
+  nock = (await nockBack('syosetu.json'))
+})
+
+afterAll(async () => {
+  return nock.nockDone()
+})
+
 describe('Series', () => {
+  const href = new URL('http://ncode.syosetu.com/n0537cm/')
   test('constructor', async () => {
-    const href = new URL('http://ncode.syosetu.com/n0537cm/')
-    const novel = await getNovel(href)
-    const series = new Series(novel, {
+    const series = new Series(await getNovel(href), {
       id: 'n0537cm',
       name: '邪神アベレージ'
     })
     expect(series.novel.name).toBe('邪神アベレージ')
   })
   test('serialize()', async () => {
-    const href = new URL('http://ncode.syosetu.com/n0537cm/')
-    const novel = await getNovel(href)
-    const series = new Series(novel)
+    const series = new Series(await getNovel(href))
     const text = series.serialize()
     expect(text).toContain('"id": "n0537cm"')
     expect(text).toContain('"over18": false')
+  })
+  test('update()', async () => {
+    const series = new Series(await getNovel(href))
+    await series.update()
+    expect(series.novel).toEqual(expect.objectContaining({
+      name: '邪神アベレージ',
+      author: '北瀬野ゆなき',
+      genre: 'ハイファンタジー',
+      status: { completed: true, size: 82 }
+    }))
   })
 })
