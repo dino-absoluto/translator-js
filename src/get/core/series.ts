@@ -20,32 +20,27 @@
  */
 /* imports */
 import { Novel, NovelData } from '../providers/common'
+import { Container } from './fs'
 /* code */
 
-export class NovelOnFS implements NovelData {
-  readonly id: string
-  name?: string
-  author?: string
-  description?: string
-  keywords?: string[]
-  genre?: string
-  status?: {
-    completed: boolean
-    size: number
-  }
-  constructor (options: {
-    id: string
-  }) {
-    this.id = options.id
-  }
+interface SeriesOptions {
+  outputDir: string
+  basename?: string
+  data?: NovelData
 }
 
 export class Series {
   private readonly novel: Novel
   readonly data: NovelData
-  constructor (novel: Novel, data?: NovelData) {
-    this.data = Object.assign({}, novel, data)
+  readonly container: Container
+  constructor (novel: Novel, options: SeriesOptions) {
+    this.data = Object.assign({}, novel, options.data)
     this.novel = novel
+    this.container = new Container({
+      outputDir: options.outputDir,
+      canRename: !options.basename,
+      name: options.basename || this.data.name || undefined
+    })
   }
 
   hasMeta (): boolean {

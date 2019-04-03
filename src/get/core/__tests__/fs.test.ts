@@ -26,7 +26,7 @@ import del from 'del'
 import makeDir = require('make-dir')
 /* code */
 
-const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core')
+const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core-fs')
 
 beforeAll(async () => {
   await del(path.join(TMPDIR, '*'))
