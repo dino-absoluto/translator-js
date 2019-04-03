@@ -41,4 +41,22 @@ export class Series implements SeriesData {
   serialize () {
     return JSON.stringify(this.novel, null, 1)
   }
+
+  hasMeta (): boolean {
+    const { novel } = this
+    return !!(novel.name &&
+       novel.author &&
+      novel.description &&
+      novel.genre &&
+      novel.keywords &&
+      novel.status)
+  }
+
+  async update () {
+    const { novel } = this
+    if (!this.hasMeta()) {
+      await novel.fetch()
+    }
+    return
+  }
 }
