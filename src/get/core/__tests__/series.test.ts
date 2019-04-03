@@ -27,14 +27,14 @@ import * as path from 'path'
 /* code */
 
 const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core-series')
-const outputDir = path.join(TMPDIR, 'output')
+const OUTDIR = path.join(TMPDIR, 'output')
 nockBack.setMode('record')
 nockBack.fixtures = path.resolve(TMPDIR, 'nock-fixtures/')
 
 let nock: { nockDone: () => void; context: NockBackContext }
 
 beforeAll(async () => {
-  await del(path.join(outputDir, '*'))
+  await del(path.join(OUTDIR, '*'))
   nock = (await nockBack('syosetu.json'))
 })
 
@@ -46,6 +46,7 @@ describe('Series', () => {
   const href = new URL('http://ncode.syosetu.com/n0537cm/')
   const title = '邪神アベレージ'
   test('constructor', async () => {
+    const outputDir = path.join(OUTDIR, 'constructor')
     const series = new Series(await getNovel(href), {
       outputDir,
       data: {
@@ -53,13 +54,17 @@ describe('Series', () => {
         name: title
       }
     })
+    expect(() => series.container.path).not.toThrow()
+    await series.ready
     expect(series.data.name).toBe('邪神アベレージ')
     expect(series.container.path).toBe(path.join(outputDir, title))
   })
   test('serialize()', async () => {
+    const outputDir = path.join(OUTDIR, 'serialize()')
     const series = new Series(await getNovel(href), {
       outputDir
     })
+    await series.ready
     expect(series.data).toEqual(expect.objectContaining({
       id: 'n0537cm',
       over18: false
@@ -67,9 +72,11 @@ describe('Series', () => {
     expect(() => series.container.path).toThrow()
   })
   test('update()', async () => {
+    const outputDir = path.join(OUTDIR, 'update()')
     const series = new Series(await getNovel(href), {
       outputDir
     })
+    await series.ready
     expect(() => series.container.path).toThrow()
     await series.update()
     expect(series.data).toEqual(expect.objectContaining({

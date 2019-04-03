@@ -34,7 +34,7 @@ export class Series {
   readonly data: NovelData
   readonly container: Container
   readonly metaFile: File
-  // readonly ready: Promise<void>
+  readonly ready: Promise<void>
   constructor (novel: Novel, options: SeriesOptions) {
     this.data = Object.assign({}, novel, options.data)
     this.novel = novel
@@ -43,15 +43,28 @@ export class Series {
       canRename: !options.basename,
       name: options.basename || this.data.name || undefined
     })
-    this.container = container
-    this.metaFile = new File({
+    const metaFile = new File({
       container,
       canRename: false,
       name: 'index.json'
     })
-    // if (this.container.name) {
-    //   this.metaFile.getData()
-    // }
+    this.container = container
+    this.metaFile = metaFile
+    if (this.container.name) {
+      this.ready = (async () => {
+        try {
+          const buffer = await metaFile.getData()
+          const data = JSON.parse(buffer.toString())
+          console.log(data)
+        } catch (err) {
+          if (err.code !== 'ENOENT') {
+            throw err
+          }
+        }
+      })()
+    } else {
+      this.ready = Promise.resolve()
+    }
   }
 
   hasMeta (): boolean {
