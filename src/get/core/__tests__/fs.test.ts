@@ -29,8 +29,8 @@ describe('Container', () => {
       outputDir: path.resolve(__dirname, '__tmp__'),
       name: 'cont1'
     })
-    expect(() => cont.name = 'cont1-renamed')
-      .toThrow('Can\'t be renamed')
+    expect(cont.setName('cont1-renamed'))
+      .rejects.toThrow('Can\'t be renamed')
   })
   test('constructor.2', async () => {
     const cont = new Container({
@@ -38,6 +38,6 @@ describe('Container', () => {
       name: 'cont2',
       canRename: true
     })
-    expect(() => cont.name = 'cont2-renamed').not.toThrow()
+    expect(cont.setName('cont2-renamed')).resolves.toBeUndefined()
   })
 })

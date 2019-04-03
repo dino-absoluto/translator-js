@@ -80,7 +80,7 @@ export class Container implements ContainerOptions {
   }
 
   get name () { return this._name }
-  set name (name) {
+  async setName (name: string) {
     if (!this.canRename && this.name != null) {
       throw new Error('Can\'t be renamed')
     }
@@ -103,11 +103,11 @@ export class Container implements ContainerOptions {
     return path.resolve(this.outputDir, name)
   }
 
-  access () {
-    makeDir.sync(this.path)
+  async access () {
+    return makeDir(this.path)
   }
 
-  remove () {
+  async remove () {
     fs.rmdirSync(this.path)
   }
 }
@@ -122,7 +122,6 @@ export class File implements FileOptions {
   readonly container: Container
   readonly canRename: boolean
   private _name?: string
-  private _synced?: boolean = false
   constructor (options: FileOptions) {
     this.container = options.container
     this.canRename = !!options.canRename
@@ -147,7 +146,7 @@ export class File implements FileOptions {
   }
 
   get name () { return this._name }
-  set name (name: string | undefined) {
+  async setName (name: string | undefined) {
     const newName = sanitizeName(name)
     if (!newName) {
       throw new Error('Setting invalid dirname')
@@ -174,14 +173,15 @@ export class File implements FileOptions {
     return path.resolve(this.dirname, name)
   }
 
-  get synced () { return this._synced }
-
-  setData (content: string | Buffer) {
-    fs.writeFileSync(this.path, content)
-    this._synced = true
+  async getData () {
+    return fs.readFileSync(this.path)
   }
 
-  remove () {
+  async setData (content: string | Buffer) {
+    fs.writeFileSync(this.path, content)
+  }
+
+  async remove () {
     fs.unlinkSync(this.path)
   }
 }
