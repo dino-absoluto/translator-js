@@ -22,6 +22,24 @@
 import { Novel, NovelData } from '../providers/common'
 /* code */
 
+export class NovelOnFS implements NovelData {
+  readonly id: string
+  name?: string
+  author?: string
+  description?: string
+  keywords?: string[]
+  genre?: string
+  status?: {
+    completed: boolean
+    size: number
+  }
+  constructor (options: {
+    id: string
+  }) {
+    this.id = options.id
+  }
+}
+
 export class Series {
   private readonly novel: Novel
   readonly data: NovelData
