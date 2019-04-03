@@ -65,5 +65,5 @@ export interface Novel {
 
 export interface Provider {
   readonly acceptDomains: string[]
-  fromURL (href: URL): Novel | void
+  fromURL (href: URL): Novel | undefined
 }

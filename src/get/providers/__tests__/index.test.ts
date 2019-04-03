@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import getProvider from '..'
+import { getProvider } from '..'
 import Syosetu from '../syosetu'
 /* code */
 
@@ -33,7 +33,7 @@ describe('module providers', () => {
       .toBe(Syosetu)
     expect(await getProvider(new URL('https://OVER18.SYOSETU.COM/')))
       .toBe(Syosetu)
-    expect(await getProvider(new URL('https://example.com/')))
-      .toBeUndefined()
+    expect(getProvider(new URL('https://example.com/')))
+      .rejects.toThrow()
   })
 })
