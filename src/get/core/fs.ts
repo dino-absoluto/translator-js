@@ -49,6 +49,7 @@ export class Container implements ContainerOptions {
   readonly outputDir: string
   readonly canRename: boolean
   private _name?: string
+  private _accessed = false
   constructor (options: ContainerOptions) {
     this.outputDir = path.resolve(options.outputDir)
     this.canRename = !!options.canRename
@@ -75,7 +76,6 @@ export class Container implements ContainerOptions {
       if (err.code !== 'ENOENT') {
         throw err
       }
-      makeDir.sync(newName)
     }
   }
 
@@ -93,6 +93,7 @@ export class Container implements ContainerOptions {
       this.rename(oldName, newName)
     }
     this._name = newName
+    this._accessed = false
   }
 
   get path () {
@@ -104,7 +105,12 @@ export class Container implements ContainerOptions {
   }
 
   async access () {
-    return makeDir(this.path)
+    if (this._accessed) {
+      return
+    } else {
+      await makeDir(this.path)
+      this._accessed = true
+    }
   }
 
   async remove () {

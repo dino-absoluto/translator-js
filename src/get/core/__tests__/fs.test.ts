@@ -21,23 +21,42 @@
 /* imports */
 import { Container } from '../fs'
 import * as path from 'path'
+import * as fs from 'fs'
+import del from 'del'
+import makeDir = require('make-dir')
 /* code */
+
+const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core')
+
+beforeAll(async () => {
+  await del(path.join(TMPDIR, '*'))
+  return makeDir(TMPDIR)
+})
 
 describe('Container', () => {
   test('constructor.1', async () => {
+    const name = 'cont1'
     const cont = new Container({
-      outputDir: path.resolve(__dirname, '__tmp__'),
-      name: 'cont1'
+      outputDir: TMPDIR,
+      name
     })
-    expect(cont.setName('cont1-renamed'))
+    expect(() => fs.accessSync(path.join(TMPDIR, name))).toThrow('ENOENT')
+    await expect(cont.setName(name + '-renamed'))
       .rejects.toThrow('Can\'t be renamed')
+    expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).toThrow('ENOENT')
   })
   test('constructor.2', async () => {
+    const name = 'cont2'
     const cont = new Container({
-      outputDir: path.resolve(__dirname, '__tmp__'),
-      name: 'cont2',
+      outputDir: TMPDIR,
+      name,
       canRename: true
     })
-    expect(cont.setName('cont2-renamed')).resolves.toBeUndefined()
+    expect(() => fs.accessSync(path.join(TMPDIR, name))).toThrow('ENOENT')
+    await expect(cont.setName(name + '-renamed'))
+      .resolves.toBeUndefined()
+    expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).toThrow('ENOENT')
+    await cont.access()
+    expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).not.toThrow()
   })
 })
