@@ -19,16 +19,26 @@
  *
  */
 /* imports */
-import { Novel } from '../providers'
+import { Novel, NovelData } from '../providers'
 /* code */
 
-export class Series {
+export interface SeriesData {
+  readonly novel?: NovelData
+}
+
+export class Series implements SeriesData {
   readonly novel: Novel
-  constructor (novel: Novel) {
+  constructor (novel: Novel, data?: NovelData) {
+    if (data) {
+      if (data.id !== novel.id) {
+        throw new Error('Novel and data don\'t match')
+      }
+      Object.assign(novel, data)
+    }
     this.novel = novel
   }
 
   serialize () {
-    return JSON.stringify(this, null, 1)
+    return JSON.stringify(this.novel, null, 1)
   }
 }

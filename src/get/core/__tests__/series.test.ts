@@ -24,7 +24,16 @@ import { getNovel } from '../../providers'
 /* code */
 
 describe('Series', () => {
-  test('serialize', async () => {
+  test('constructor', async () => {
+    const href = new URL('http://ncode.syosetu.com/n0537cm/')
+    const novel = await getNovel(href)
+    const series = new Series(novel, {
+      id: 'n0537cm',
+      name: '邪神アベレージ'
+    })
+    expect(series.novel.name).toBe('邪神アベレージ')
+  })
+  test('serialize()', async () => {
     const href = new URL('http://ncode.syosetu.com/n0537cm/')
     const novel = await getNovel(href)
     const series = new Series(novel)
