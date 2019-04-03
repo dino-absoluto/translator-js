@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { Novel, NovelData } from '../providers'
+import { Novel, NovelData } from '../providers/common'
 /* code */
 
 export interface SeriesData {

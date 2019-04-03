@@ -21,11 +21,6 @@
 /* imports */
 import { Provider, Novel } from './common'
 /* code */
-export {
-  Provider,
-  Novel, NovelData,
-  Chapter, ChapterData,
-  Content, Formatter } from './common'
 
 let initialized: Promise<void>
 const domains = new Map()
