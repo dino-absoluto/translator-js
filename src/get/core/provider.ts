@@ -27,7 +27,7 @@ export interface Formatter {
 }
 
 export interface Content {
-  content: (fmt: Formatter) => string
+  content: (fmt: Formatter) => string[]
   resources: {
     name: string
     data: Buffer

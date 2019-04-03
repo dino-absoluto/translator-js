@@ -91,7 +91,7 @@ describe('SyosetuChapter', () => {
     expect(chapter.name).toBe('記念SS：異伝「クリスマス禁止令」')
     const content = chapter.content
     expect(content).not.toBeNull()
-    let data = (content as Content).content({
+    const lines = (content as Content).content({
       requestFile: (name: string) => {
         return name
       },
@@ -99,6 +99,8 @@ describe('SyosetuChapter', () => {
         return node.textContent || ''
       }
     })
+    expect(lines.length).toBe(3)
+    const data = lines.join('\n\n---\n\n')
     expect(data.length).toBeGreaterThan(3000)
     expect(data).toContain('　違うらしい。')
     expect(data).toContain('　──よし、決めた。')

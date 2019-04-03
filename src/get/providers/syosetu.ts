@@ -81,7 +81,8 @@ export class SyosetuChapter implements Chapter {
     }))
     this.content = {
       content: (fmt) => {
-        return nodes.map(node => fmt.parseNode(node).trim()).join('\n\n---\n\n')
+        return nodes.map(node =>
+          fmt.parseNode(node).trim())
       },
       resources: []
     }
