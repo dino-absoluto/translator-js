@@ -52,10 +52,10 @@ export class Container implements ContainerOptions {
   constructor (options: ContainerOptions) {
     this.outputDir = path.resolve(options.outputDir)
     this.canRename = !!options.canRename
-    try {
-      this.name = options.name
-      // has name
-    } catch {
+    const name = sanitizeName(options.name)
+    if (name) {
+      this._name = name
+    } else {
       // no name
       if (!this.canRename) {
         throw new Error('No name yet can\'t be renamed')
@@ -63,17 +63,20 @@ export class Container implements ContainerOptions {
     }
   }
 
-  private rename (oldName: string | undefined, newName: string) {
+  private rename (oldName: string, newName: string) {
     newName = path.resolve(this.outputDir, newName)
-    if (!oldName) {
-      makeDir.sync(newName)
-      return
-    }
     oldName = path.resolve(this.outputDir, oldName)
     if (oldName === newName) {
       return
     }
-    fs.renameSync(oldName, newName)
+    try {
+      fs.renameSync(oldName, newName)
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
+      makeDir.sync(newName)
+    }
   }
 
   get name () { return this._name }
@@ -86,7 +89,9 @@ export class Container implements ContainerOptions {
       throw new Error('Setting invalid dirname')
     }
     const oldName = this._name
-    this.rename(oldName, newName)
+    if (oldName) {
+      this.rename(oldName, newName)
+    }
     this._name = newName
   }
 
@@ -113,7 +118,15 @@ export class File implements FileOptions {
   constructor (options: FileOptions) {
     this.container = options.container
     this.canRename = !!options.canRename
-    this.name = options.name
+    const name = sanitizeName(options.name)
+    if (name) {
+      this._name = name
+    } else {
+      // no name
+      if (!this.canRename) {
+        throw new Error('No name yet can\'t be renamed')
+      }
+    }
   }
 
   private rename (oldName: string, newName: string) {
@@ -154,8 +167,9 @@ export class File implements FileOptions {
   }
 
   get synced () { return this._synced }
-  set data (content: Buffer) {
-    // this._synced = true
+
+  setData (content: Buffer) {
+    this._synced = true
   }
 
   remove () {
