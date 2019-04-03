@@ -113,7 +113,7 @@ export class Container implements ContainerOptions {
     }
   }
 
-  async remove () {
+  async clean () {
     fs.rmdirSync(this.path)
   }
 }
@@ -128,6 +128,7 @@ export class File implements FileOptions {
   readonly container: Container
   readonly canRename: boolean
   private _name?: string
+  private _removed = false
   constructor (options: FileOptions) {
     this.container = options.container
     this.canRename = !!options.canRename
@@ -153,6 +154,7 @@ export class File implements FileOptions {
 
   get name () { return this._name }
   async setName (name: string | undefined) {
+    await this.access()
     const newName = sanitizeName(name)
     if (!newName) {
       throw new Error('Setting invalid dirname')
@@ -179,15 +181,25 @@ export class File implements FileOptions {
     return path.resolve(this.dirname, name)
   }
 
+  async access () {
+    if (this._removed) {
+      throw new Error('File has been removed')
+    }
+  }
+
   async getData () {
+    await this.access()
     return fs.readFileSync(this.path)
   }
 
   async setData (content: string | Buffer) {
+    await this.access()
     fs.writeFileSync(this.path, content)
   }
 
   async remove () {
+    await this.access()
+    this._removed = true
     fs.unlinkSync(this.path)
   }
 }
