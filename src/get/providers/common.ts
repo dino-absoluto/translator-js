@@ -38,17 +38,18 @@ export interface Content {
   }[]
 }
 
-export interface Chapter {
+export interface ChapterData {
   group?: string
   name: string
   updateId?: string
   content?: Content
+}
+
+export interface Chapter extends ChapterData {
   fetch (): Promise<void>
 }
 
-export type Index = Chapter[]
-
-export interface Novel {
+export interface NovelData {
   readonly id: string
   name?: string
   author?: string
@@ -59,8 +60,11 @@ export interface Novel {
     completed: boolean
     size: number
   }
+}
+
+export interface Novel extends NovelData {
   fetch (): Promise<void>
-  fetchIndex (): Promise<Index>
+  fetchIndex (): Promise<Chapter[]>
 }
 
 export interface Provider {
