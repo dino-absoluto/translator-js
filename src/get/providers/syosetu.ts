@@ -21,26 +21,9 @@
 /* imports */
 import { Provider, Novel, Chapter, Content } from './common'
 import got from '../../utils/syosetu-got'
+import { trim, flow } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
 /* code */
-
-const ifStr = (text: string | void | null, fn?: (v: string) => any) => {
-  if (!text) {
-    return
-  }
-  text = text.trim()
-  if (!text.length) {
-    return
-  }
-  return fn ? fn(text) : text
-}
-
-const ifTrue = <T>(value: T | void | null, fn: (v: T) => any): any => {
-  if (!value) {
-    return
-  }
-  return fn(value)
-}
 
 export class SyosetuChapter implements Chapter {
   private url: URL
@@ -68,15 +51,17 @@ export class SyosetuChapter implements Chapter {
     if (!main) {
       return
     }
-    ifTrue(main.querySelector('.novel_subtitle'), node => {
-      this.name = ifStr(node.textContent)
-    })
+    flow(main.querySelector('.novel_subtitle'))
+      .then(node => trim(node.textContent))
+      .then(text => {
+        this.name = text
+      })
     const nodes: Element[] = []
     ;[
       '#novel_p',
       '#novel_honbun',
       '#novel_a'
-    ].forEach(id => ifTrue(main.querySelector(id), node => {
+    ].forEach(id => flow(main.querySelector(id)).then(node => {
       nodes.push(node)
     }))
     this.content = {
@@ -152,12 +137,14 @@ export class SyosetuNovel implements Novel {
       if (lines.length !== 4) {
         throw new Error('Failed to parse table')
       }
-      this.description = ifStr(lines[0].textContent)
-      this.author = ifStr(lines[1].textContent)
-      this.keywords = ifStr(lines[2].textContent,
-        s => s.split(/\s+/g))
-      this.genre = ifStr(lines[3].textContent,
-        s => s.split('〔', 1)[0])
+      this.description = trim(lines[0].textContent)
+      this.author = trim(lines[1].textContent)
+      this.keywords = flow(trim(lines[2].textContent)).then(
+        s => s.split(/\s+/g)
+      ).get()
+      this.genre = flow(trim(lines[3].textContent)).then(
+        s => s.split('〔', 1)[0]
+      ).get()
     }
     {
       // status
@@ -204,7 +191,7 @@ export class SyosetuNovel implements Novel {
     let group: string | undefined
     for (const node of indexBox.children) {
       if (node.classList.contains('chapter_title')) {
-        group = ifStr(node.textContent)
+        group = trim(node.textContent)
         continue
       } else if (node.classList.contains('novel_sublist2')) {
         if (node.children.length < 2) {
@@ -218,7 +205,7 @@ export class SyosetuNovel implements Novel {
           const a = col.firstElementChild
           if (a && a.tagName === 'A') {
             let link = a as HTMLLinkElement
-            name = ifStr(a.textContent)
+            name = trim(a.textContent)
             url = new URL(link.href)
           }
         }
@@ -226,9 +213,9 @@ export class SyosetuNovel implements Novel {
           const col = node.children[1]
           const span = col.firstElementChild
           if (span) {
-            timestamp = ifStr(span.getAttribute('title'))
+            timestamp = trim(span.getAttribute('title'))
           } else {
-            timestamp = ifStr(col.textContent)
+            timestamp = trim(col.textContent)
           }
         }
         if (name && url) {

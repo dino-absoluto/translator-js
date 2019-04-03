@@ -19,26 +19,29 @@
  *
  */
 /* imports */
-import cookie = require('cookie')
-import gotBase = require('got')
-import pLimit from 'p-limit'
-/* -imports */
-
-interface GotOptions {
-  headers?: {
-    cookie?: string
+/* code */
+export const trim = (text: string | undefined | null): string | undefined => {
+  if (!text) {
+    return
   }
+  text = text.trim()
+  if (!text.length) {
+    return
+  }
+  return text
 }
 
-const limit = pLimit(1)
-
-const got = (href: gotBase.GotUrl, config: GotOptions = {}) => {
-  let url = new URL(href.toString())
-  config.headers = Object.assign({}, config.headers)
-  if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
-    config.headers.cookie = cookie.serialize('over18', 'yes')
+export const flow = <T> (value: T) => {
+  return {
+    then <O> (fn: (input: NonNullable<T>) => O) {
+      if (value) {
+        return flow(fn(value as NonNullable<T>))
+      } else {
+        return flow<O>(undefined as unknown as O)
+      }
+    },
+    get () {
+      return value
+    }
   }
-  return limit(() => gotBase(url, config))
 }
-
-export default got
