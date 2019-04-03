@@ -194,6 +194,7 @@ export class File implements FileOptions {
 
   async setData (content: string | Buffer) {
     await this.access()
+    await this.container.access()
     fs.writeFileSync(this.path, content)
   }
 

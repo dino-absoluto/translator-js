@@ -20,7 +20,7 @@
  */
 /* imports */
 import { Novel, NovelData } from '../providers/common'
-import { Container } from './fs'
+import { Container, File } from './fs'
 /* code */
 
 interface SeriesOptions {
@@ -33,14 +33,25 @@ export class Series {
   private readonly novel: Novel
   readonly data: NovelData
   readonly container: Container
+  readonly metaFile: File
+  // readonly ready: Promise<void>
   constructor (novel: Novel, options: SeriesOptions) {
     this.data = Object.assign({}, novel, options.data)
     this.novel = novel
-    this.container = new Container({
+    const container = new Container({
       outputDir: options.outputDir,
       canRename: !options.basename,
       name: options.basename || this.data.name || undefined
     })
+    this.container = container
+    this.metaFile = new File({
+      container,
+      canRename: false,
+      name: 'index.json'
+    })
+    // if (this.container.name) {
+    //   this.metaFile.getData()
+    // }
   }
 
   hasMeta (): boolean {
@@ -59,6 +70,11 @@ export class Series {
       await novel.fetch()
     }
     Object.assign(data, novel)
+    const name = data.name
+    if (name && this.container.canRename) {
+      await this.container.setName(name)
+    }
+    await this.metaFile.setData(JSON.stringify(data, null, 1))
     return
   }
 }

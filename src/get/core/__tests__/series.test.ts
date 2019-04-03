@@ -22,17 +22,19 @@
 import { Series } from '../series'
 import { getNovel } from '../../providers'
 import { back as nockBack, NockBackContext } from 'nock'
+import del from 'del'
 import * as path from 'path'
 /* code */
 
 const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core-series')
-
+const outputDir = path.join(TMPDIR, 'output')
 nockBack.setMode('record')
 nockBack.fixtures = path.resolve(TMPDIR, 'nock-fixtures/')
 
 let nock: { nockDone: () => void; context: NockBackContext }
 
 beforeAll(async () => {
+  await del(path.join(outputDir, '*'))
   nock = (await nockBack('syosetu.json'))
 })
 
@@ -42,7 +44,6 @@ afterAll(async () => {
 
 describe('Series', () => {
   const href = new URL('http://ncode.syosetu.com/n0537cm/')
-  const outputDir = path.join(TMPDIR, 'output')
   const title = '邪神アベレージ'
   test('constructor', async () => {
     const series = new Series(await getNovel(href), {
