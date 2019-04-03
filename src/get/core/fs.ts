@@ -102,6 +102,14 @@ export class Container implements ContainerOptions {
     }
     return path.resolve(this.outputDir, name)
   }
+
+  access () {
+    makeDir.sync(this.path)
+  }
+
+  remove () {
+    fs.rmdirSync(this.path)
+  }
 }
 
 interface FileOptions {
@@ -168,11 +176,12 @@ export class File implements FileOptions {
 
   get synced () { return this._synced }
 
-  setData (content: Buffer) {
+  setData (content: string | Buffer) {
+    fs.writeFileSync(this.path, content)
     this._synced = true
   }
 
   remove () {
-    return
+    fs.unlinkSync(this.path)
   }
 }
