@@ -36,7 +36,8 @@ export class Series {
   readonly metaFile: File
   readonly ready: Promise<void>
   constructor (novel: Novel, options: SeriesOptions) {
-    this.data = Object.assign({}, novel, options.data)
+    const data = Object.assign({}, novel, options.data)
+    this.data = data
     this.novel = novel
     const container = new Container({
       outputDir: options.outputDir,
@@ -54,8 +55,8 @@ export class Series {
       this.ready = (async () => {
         try {
           const buffer = await metaFile.getData()
-          const data = JSON.parse(buffer.toString())
-          console.log(data)
+          const json = JSON.parse(buffer.toString())
+          Object.assign(data, json)
         } catch (err) {
           if (err.code !== 'ENOENT') {
             throw err

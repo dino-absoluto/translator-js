@@ -24,6 +24,8 @@ import { getNovel } from '../../providers'
 import { back as nockBack, NockBackContext } from 'nock'
 import del from 'del'
 import * as path from 'path'
+import * as fs from 'fs'
+import makeDir = require('make-dir')
 /* code */
 
 const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core-series')
@@ -45,8 +47,8 @@ afterAll(async () => {
 describe('Series', () => {
   const href = new URL('http://ncode.syosetu.com/n0537cm/')
   const title = '邪神アベレージ'
-  test('constructor', async () => {
-    const outputDir = path.join(OUTDIR, 'constructor')
+  test('constructor.1', async () => {
+    const outputDir = path.join(OUTDIR, 'constructor.1')
     const series = new Series(await getNovel(href), {
       outputDir,
       data: {
@@ -58,6 +60,30 @@ describe('Series', () => {
     await series.ready
     expect(series.data.name).toBe('邪神アベレージ')
     expect(series.container.path).toBe(path.join(outputDir, title))
+  })
+  test('constructor.2', async () => {
+    const outputDir = path.join(OUTDIR, 'constructor.2')
+    const expectedDir = path.join(outputDir, title)
+    await makeDir(expectedDir)
+    fs.copyFileSync(
+      path.join(__dirname, 'testdata/index.json'),
+      path.join(expectedDir, 'index.json'))
+    const series = new Series(await getNovel(href), {
+      outputDir,
+      data: {
+        id: 'n0537cm',
+        name: title
+      }
+    })
+    expect(() => series.container.path).not.toThrow()
+    await series.ready
+    expect(series.data).toEqual(expect.objectContaining({
+      name: '邪神アベレージ',
+      author: '北瀬野ゆなき',
+      genre: 'ハイファンタジー',
+      status: { completed: true, size: 82 }
+    }))
+    expect(series.container.path).toBe(expectedDir)
   })
   test('serialize()', async () => {
     const outputDir = path.join(OUTDIR, 'serialize()')
