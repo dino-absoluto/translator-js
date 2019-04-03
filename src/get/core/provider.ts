@@ -21,9 +21,13 @@
 /* imports */
 /* code */
 
-export interface Formatter {
-  requestFile: (name: string) => string
-  parseNode: (node: Node) => string
+export abstract class Formatter {
+  requestFile (_name: string): string {
+    throw new Error('Unimplemented requestFile()')
+  }
+  parseNode (node: Node): string {
+    return node.textContent || ''
+  }
 }
 
 export interface Content {

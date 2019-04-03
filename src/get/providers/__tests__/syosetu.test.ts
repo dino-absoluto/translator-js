@@ -20,9 +20,9 @@
  */
 /* imports */
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
-import { Content } from '../../core/provider'
-import { URL } from 'url'
+import { Content, Formatter } from '../../core/provider'
 import { back as nockBack, NockBackContext } from 'nock'
+import { URL } from 'url'
 import * as path from 'path'
 /* code */
 
@@ -91,14 +91,8 @@ describe('SyosetuChapter', () => {
     expect(chapter.name).toBe('記念SS：異伝「クリスマス禁止令」')
     const content = chapter.content
     expect(content).not.toBeNull()
-    const lines = (content as Content).content({
-      requestFile: (name: string) => {
-        return name
-      },
-      parseNode: (node: Node) => {
-        return node.textContent || ''
-      }
-    })
+    const lines = (content as Content).content(
+      new (class extends Formatter {})())
     expect(lines.length).toBe(3)
     const data = lines.join('\n\n---\n\n')
     expect(data.length).toBeGreaterThan(3000)
