@@ -19,31 +19,12 @@
  *
  */
 /* imports */
-import { Provider } from './common'
+import { Novel } from '../providers'
 /* code */
-export { Provider, Novel, Chapter, Content, Formatter } from './common'
 
-let initialized: Promise<void>
-const domains = new Map()
-
-export const register = (provider: Provider) => {
-  for (const domain of provider.acceptDomains) {
-    if (domains.has(domain)) {
-      throw new Error(`'${domain}' domain existed`)
-    }
-    domains.set(domain, provider)
+export class Series {
+  readonly novel: Novel
+  constructor (novel: Novel) {
+    this.novel = novel
   }
 }
-
-export const getProvider = async (url: URL): Promise<Provider> => {
-  if (!initialized) {
-    initialized = (async () => {
-      register((await import('./syosetu')).default)
-    })()
-    await initialized
-    return getProvider(url)
-  }
-  return domains.get(url.hostname)
-}
-
-export default getProvider
