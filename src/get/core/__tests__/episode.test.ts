@@ -22,6 +22,7 @@
 import { EpisodeList } from '../episode'
 import { Folder } from '../fs'
 import { Chapter, ChapterData, Content } from '../../providers/common'
+import { hashDir } from '../../../utils/test-utils'
 import * as path from 'path'
 import del from 'del'
 import makeDir = require('make-dir')
@@ -66,6 +67,17 @@ describe('EpisodeList', () => {
     const eplist = new EpisodeList(rootDir, {
     })
     await eplist.ready
+  })
+  test('simple tree', async () => {
+    const tmpPath = path.join(TMPDIR, 'constructor')
+    const rootDir = new Folder(null, tmpPath)
+    const eplist = new EpisodeList(rootDir, {
+    })
+    await rootDir.access()
+    await eplist.ready
+    expect(await hashDir(path.join(tmpPath, '**/*'), {
+      cwd: tmpPath
+    })).toMatchSnapshot()
     await eplist.updateWith([
       new FakeChapter({
         name: 'prologue',
@@ -85,6 +97,9 @@ describe('EpisodeList', () => {
         text: 'Still nothing!!!'
       })
     ])
+    expect(await hashDir(path.join(tmpPath, '**/*'), {
+      cwd: tmpPath
+    })).toMatchSnapshot()
     await eplist.updateWith([
       new FakeChapter({
         name: 'prologue',
@@ -106,5 +121,33 @@ describe('EpisodeList', () => {
         text: 'Still nothing!!! And Again!'
       })
     ])
+    expect(await hashDir(path.join(tmpPath, '**/*'), {
+      cwd: tmpPath
+    })).toMatchSnapshot()
+    await eplist.updateWith([
+      new FakeChapter({
+        name: 'prologue',
+        text: 'Hello!! Updated!'
+      }),
+      new FakeChapter({
+        updateId: '2',
+        name: 'First Chapter',
+        text: 'Nothing!! 2!!'
+      }),
+      new FakeChapter({
+        group: 'New group',
+        updateId: '2',
+        name: '2nd Chapter',
+        text: 'Still nothing!! Again!'
+      }),
+      new FakeChapter({
+        group: 'New group',
+        name: '3nd Chapter',
+        text: 'Still nothing!!! And Again!'
+      })
+    ])
+    expect(await hashDir(path.join(tmpPath, '**/*'), {
+      cwd: tmpPath
+    })).toMatchSnapshot()
   })
 })

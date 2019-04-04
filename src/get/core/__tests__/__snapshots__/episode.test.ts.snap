@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EpisodeList simple tree 1`] = `Object {}`;
+
+exports[`EpisodeList simple tree 2`] = `
+Object {
+  "!meta/!cache.json": "cI57C6vM9eBN8jM6HUNqKpmXIPzMfOPILdo6cIPqvF1djB+i4Wu8G3qnzqUBEGg/2NtDfwYT/byRswADNJmBwg==",
+  "!meta/0 prologue.txt": "3d1Ihjf8wO68sy6cPHdwk60Ew2IWD/yHYKg4t6BHEwKTT9CZb61P1Y2Qd17j0NuhxP5YgzYUn9ezvVCxCKIYlQ==",
+  "!meta/1 First Chapter.txt": "1gnXI8XrAp5oK0RSKLnKbyy1SsrjhsptZKgWQUv0lVW/IpKWItpz0sI6f367VojVjgwVMZvpbbjyv0uhrlOyOQ==",
+  "!meta/2 2nd Chapter.txt": "1zPfLroO9Djx5U5Ru7qynA+iJd/X03YV86AAh0jKXNSrB5frmBkIWiRRg0G8nrBz2FUbHu7gKPp0BQPGKTzqIA==",
+  "New group/3 3nd Chapter.txt": "S1hnudiG1WyOutI2+XbnIUGBZkGkoQ/lyQ+I3h7yqXv1V27dPgE5E8Zul8XUUZO8+LZ802Eyj1UZUrBtDz6qOw==",
+}
+`;
+
+exports[`EpisodeList simple tree 3`] = `
+Object {
+  "!meta/!cache.json": "sImOQ7CmLvhaizsKsXqC3oEpc4fGjo5fdtKHtb7RKexiyKBuHBQdZdtchGHZti6Jj+wgrdtnwm+3LNJ7fQ/j/w==",
+  "!meta/0 prologue.txt": "3d1Ihjf8wO68sy6cPHdwk60Ew2IWD/yHYKg4t6BHEwKTT9CZb61P1Y2Qd17j0NuhxP5YgzYUn9ezvVCxCKIYlQ==",
+  "!meta/1 First Chapter.txt": "WGerlyTOlfhqvFLg8WdfymXNNAOAZI1Uf4epXC9RiMYuPmS1sApcHHbgPCS8PyGRk6sjnQ8qT3azkGFKm9QPiQ==",
+  "!meta/2 2nd Chapter.txt": "86ZBM8TpNlz8rK6Oz1JzJNI+ScJ3ExU812QAe+Sig9kQJjH/lOVYxD/JvL5K66tEysoHviHgW/QHIIblo12vNA==",
+  "New group/3 3nd Chapter.txt": "S1hnudiG1WyOutI2+XbnIUGBZkGkoQ/lyQ+I3h7yqXv1V27dPgE5E8Zul8XUUZO8+LZ802Eyj1UZUrBtDz6qOw==",
+}
+`;
+
+exports[`EpisodeList simple tree 4`] = `
+Object {
+  "!meta/!cache.json": "RRW0uaY/aIilJYz9mRdN56Qdf797rDE1c6pNDvDRmO5P8GHaYxxcqsc9GInWALkcMTn87s+BsgGjb1k5SURfHw==",
+  "!meta/0 prologue.txt": "3d1Ihjf8wO68sy6cPHdwk60Ew2IWD/yHYKg4t6BHEwKTT9CZb61P1Y2Qd17j0NuhxP5YgzYUn9ezvVCxCKIYlQ==",
+  "!meta/1 First Chapter.txt": "WGerlyTOlfhqvFLg8WdfymXNNAOAZI1Uf4epXC9RiMYuPmS1sApcHHbgPCS8PyGRk6sjnQ8qT3azkGFKm9QPiQ==",
+  "New group/2 2nd Chapter.txt": "86ZBM8TpNlz8rK6Oz1JzJNI+ScJ3ExU812QAe+Sig9kQJjH/lOVYxD/JvL5K66tEysoHviHgW/QHIIblo12vNA==",
+  "New group/3 3nd Chapter.txt": "S1hnudiG1WyOutI2+XbnIUGBZkGkoQ/lyQ+I3h7yqXv1V27dPgE5E8Zul8XUUZO8+LZ802Eyj1UZUrBtDz6qOw==",
+}
+`;
