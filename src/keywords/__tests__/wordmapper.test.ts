@@ -20,9 +20,9 @@
  */
 /* imports */
 import { mapKeyword } from '../wordmapper'
-import { WordMap } from '../words';
+import { WordMap } from '../words'
 import * as path from 'path'
-import { promises as fs } from 'fs'
+import * as pfs from '../../utils/pfs'
 
 interface TestOptions {
   lax?: boolean,
@@ -37,6 +37,7 @@ const testKeywords = async (options: TestOptions) => {
     mnlt: {},
     mid: {}
   }
+  const coverage = []
   for (const [subdomain, map] of Object.entries(keywords)) {
     let mapped = 0
     let sum = 0
@@ -51,10 +52,13 @@ const testKeywords = async (options: TestOptions) => {
     }
     expect(mapped).toBeGreaterThan(0)
     expect(sum).toBeGreaterThan(0)
-    console.log(`Coverage [${subdomain}]: ${
-      Math.round(mapped / sum * 10000)/100}% of ${sum}`)
+    coverage.push([ subdomain,
+      `${Math.round(mapped / sum * 10000) / 100}% of ${sum}`
+    ])
   }
-  await fs.writeFile(path.join(__dirname, options.outputFile),
+  console.log(coverage.map(
+    ([subdomain, msg]) => `[${subdomain}]: ${msg}`).join('\n'))
+  await pfs.writeFile(path.join(__dirname, options.outputFile),
     JSON.stringify(outMap, null, 1)
   )
 }

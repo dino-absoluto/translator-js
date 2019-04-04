@@ -28,7 +28,7 @@ import * as fs from 'fs'
 import makeDir = require('make-dir')
 /* code */
 
-const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core-series')
+const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-series')
 const OUTDIR = path.join(TMPDIR, 'output')
 nockBack.setMode('record')
 nockBack.fixtures = path.resolve(TMPDIR, 'nock-fixtures/')

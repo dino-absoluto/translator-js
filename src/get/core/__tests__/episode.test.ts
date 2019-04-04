@@ -23,9 +23,15 @@ import { EpisodeList } from '../episode'
 import { Folder } from '../fs'
 import { Chapter, ChapterData, Content } from '../../providers/common'
 import * as path from 'path'
+import del from 'del'
+import makeDir = require('make-dir')
 /* code */
 
 const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-episode')
+beforeAll(async () => {
+  await del(path.join(TMPDIR, '*'))
+  return makeDir(TMPDIR)
+})
 
 interface FakeData extends ChapterData {
   group?: string | undefined
@@ -58,7 +64,6 @@ describe('EpisodeList', () => {
     const tmpPath = path.join(TMPDIR, 'constructor')
     const rootDir = new Folder(null, tmpPath)
     const eplist = new EpisodeList(rootDir, {
-      compressedCache: true
     })
     await eplist.ready
     await eplist.updateWith([
