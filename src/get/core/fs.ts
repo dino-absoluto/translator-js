@@ -48,9 +48,9 @@ interface FSItem {
 }
 
 export class Folder implements FSItem {
+  readonly children: Set<Folder | File> = new Set()
   readonly parent?: Folder
   /* private data */
-  private readonly children: Set<Folder | File> = new Set()
   private _dirname?: string
   private _accessed = false
 
@@ -88,6 +88,12 @@ export class Folder implements FSItem {
     if (!children.size) {
       throw new Error('Folder isn\'t empty')
     }
+    const fpath = this.path
+    delete this._dirname
+    if (this.parent) {
+      this.parent.children.delete(this)
+    }
+    await pfs.rmdir(fpath)
   }
 
   get renameable () { return !!this.parent }
@@ -118,11 +124,15 @@ export class Folder implements FSItem {
   }
 
   requestFolder (name: string): Folder {
-    return new Folder(this, name)
+    const entry = new Folder(this, name)
+    this.children.add(entry)
+    return entry
   }
 
   requestFile (name: string): File {
-    return new File(this, name)
+    const entry = new File(this, name)
+    this.children.add(entry)
+    return entry
   }
 }
 
@@ -174,6 +184,8 @@ export class File implements FSItem {
   async remove () {
     await this.access()
     const fpath = this.path
+    delete this._filename
+    this.parent.children.delete(this)
     try {
       await pfs.unlink(fpath)
     } catch (err) {

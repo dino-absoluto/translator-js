@@ -44,3 +44,5 @@ export const rename:
   typeof fs.promises.rename = wrap(fs.rename)
 export const unlink:
   typeof fs.promises.unlink = wrap(fs.unlink)
+export const rmdir:
+  typeof fs.promises.rmdir = wrap(fs.rmdir)
