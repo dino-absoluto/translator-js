@@ -20,8 +20,8 @@
  */
 /* imports */
 import { trim, flow } from '../../utils/flow'
+import * as pfs from '../../utils/pfs'
 import * as path from 'path'
-import * as fs from 'fs'
 import makeDir = require('make-dir')
 /* code */
 
@@ -105,7 +105,7 @@ export class Folder implements FSItem {
     if (oldName) {
       try {
         const parentDir = this.parent.path
-        fs.renameSync(
+        await pfs.rename(
           path.join(parentDir, oldName),
           path.join(parentDir, newName))
       } catch (err) {
@@ -160,7 +160,7 @@ export class File implements FSItem {
     if (oldName) {
       try {
         const parentDir = this.parent.path
-        fs.renameSync(
+        await pfs.rename(
           path.join(parentDir, oldName),
           path.join(parentDir, newName))
       } catch (err) {
@@ -175,7 +175,7 @@ export class File implements FSItem {
     await this.access()
     const fpath = this.path
     try {
-      fs.unlinkSync(fpath)
+      await pfs.unlink(fpath)
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw err
@@ -185,12 +185,12 @@ export class File implements FSItem {
 
   async getData () {
     await this.access()
-    return fs.readFileSync(this.path)
+    return pfs.readFile(this.path)
   }
 
   async setData (content: string | Buffer) {
     await this.parent.access()
     await this.access()
-    fs.writeFileSync(this.path, content)
+    await pfs.writeFile(this.path, content)
   }
 }
