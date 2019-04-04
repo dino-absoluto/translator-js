@@ -20,7 +20,7 @@
  */
 /* imports */
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
-import { Content, Formatter } from '../common'
+import { Content, Formatter, FormatterCallback } from '../common'
 import { back as nockBack, NockBackContext } from 'nock'
 import * as path from 'path'
 /* code */
@@ -90,8 +90,16 @@ describe('SyosetuChapter', () => {
     expect(chapter.name).toBe('記念SS：異伝「クリスマス禁止令」')
     const content = chapter.content
     expect(content).not.toBeNull()
-    const lines = (content as Content).content(
-      new (class extends Formatter {})())
+    let lines: string[] = []
+    ;(content as Content)(
+      new (class extends Formatter {
+        requestFile (_name: string, get: FormatterCallback) {
+          let data = get(_name)
+          expect(Array.isArray(data)).toBeTruthy()
+          lines = data as string[]
+        }
+      })()
+    )
     expect(lines.length).toBe(3)
     const data = lines.join('\n\n---\n\n')
     expect(data.length).toBeGreaterThan(3000)

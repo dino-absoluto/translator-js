@@ -21,22 +21,18 @@
 /* imports */
 /* code */
 
+export type FormatterCallback = (name: string) => Buffer | string[]
 export abstract class Formatter {
-  requestFile (_name: string): string {
-    throw new Error('Unimplemented requestFile()')
-  }
+  abstract requestFile (
+    name: string,
+    fn: FormatterCallback): void
+
   parseNode (node: Node): string {
     return node.textContent || ''
   }
 }
 
-export interface Content {
-  content: (fmt: Formatter) => string[]
-  resources: {
-    name: string
-    data: Buffer
-  }[]
-}
+export type Content = (fmt: Formatter) => void
 
 export interface ChapterData {
   group?: string

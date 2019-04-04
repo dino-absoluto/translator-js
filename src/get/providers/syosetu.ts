@@ -64,12 +64,12 @@ export class SyosetuChapter implements Chapter {
     ].forEach(id => flow(main.querySelector(id)).then(node => {
       nodes.push(node)
     }))
-    this.content = {
-      content: (fmt) => {
-        return nodes.map(node =>
-          fmt.parseNode(node).trim())
-      },
-      resources: []
+    this.content = (fmt) => {
+      let sections = nodes.map(node =>
+        fmt.parseNode(node).trim())
+      fmt.requestFile(this.name + '.txt', (name) => {
+        return sections
+      })
     }
   }
 }
