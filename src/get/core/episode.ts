@@ -19,14 +19,31 @@
  *
  */
 /* imports */
-import { Chapter } from '../providers/common'
+import { Chapter, Formatter as AbstractFormatter } from '../providers/common'
 import { Folder, File } from './fs'
 /* code */
+
+class Formatter extends AbstractFormatter {
+  private files = new Map()
+  private prefix: string
+  constructor (prefix: string) {
+    super()
+    this.prefix = prefix
+  }
+
+  requestFile (name: string) {
+    const { files, prefix } = this
+    if (files.has(name)) {
+      return ''
+    }
+    return `${prefix}${name}`
+  }
+}
 
 interface EpisodeData {
   groupId?: number
   updateId?: string
-  files: string[]
+  files?: string[]
 }
 
 interface EpisodeListData {
@@ -39,9 +56,14 @@ export class EpisodeList {
   private data: EpisodeListData
   private folders: Folder[]
   private metaFile: File
-  constructor (rootDir: Folder, data: EpisodeListData) {
+  constructor (rootDir: Folder, options: {
+    data?: EpisodeListData
+  }) {
     this.rootDir = rootDir
-    this.data = data
+    this.data = options.data || {
+      groups: [],
+      episodes: []
+    }
     const metaDir = rootDir.requestFolder('!meta')
     const metaFile = metaDir.requestFile('!cache.json')
     const folders = [
@@ -66,17 +88,66 @@ export class EpisodeList {
   private async updateGroups (groups: string[]) {
     const { folders, rootDir, data } = this
     for (const [id, group] of groups.entries()) {
-      let fd = folders[id]
-      if (!fd) {
-        fd = rootDir.requestFolder(group)
-        folders[id] = fd
+      let folder = folders[id]
+      if (!folder) {
+        folder = rootDir.requestFolder(group)
+        folders[id] = folder
       } else {
-        if (group !== fd.name) {
-          await fd.rename(group)
+        if (group !== folder.name) {
+          await folder.rename(group)
         }
       }
     }
     data.groups = groups
+  }
+
+  private testEpisode (ep: EpisodeData, ch: Chapter & EpisodeData): boolean {
+    if (!ep.files || !ep.files.length) {
+      return false
+    }
+    if (ep.updateId && ep.updateId !== ch.updateId) {
+      return false
+    }
+    if (ep.groupId && ep.groupId !== ch.groupId) {
+      return false
+    }
+    return true
+  }
+
+  private async updateEpisode (index: number, ep: EpisodeData, ch: Chapter & EpisodeData) {
+    if (this.testEpisode(ep, ch)) {
+      return
+    }
+    const folder = this.folders[ep.groupId || 0]
+    await ch.fetch()
+    if (!folder) {
+      throw new Error(`Folder must not be ${folder}`)
+    }
+    const format = new Formatter(`${index} `)
+    // write files
+    if (ep.files) {
+      // remove old files
+      await Promise.all(ep.files.map(file => folder.requestFile(file).remove()))
+    }
+  }
+
+  private preprocess (chapters: Chapter[]) {
+    let groupId = 0
+    let groupName: string | undefined
+    const groups = []
+    for (const chapter of chapters) {
+      const ch: Chapter & EpisodeData = chapter
+      if (ch.group !== groupName) {
+        groups.push(ch.group)
+        groupId = groups.length
+        groupName = ch.group
+      }
+      ch.groupId = groupId
+    }
+    return {
+      groups,
+      chapters
+    }
   }
 
   private async load () {
