@@ -55,7 +55,7 @@ export class Series {
     if (name) {
       this.ready = (async () => {
         try {
-          const buffer = await metaFile.getData()
+          const buffer = await metaFile.read()
           const json = JSON.parse(buffer.toString())
           Object.assign(data, json)
         } catch (err) {
@@ -89,7 +89,7 @@ export class Series {
     if (name && this.container.renameable) {
       await this.container.rename(name)
     }
-    await this.metaFile.setData(JSON.stringify(data, null, 1))
+    await this.metaFile.write(JSON.stringify(data, null, 1))
     return
   }
 }

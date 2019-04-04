@@ -174,7 +174,9 @@ export class EpisodeList {
         buf = Buffer.from(data.join('\n\n---\n\n'))
       }
       files.push(name)
-      await folder.requestFile(name).setData(buf)
+      const file = folder.requestFile(name)
+      await file.write(buf)
+      await file.close()
     }
     if (files.length) {
       ep.files = files
@@ -203,7 +205,7 @@ export class EpisodeList {
   private async load () {
     const { metaFile } = this
     try {
-      const cache = await this.decode(await metaFile.getData())
+      const cache = await this.decode(await metaFile.read())
       const { data } = this
       await this.updateGroups(cache.groups)
       data.episodes = cache.episodes || []
@@ -216,6 +218,6 @@ export class EpisodeList {
 
   async save () {
     const { metaFile } = this
-    await metaFile.setData(await this.encode(this.data))
+    await metaFile.write(await this.encode(this.data))
   }
 }

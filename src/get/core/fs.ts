@@ -44,6 +44,7 @@ interface FSItem {
   path: string
   access (): Promise<void>
   remove (): Promise<void>
+  close (): Promise<void>
   rename (name: string): Promise<void>
 }
 
@@ -84,16 +85,20 @@ export class Folder implements FSItem {
     }
   }
 
+  async close () {
+    delete this._dirname
+    if (this.parent) {
+      this.parent.children.delete(this)
+    }
+  }
+
   async remove () {
     const { children } = this
     if (!children.size) {
       throw new Error('Folder isn\'t empty')
     }
     const fpath = this.path
-    delete this._dirname
-    if (this.parent) {
-      this.parent.children.delete(this)
-    }
+    await this.close()
     await pfs.rmdir(fpath)
   }
 
@@ -188,11 +193,15 @@ export class File implements FSItem {
     }
   }
 
+  async close () {
+    delete this._filename
+    this.parent.children.delete(this)
+  }
+
   async remove () {
     await this.access()
     const fpath = this.path
-    delete this._filename
-    this.parent.children.delete(this)
+    await this.close()
     try {
       await pfs.unlink(fpath)
     } catch (err) {
@@ -202,12 +211,12 @@ export class File implements FSItem {
     }
   }
 
-  async getData () {
+  async read () {
     await this.access()
     return pfs.readFile(this.path)
   }
 
-  async setData (content: string | Buffer) {
+  async write (content: string | Buffer) {
     await this.parent.access()
     await this.access()
     await pfs.writeFile(this.path, content)
