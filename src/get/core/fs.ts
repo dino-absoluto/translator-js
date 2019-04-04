@@ -63,6 +63,7 @@ export class Folder implements FSItem {
     }
   }
 
+  get name () { return this._dirname }
   get path (): string {
     const { parent, _dirname } = this
     if (!_dirname) {
@@ -109,6 +110,9 @@ export class Folder implements FSItem {
     this._dirname = newName
     this._accessed = false
     if (oldName) {
+      if (newName === oldName) {
+        return
+      }
       try {
         const parentDir = this.parent.path
         await pfs.rename(
@@ -168,6 +172,9 @@ export class File implements FSItem {
     const oldName = this._filename
     this._filename = newName
     if (oldName) {
+      if (newName === oldName) {
+        return
+      }
       try {
         const parentDir = this.parent.path
         await pfs.rename(

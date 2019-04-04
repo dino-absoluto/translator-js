@@ -19,8 +19,82 @@
  *
  */
 /* imports */
-// import { Chapter, ChapterData } from '../providers/common'
+import { Chapter } from '../providers/common'
+import { Folder, File } from './fs'
 /* code */
 
-export class Episode {
+interface EpisodeData {
+  groupId?: number
+  updateId?: string
+  files: string[]
+}
+
+interface EpisodeListData {
+  groups: string[]
+  episodes: EpisodeData[]
+}
+
+export class EpisodeList {
+  readonly rootDir: Folder
+  private data: EpisodeListData
+  private folders: Folder[]
+  private metaFile: File
+  constructor (rootDir: Folder, data: EpisodeListData) {
+    this.rootDir = rootDir
+    this.data = data
+    const metaDir = rootDir.requestFolder('!meta')
+    const metaFile = metaDir.requestFile('!cache.json')
+    const folders = [
+      metaDir
+    ]
+    this.folders = folders
+    this.metaFile = metaFile
+    this.load()
+  }
+
+  updateWith (_newData: Chapter[]) {
+    return
+  }
+
+  private encode (data: object) {
+    return JSON.stringify(data, null, 1)
+  }
+  private decode (data: Buffer) {
+    return JSON.parse(data.toString())
+  }
+
+  private async updateGroups (groups: string[]) {
+    const { folders, rootDir, data } = this
+    for (const [id, group] of groups.entries()) {
+      let fd = folders[id]
+      if (!fd) {
+        fd = rootDir.requestFolder(group)
+        folders[id] = fd
+      } else {
+        if (group !== fd.name) {
+          await fd.rename(group)
+        }
+      }
+    }
+    data.groups = groups
+  }
+
+  private async load () {
+    const { metaFile } = this
+    try {
+      const cache = await this.decode(await metaFile.getData())
+      const { data } = this
+      this.updateGroups(cache.groups)
+      data.episodes = cache.episodes
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
+    }
+  }
+
+  async save () {
+    const { metaFile } = this
+    metaFile.setData(await this.encode(this.data))
+  }
 }
