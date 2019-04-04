@@ -39,69 +39,39 @@ const sanitizeName = (name?: string) => {
     }).get()
 }
 
-interface ContainerOptions {
-  outputDir: string
-  canRename?: boolean
-  name?: string
+interface FSItem {
+  parent?: Folder
+  path: string
+  access (): Promise<void>
+  remove (): Promise<void>
+  rename (name: string): Promise<void>
 }
 
-export class Container implements ContainerOptions {
-  readonly outputDir: string
-  readonly canRename: boolean
-  private _name?: string
+export class Folder implements FSItem {
+  readonly parent?: Folder
+  /* private data */
+  private readonly children: Set<Folder | File> = new Set()
+  private _dirname?: string
   private _accessed = false
-  constructor (options: ContainerOptions) {
-    this.outputDir = path.resolve(options.outputDir)
-    this.canRename = !!options.canRename
-    const name = sanitizeName(options.name)
-    if (name) {
-      this._name = name
+
+  constructor (parent: Folder | undefined | null, name: string) {
+    if (parent) {
+      this.parent = parent
+      this._dirname = sanitizeName(name)
     } else {
-      // no name
-      if (!this.canRename) {
-        throw new Error('No name yet can\'t be renamed')
-      }
+      this._dirname = path.resolve(name)
     }
   }
 
-  private rename (oldName: string, newName: string) {
-    newName = path.resolve(this.outputDir, newName)
-    oldName = path.resolve(this.outputDir, oldName)
-    if (oldName === newName) {
-      return
+  get path (): string {
+    const { parent, _dirname } = this
+    if (!_dirname) {
+      throw new Error('Folder\'s path is undefined')
     }
-    try {
-      fs.renameSync(oldName, newName)
-    } catch (err) {
-      if (err.code !== 'ENOENT') {
-        throw err
-      }
+    if (parent) {
+      return path.join(parent.path, _dirname)
     }
-  }
-
-  get name () { return this._name }
-  async setName (name: string) {
-    if (!this.canRename && this.name != null) {
-      throw new Error('Can\'t be renamed')
-    }
-    const newName = sanitizeName(name)
-    if (!newName) {
-      throw new Error('Setting invalid dirname')
-    }
-    const oldName = this._name
-    if (oldName) {
-      this.rename(oldName, newName)
-    }
-    this._name = newName
-    this._accessed = false
-  }
-
-  get path () {
-    const { name } = this
-    if (!name) {
-      throw new Error('rootDir is undefined')
-    }
-    return path.resolve(this.outputDir, name)
+    return _dirname
   }
 
   async access () {
@@ -113,78 +83,98 @@ export class Container implements ContainerOptions {
     }
   }
 
-  async clean () {
-    fs.rmdirSync(this.path)
+  async remove () {
+    const { children } = this
+    if (!children.size) {
+      throw new Error('Folder isn\'t empty')
+    }
+  }
+
+  get renameable () { return !!this.parent }
+  async rename (name: string) {
+    if (!this.parent) {
+      throw new Error('Folder can\'t be renamed')
+    }
+    const newName = sanitizeName(name)
+    if (!newName) {
+      throw new Error('Folder\'s name is invalid')
+    }
+    const oldName = this._dirname
+    this._dirname = newName
+    this._accessed = false
+    if (oldName) {
+      try {
+        const parentDir = this.parent.path
+        fs.renameSync(
+          path.join(parentDir, oldName),
+          path.join(parentDir, newName))
+      } catch (err) {
+        if (err.code !== 'ENOENT') {
+          throw err
+        }
+      }
+    }
+    return
+  }
+
+  requestFolder (name: string): Folder {
+    return new Folder(this, name)
+  }
+
+  requestFile (name: string): File {
+    return new File(this, name)
   }
 }
 
-interface FileOptions {
-  readonly container: Container
-  canRename?: boolean
-  name?: string
-}
+export class File implements FSItem {
+  readonly parent: Folder
+  private _filename?: string
 
-export class File implements FileOptions {
-  readonly container: Container
-  readonly canRename: boolean
-  private _name?: string
-  private _removed = false
-  constructor (options: FileOptions) {
-    this.container = options.container
-    this.canRename = !!options.canRename
-    const name = sanitizeName(options.name)
-    if (name) {
-      this._name = name
-    } else {
-      // no name
-      if (!this.canRename) {
-        throw new Error('No name yet can\'t be renamed')
+  constructor (parent: Folder, name: string) {
+    this.parent = parent
+    this._filename = sanitizeName(name)
+  }
+
+  get path (): string {
+    const { parent, _filename } = this
+    if (!_filename) {
+      throw new Error('Filename is not set')
+    }
+    return path.join(parent.path, _filename)
+  }
+
+  async access () {
+    if (!this._filename) {
+      throw new Error('Filename is not set')
+    }
+    return
+  }
+
+  async rename (name: string) {
+    const newName = sanitizeName(name)
+    if (!newName) {
+      throw new Error('File\'s name is invalid')
+    }
+    const oldName = this._filename
+    this._filename = newName
+    if (oldName) {
+      try {
+        const parentDir = this.parent.path
+        fs.renameSync(
+          path.join(parentDir, oldName),
+          path.join(parentDir, newName))
+      } catch (err) {
+        if (err.code !== 'ENOENT') {
+          throw err
+        }
       }
     }
   }
 
-  private rename (oldName: string, newName: string) {
-    if (oldName === newName) {
-      return
-    }
-    newName = path.resolve(this.dirname, newName)
-    oldName = path.resolve(this.dirname, oldName)
-    fs.renameSync(oldName, newName)
-  }
-
-  get name () { return this._name }
-  async setName (name: string | undefined) {
+  async remove () {
     await this.access()
-    const newName = sanitizeName(name)
-    if (!newName) {
-      throw new Error('Setting invalid dirname')
-    }
-    if (!this.canRename) {
-      throw new Error('Can\'t be rename')
-    }
-    const oldName = this._name
-    if (oldName) {
-      this.rename(oldName, newName)
-    }
-    this._name = newName
-  }
-
-  get dirname () {
-    return this.container.path
-  }
-
-  get path () {
-    const { name } = this
-    if (!name) {
-      throw new Error('rootDir is undefined')
-    }
-    return path.resolve(this.dirname, name)
-  }
-
-  async access () {
-    if (this._removed) {
-      throw new Error('File has been removed')
-    }
+    delete this._filename
+    fs.unlinkSync(this.path)
   }
 
   async getData () {
@@ -193,14 +183,8 @@ export class File implements FileOptions {
   }
 
   async setData (content: string | Buffer) {
+    await this.parent.access()
     await this.access()
-    await this.container.access()
     fs.writeFileSync(this.path, content)
-  }
-
-  async remove () {
-    await this.access()
-    this._removed = true
-    fs.unlinkSync(this.path)
   }
 }

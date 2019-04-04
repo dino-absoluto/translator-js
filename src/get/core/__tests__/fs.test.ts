@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { Container } from '../fs'
+import { Folder } from '../fs'
 import * as path from 'path'
 import * as fs from 'fs'
 import del from 'del'
@@ -33,27 +33,26 @@ beforeAll(async () => {
   return makeDir(TMPDIR)
 })
 
-describe('Container', () => {
+describe('Folder', () => {
+  const tmpDir = new Folder(null, TMPDIR)
+  test('constructor.0', async () => {
+    expect(tmpDir.path).toBe(TMPDIR)
+  })
   test('constructor.1', async () => {
     const name = 'cont1'
-    const cont = new Container({
-      outputDir: TMPDIR,
-      name
-    })
+    const cont = new Folder(null, path.join(TMPDIR, name))
+    expect(cont.renameable).toBeFalsy()
     expect(() => fs.accessSync(path.join(TMPDIR, name))).toThrow('ENOENT')
-    await expect(cont.setName(name + '-renamed'))
-      .rejects.toThrow('Can\'t be renamed')
+    await expect(cont.rename(name + '-renamed'))
+      .rejects.toThrow('can\'t be renamed')
     expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).toThrow('ENOENT')
   })
   test('constructor.2', async () => {
     const name = 'cont2'
-    const cont = new Container({
-      outputDir: TMPDIR,
-      name,
-      canRename: true
-    })
+    const cont = tmpDir.requestFolder(name)
+    expect(cont.renameable).toBeTruthy()
     expect(() => fs.accessSync(path.join(TMPDIR, name))).toThrow('ENOENT')
-    await expect(cont.setName(name + '-renamed'))
+    await expect(cont.rename(name + '-renamed'))
       .resolves.toBeUndefined()
     expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).toThrow('ENOENT')
     await cont.access()

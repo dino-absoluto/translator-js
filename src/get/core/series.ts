@@ -20,7 +20,8 @@
  */
 /* imports */
 import { Novel, NovelData } from '../providers/common'
-import { Container, File } from './fs'
+import { Folder, File } from './fs'
+import * as path from 'path'
 /* code */
 
 interface SeriesOptions {
@@ -32,26 +33,26 @@ interface SeriesOptions {
 export class Series {
   private readonly novel: Novel
   readonly data: NovelData
-  readonly container: Container
+  readonly container: Folder
   readonly metaFile: File
   readonly ready: Promise<void>
   constructor (novel: Novel, options: SeriesOptions) {
     const data = Object.assign({}, novel, options.data)
     this.data = data
     this.novel = novel
-    const container = new Container({
-      outputDir: options.outputDir,
-      canRename: !options.basename,
-      name: options.basename || this.data.name || undefined
-    })
-    const metaFile = new File({
-      container,
-      canRename: false,
-      name: 'index.json'
-    })
+    let container: Folder
+    const name = options.basename || this.data.name
+    if (options.basename) {
+      container = new Folder(null,
+        path.join(options.outputDir,options.basename))
+    } else {
+      const rootDir = new Folder(null, options.outputDir)
+      container = rootDir.requestFolder(name || '')
+    }
+    const metaFile = container.requestFile('index.json')
     this.container = container
     this.metaFile = metaFile
-    if (this.container.name) {
+    if (name) {
       this.ready = (async () => {
         try {
           const buffer = await metaFile.getData()
@@ -85,8 +86,8 @@ export class Series {
     }
     Object.assign(data, novel)
     const name = data.name
-    if (name && this.container.canRename) {
-      await this.container.setName(name)
+    if (name && this.container.renameable) {
+      await this.container.rename(name)
     }
     await this.metaFile.setData(JSON.stringify(data, null, 1))
     return
