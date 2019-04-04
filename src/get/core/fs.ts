@@ -173,8 +173,14 @@ export class File implements FSItem {
 
   async remove () {
     await this.access()
-    delete this._filename
-    fs.unlinkSync(this.path)
+    const fpath = this.path
+    try {
+      fs.unlinkSync(fpath)
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
+    }
   }
 
   async getData () {

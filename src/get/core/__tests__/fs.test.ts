@@ -19,14 +19,14 @@
  *
  */
 /* imports */
-import { Folder } from '../fs'
+import { Folder, File } from '../fs'
 import * as path from 'path'
 import * as fs from 'fs'
 import del from 'del'
 import makeDir = require('make-dir')
 /* code */
 
-const TMPDIR = path.resolve('__tmp__/jest-tmp/get/core-fs')
+const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-fs')
 
 beforeAll(async () => {
   await del(path.join(TMPDIR, '*'))
@@ -34,28 +34,75 @@ beforeAll(async () => {
 })
 
 describe('Folder', () => {
-  const tmpDir = new Folder(null, TMPDIR)
-  test('constructor.0', async () => {
-    expect(tmpDir.path).toBe(TMPDIR)
-  })
-  test('constructor.1', async () => {
-    const name = 'cont1'
-    const cont = new Folder(null, path.join(TMPDIR, name))
-    expect(cont.renameable).toBeFalsy()
-    expect(() => fs.accessSync(path.join(TMPDIR, name))).toThrow('ENOENT')
-    await expect(cont.rename(name + '-renamed'))
-      .rejects.toThrow('can\'t be renamed')
-    expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).toThrow('ENOENT')
+  const tmpDir = new Folder(null, path.join(TMPDIR, 'Folder'))
+  expect(tmpDir.path).toBe(TMPDIR + '/Folder')
+  const TMPPATH = tmpDir.path
+  beforeEach(async () => {
+    await del(path.join(TMPPATH, '*'))
   })
   test('constructor.2', async () => {
+    const name = 'cont1'
+    const testPath = path.join(TMPPATH, name)
+    const cont = new Folder(null, testPath)
+    expect(cont.renameable).toBeFalsy()
+    expect(() => fs.accessSync(testPath)).toThrow('ENOENT')
+    await expect(cont.rename(name + '-renamed'))
+      .rejects.toThrow('can\'t be renamed')
+    expect(() => fs.accessSync(testPath + '-renamed')).toThrow('ENOENT')
+  })
+  test('requestFolder()', async () => {
     const name = 'cont2'
+    const testPath = path.join(TMPPATH, name)
     const cont = tmpDir.requestFolder(name)
     expect(cont.renameable).toBeTruthy()
-    expect(() => fs.accessSync(path.join(TMPDIR, name))).toThrow('ENOENT')
+    expect(() => fs.accessSync(testPath)).toThrow('ENOENT')
     await expect(cont.rename(name + '-renamed'))
       .resolves.toBeUndefined()
-    expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).toThrow('ENOENT')
+    expect(() => fs.accessSync(testPath + '-renamed')).toThrow('ENOENT')
     await cont.access()
-    expect(() => fs.accessSync(path.join(TMPDIR, name + '-renamed'))).not.toThrow()
+    expect(() => fs.accessSync(testPath + '-renamed')).not.toThrow()
+  })
+})
+
+describe('File', () => {
+  const tmpDir = new Folder(null, path.join(TMPDIR, 'File'))
+  const TMPPATH = tmpDir.path
+  beforeEach(async () => {
+    await del(path.join(TMPPATH, '*'))
+  })
+  test('constructor()', async () => {
+    const name = 'constructor.txt'
+    const testPath = path.join(TMPPATH, name)
+    const file = tmpDir.requestFile(name)
+    expect(file.path).toBe(testPath)
+  })
+  test('simple manipulation', async () => {
+    const name = 'access.txt'
+    const testPath = path.join(TMPPATH, name)
+    const file = tmpDir.requestFile(name)
+    expect(file.path).toBe(testPath)
+    await file.access()
+    await file.rename('access-renamed.txt')
+    await file.remove()
+  })
+  test('simple write-read', async () => {
+    const name = 'access.txt'
+    const testPath = path.join(TMPPATH, name)
+    const file = tmpDir.requestFile(name)
+    expect(file.path).toBe(testPath)
+    await file.setData('Hello World!')
+    expect(file.getData()).resolves.toEqual(Buffer.from('Hello World!'))
+  })
+  test('simple read-write-read', async () => {
+    const name = 'access.txt'
+    const testPath = path.join(TMPPATH, name)
+    const file = tmpDir.requestFile(name)
+    expect(file.path).toBe(testPath)
+    expect(file.getData()).rejects.toThrow('ENOENT')
+    await file.setData('Hello World!')
+    expect(file.getData()).resolves.toEqual(Buffer.from('Hello World!'))
+    expect(file.getData()).resolves.toEqual(Buffer.from('Hello World!'))
+    await file.remove()
+    expect(file.getData()).rejects.toThrow('ENOENT')
   })
 })
