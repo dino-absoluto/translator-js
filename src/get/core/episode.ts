@@ -21,22 +21,24 @@
 /* imports */
 import { Chapter, Formatter as AbstractFormatter } from '../providers/common'
 import { Folder, File } from './fs'
+import { gunzipSync, gzipSync } from 'zlib'
 /* code */
 
 class Formatter extends AbstractFormatter {
-  private files = new Map()
-  private prefix: string
+  readonly files = new Map<string, string[] | Buffer>()
+  readonly prefix: string
   constructor (prefix: string) {
     super()
     this.prefix = prefix
   }
 
-  requestFile (name: string) {
+  requestFile (name: string, get: (name: string) => string[] | Buffer) {
     const { files, prefix } = this
+    name = `${prefix}${name}`
     if (files.has(name)) {
-      return ''
+      return
     }
-    return `${prefix}${name}`
+    files.set(name, get(name))
   }
 }
 
@@ -53,41 +55,62 @@ interface EpisodeListData {
 
 export class EpisodeList {
   readonly rootDir: Folder
-  private data: EpisodeListData
+  data: EpisodeListData
+  ready: Promise<void>
   private folders: Folder[]
   private metaFile: File
+  private compressedCache: boolean
   constructor (rootDir: Folder, options: {
+    compressedCache?: boolean
     data?: EpisodeListData
-  }) {
+  } = {}) {
     this.rootDir = rootDir
     this.data = options.data || {
       groups: [],
       episodes: []
     }
+    this.compressedCache = !!options.compressedCache
     const metaDir = rootDir.requestFolder('!meta')
-    const metaFile = metaDir.requestFile('!cache.json')
+    const metaFile = metaDir.requestFile(
+      this.compressedCache ? '!cache.json.gz' : '!cache.json')
     const folders = [
       metaDir
     ]
     this.folders = folders
     this.metaFile = metaFile
-    this.load()
+    this.ready = this.load()
   }
 
-  updateWith (_newData: Chapter[]) {
-    return
+  async updateWith (newData: Chapter[]) {
+    const { data: { episodes } } = this
+    const { groups, chapters } = this.preprocess(newData)
+    await this.updateGroups(groups)
+    for (const [index, chapter] of chapters.entries()) {
+      await this.updateEpisode(index, chapter)
+    }
+    episodes.length = chapters.length
+    return this.save()
   }
 
   private encode (data: object) {
-    return JSON.stringify(data, null, 1)
+    if (!this.compressedCache) {
+      return JSON.stringify(data, null, 1)
+    } else {
+      return gzipSync(JSON.stringify(data))
+    }
   }
   private decode (data: Buffer) {
-    return JSON.parse(data.toString())
+    if (!this.compressedCache) {
+      return JSON.parse(data.toString())
+    } else {
+      return JSON.parse(gunzipSync(data).toString())
+    }
   }
 
   private async updateGroups (groups: string[]) {
     const { folders, rootDir, data } = this
-    for (const [id, group] of groups.entries()) {
+    for (const [index, group] of groups.entries()) {
+      const id = index + 1
       let folder = folders[id]
       if (!folder) {
         folder = rootDir.requestFolder(group)
@@ -105,29 +128,56 @@ export class EpisodeList {
     if (!ep.files || !ep.files.length) {
       return false
     }
-    if (ep.updateId && ep.updateId !== ch.updateId) {
+    if (ch.updateId && ep.updateId !== ch.updateId) {
       return false
     }
-    if (ep.groupId && ep.groupId !== ch.groupId) {
+    if (ch.groupId && ep.groupId !== ch.groupId) {
       return false
     }
     return true
   }
 
-  private async updateEpisode (index: number, ep: EpisodeData, ch: Chapter & EpisodeData) {
+  private async updateEpisode (index: number, ch: Chapter & EpisodeData) {
+    const { data: { episodes } } = this
+    let ep = episodes[index]
+    if (!ep) {
+      ep = {}
+      episodes[index] = ep
+    }
     if (this.testEpisode(ep, ch)) {
       return
     }
-    const folder = this.folders[ep.groupId || 0]
+    if (ep.files) {
+      const folder = this.folders[ep.groupId || 0]
+      // remove old files
+      await Promise.all(ep.files.map(file => folder.requestFile(file).remove()))
+      delete ep.files
+    }
     await ch.fetch()
+    ep.groupId = ch.groupId
+    ep.updateId = ch.updateId
+    const folder = this.folders[ep.groupId || 0]
     if (!folder) {
       throw new Error(`Folder must not be ${folder}`)
     }
     const format = new Formatter(`${index} `)
+    if (ch.content) {
+      ch.content(format)
+    }
     // write files
-    if (ep.files) {
-      // remove old files
-      await Promise.all(ep.files.map(file => folder.requestFile(file).remove()))
+    const files = []
+    for (const [name, data] of format.files) {
+      let buf: Buffer
+      if (data instanceof Buffer) {
+        buf = data
+      } else {
+        buf = Buffer.from(data.join('\n\n---\n\n'))
+      }
+      files.push(name)
+      await folder.requestFile(name).setData(buf)
+    }
+    if (files.length) {
+      ep.files = files
     }
   }
 
@@ -138,7 +188,7 @@ export class EpisodeList {
     for (const chapter of chapters) {
       const ch: Chapter & EpisodeData = chapter
       if (ch.group !== groupName) {
-        groups.push(ch.group)
+        groups.push(ch.group || 'no name')
         groupId = groups.length
         groupName = ch.group
       }
@@ -155,8 +205,8 @@ export class EpisodeList {
     try {
       const cache = await this.decode(await metaFile.getData())
       const { data } = this
-      this.updateGroups(cache.groups)
-      data.episodes = cache.episodes
+      await this.updateGroups(cache.groups)
+      data.episodes = cache.episodes || []
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw err
@@ -166,6 +216,6 @@ export class EpisodeList {
 
   async save () {
     const { metaFile } = this
-    metaFile.setData(await this.encode(this.data))
+    await metaFile.setData(await this.encode(this.data))
   }
 }

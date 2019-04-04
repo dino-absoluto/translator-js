@@ -19,4 +19,87 @@
  *
  */
 /* imports */
+import { EpisodeList } from '../episode'
+import { Folder } from '../fs'
+import { Chapter, ChapterData, Content } from '../../providers/common'
+import * as path from 'path'
 /* code */
+
+const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-episode')
+
+interface FakeData extends ChapterData {
+  group?: string | undefined
+  name: string
+  updateId?: string | undefined
+  text: string
+}
+
+class FakeChapter implements Chapter {
+  group?: string | undefined
+  name: string = ''
+  updateId?: string | undefined
+  content?: Content
+  private text: string = ''
+  constructor (options: FakeData) {
+    Object.assign(this, options)
+  }
+  async fetch () {
+    this.content = (fmt) => {
+      fmt.requestFile(this.name + '.txt', _fname => [
+        _fname,
+        this.text
+      ])
+    }
+  }
+}
+
+describe('EpisodeList', () => {
+  test('constructor.1', async () => {
+    const tmpPath = path.join(TMPDIR, 'constructor')
+    const rootDir = new Folder(null, tmpPath)
+    const eplist = new EpisodeList(rootDir, {
+      compressedCache: true
+    })
+    await eplist.ready
+    await eplist.updateWith([
+      new FakeChapter({
+        name: 'prologue',
+        text: 'Hello!!'
+      }),
+      new FakeChapter({
+        name: 'First Chapter',
+        text: 'Nothing!!'
+      }),
+      new FakeChapter({
+        name: '2nd Chapter',
+        text: 'Still nothing!!'
+      }),
+      new FakeChapter({
+        group: 'New group',
+        name: '3nd Chapter',
+        text: 'Still nothing!!!'
+      })
+    ])
+    await eplist.updateWith([
+      new FakeChapter({
+        name: 'prologue',
+        text: 'Hello!! Updated!'
+      }),
+      new FakeChapter({
+        updateId: '2',
+        name: 'First Chapter',
+        text: 'Nothing!! 2!!'
+      }),
+      new FakeChapter({
+        updateId: '2',
+        name: '2nd Chapter',
+        text: 'Still nothing!! Again!'
+      }),
+      new FakeChapter({
+        group: 'New group',
+        name: '3nd Chapter',
+        text: 'Still nothing!!! And Again!'
+      })
+    ])
+  })
+})
