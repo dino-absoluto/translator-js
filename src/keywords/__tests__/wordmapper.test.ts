@@ -23,6 +23,7 @@ import { mapKeyword } from '../wordmapper'
 import { WordMap } from '../words'
 import * as path from 'path'
 import * as pfs from '../../utils/pfs'
+import chalk from 'chalk'
 
 interface TestOptions {
   lax?: boolean,
@@ -53,11 +54,13 @@ const testKeywords = async (options: TestOptions) => {
     expect(mapped).toBeGreaterThan(0)
     expect(sum).toBeGreaterThan(0)
     coverage.push([ subdomain,
-      `${Math.round(mapped / sum * 10000) / 100}% of ${sum}`
+      chalk`{green ${
+        (Math.round(mapped / sum * 1000) / 10 + '%').padEnd(5, ' ')}} {grey of} {yellow ${
+        sum.toString()}}`
     ])
   }
   console.log(coverage.map(
-    ([subdomain, msg]) => `[${subdomain}]: ${msg}`).join('\n'))
+    ([subdomain, msg]) => chalk`{blue [${subdomain.padEnd(5, ' ')}]} ${msg}`).join('\n'))
   await pfs.writeFile(path.join(__dirname, options.outputFile),
     JSON.stringify(outMap, null, 1)
   )
