@@ -60,8 +60,10 @@ export class EpisodeList {
   private folders: Folder[]
   private metaFile: File
   private compressedCache: boolean
+  private pad0: number = 3
   constructor (rootDir: Folder, options: {
     compressedCache?: boolean
+    pad0?: number
     data?: EpisodeListData
   } = {}) {
     this.rootDir = rootDir
@@ -70,6 +72,7 @@ export class EpisodeList {
       episodes: []
     }
     this.compressedCache = !!options.compressedCache
+    this.pad0 = options.pad0 || this.pad0
     const metaDir = rootDir.requestFolder('!meta')
     const metaFile = metaDir.requestFile(
       this.compressedCache ? '!cache.json.gz' : '!cache.json')
@@ -160,7 +163,8 @@ export class EpisodeList {
     if (!folder) {
       throw new Error(`Folder must not be ${folder}`)
     }
-    const format = new Formatter(`${index} `)
+    const format = new Formatter(
+      `${(index + 1).toString().padStart(this.pad0, '0')} `)
     if (ch.content) {
       ch.content(format)
     }
@@ -190,8 +194,10 @@ export class EpisodeList {
     for (const chapter of chapters) {
       const ch: Chapter & EpisodeData = chapter
       if (ch.group !== groupName) {
-        groups.push(ch.group || 'no name')
-        groupId = groups.length
+        groupId = groups.length + 1
+        groups.push(`${
+          groupId.toString().padStart(this.pad0, '0')} ${
+          ch.group || 'no name'}`)
         groupName = ch.group
       }
       ch.groupId = groupId
