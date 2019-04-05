@@ -1,5 +1,5 @@
 /**
- * @file index.ts
+ * @file Test Syosetu
  * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
@@ -20,7 +20,8 @@
  */
 /* imports */
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
-import { Content, Context, ContextCallback } from '../common'
+import { Content, ContextCallback } from '../common'
+import { Context } from '../context'
 import { back as nockBack, NockBackContext } from 'nock'
 import * as path from 'path'
 /* code */

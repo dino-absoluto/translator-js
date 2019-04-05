@@ -19,7 +19,8 @@
  *
  */
 /* imports */
-import { Chapter, Context as AbstractContext } from '../providers/common'
+import { Chapter } from '../providers/common'
+import { Context as AbstractContext } from '../providers/context'
 import { Folder, File } from './fs'
 import { gunzipSync, gzipSync } from 'zlib'
 /* code */
