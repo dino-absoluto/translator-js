@@ -23,16 +23,49 @@ import hasha = require('hasha')
 import * as path from 'path'
 import del from 'del'
 import makeDir = require('make-dir')
+import { back as nockBack, NockBackContext } from 'nock'
+
+/* setup */
+const SRC_DIR = path.normalize(__dirname + '/../')
+const TMP_DIR = path.resolve('__tmp__/jest/')
+const FIXTURES_DIR = path.resolve('__tmp__/nock-fixtures')
+nockBack.fixtures = FIXTURES_DIR
+nockBack.setMode('record')
 
 /* code */
-export const __TMPDIR = path.resolve('__tmp__/jest/')
 export const setupTmpDir = (name: string) => {
-  const fpath = path.join(__TMPDIR, name)
+  const fpath = path.join(TMP_DIR, name)
   beforeAll(async () => {
     await del(path.join(fpath, '*'))
     await makeDir(fpath)
   })
   return fpath
+}
+
+interface TestEnvSetupOptions {
+  network?: boolean
+}
+
+export const setup = (fname: string, options: TestEnvSetupOptions = {}) => {
+  const unit = path.posix.normalize(path.relative(SRC_DIR, fname))
+    .replace(/\/([^\/]+)\/__tests__\//g, '/$1__')
+  const tmpdir = path.join(TMP_DIR, unit)
+  let nock: { nockDone: () => void, context: NockBackContext }
+  beforeAll(async () => {
+    await del(path.join(tmpdir, '*'))
+    await makeDir(tmpdir)
+    if (options.network) {
+      nock = await nockBack(unit + '.json')
+    }
+  })
+  afterAll(async () => {
+    if (nock && nock.nockDone) {
+      await nock.nockDone()
+    }
+  })
+  return {
+    __TMPDIR: tmpdir
+  }
 }
 
 export const hashDir = async (

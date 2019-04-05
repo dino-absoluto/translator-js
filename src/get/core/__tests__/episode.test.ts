@@ -22,11 +22,11 @@
 import { EpisodeList } from '../episode'
 import { Folder } from '../fs'
 import { Chapter, ChapterData, RenderFn } from '../../providers/common'
-import { hashDir, setupTmpDir } from '../../../utils/test-utils'
+import { hashDir, setup } from '../../../utils/test-utils'
 import * as path from 'path'
 
 /* setup */
-const TMPDIR = setupTmpDir('get__core-episode')
+const { __TMPDIR } = setup(__filename)
 
 /* code */
 interface FakeData extends ChapterData {
@@ -57,14 +57,14 @@ class FakeChapter implements Chapter {
 
 describe('EpisodeList', () => {
   test('constructor.1', async () => {
-    const tmpPath = path.join(TMPDIR, 'constructor')
+    const tmpPath = path.join(__TMPDIR, 'constructor')
     const rootDir = new Folder(null, tmpPath)
     const eplist = new EpisodeList(rootDir, {
     })
     await eplist.ready
   })
   test('simple tree', async () => {
-    const tmpPath = path.join(TMPDIR, 'constructor')
+    const tmpPath = path.join(__TMPDIR, 'constructor')
     const rootDir = new Folder(null, tmpPath)
     const eplist = new EpisodeList(rootDir, {
     })

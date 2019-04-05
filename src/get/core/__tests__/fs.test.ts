@@ -22,15 +22,15 @@
 import { Folder } from '../fs'
 import * as path from 'path'
 import * as fs from 'fs'
-import { setupTmpDir } from '../../../utils/test-utils'
+import { setup } from '../../../utils/test-utils'
 
 /* setup */
-const TMPDIR = setupTmpDir('get__core-fs')
+const { __TMPDIR } = setup(__filename)
 
 /* code */
 describe('Folder', () => {
-  const tmpDir = new Folder(null, path.join(TMPDIR, 'Folder'))
-  expect(tmpDir.path).toBe(TMPDIR + '/Folder')
+  const tmpDir = new Folder(null, path.join(__TMPDIR, 'Folder'))
+  expect(tmpDir.path).toBe(__TMPDIR + '/Folder')
   const TMPPATH = tmpDir.path
   test('constructor.2', async () => {
     const name = 'cont1'
@@ -57,7 +57,7 @@ describe('Folder', () => {
 })
 
 describe('File', () => {
-  const tmpDir = new Folder(null, path.join(TMPDIR, 'File'))
+  const tmpDir = new Folder(null, path.join(__TMPDIR, 'File'))
   const TMPPATH = tmpDir.path
   test('constructor()', async () => {
     const name = 'constructor.txt'

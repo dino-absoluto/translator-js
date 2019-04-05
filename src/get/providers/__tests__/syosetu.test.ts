@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { setupTmpDir } from '../../../utils/test-utils'
+import { setup } from '../../../utils/test-utils'
 import * as pfs from '../../../utils/pfs'
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
 import { RenderFn } from '../common'
@@ -27,7 +27,9 @@ import { SimpleContext } from '../context'
 import * as path from 'path'
 
 /* setup */
-const TMPDIR = setupTmpDir('get__providers-syosetu')
+const { __TMPDIR } = setup(__filename, {
+  network: true
+})
 
 /* code */
 describe('SyosetuNovel', () => {
@@ -106,7 +108,7 @@ describe('SyosetuChapter', () => {
     const ctx = new SimpleContext()
     ;(content as RenderFn)(ctx)
     {
-      const fpath = path.join(TMPDIR, ctx.text[0][0])
+      const fpath = path.join(__TMPDIR, ctx.text[0][0])
       const lines = ctx.text[0][1]
       expect(lines.length).toBe(2)
       const data = lines.join('\n\n---\n\n')
@@ -114,7 +116,7 @@ describe('SyosetuChapter', () => {
       await pfs.writeFile(fpath, data)
     }
     for (const [name, buf] of ctx.bufs) {
-      const fpath = path.join(TMPDIR, name)
+      const fpath = path.join(__TMPDIR, name)
       await pfs.writeFile(fpath, buf)
     }
   })

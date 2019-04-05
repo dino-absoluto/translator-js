@@ -20,12 +20,15 @@
  */
 /* imports */
 // import * as pfs from '../../../utils/pfs'
-import { hash } from '../../../utils/test-utils'
+import { hash, setup } from '../../../utils/test-utils'
 import got from '../../../utils/syosetu-got'
 import { JSDOM } from 'jsdom'
 import { SimpleContext } from '../context'
 
 /* setup */
+const { __TMPDIR } = setup(__filename, {
+  network: true
+})
 
 /* code */
 describe('Context', () => {

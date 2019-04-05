@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { hashDir, setupTmpDir } from '../../../utils/test-utils'
+import { hashDir, setup } from '../../../utils/test-utils'
 import { Series } from '../series'
 import { getNovel } from '../../providers'
 import * as path from 'path'
@@ -27,14 +27,16 @@ import * as fs from 'fs'
 import makeDir = require('make-dir')
 
 /* setup */
-const TMPDIR = setupTmpDir('get__core-series')
+const { __TMPDIR } = setup(__filename, {
+  network: true
+})
 
 /* code */
 describe('Series', () => {
   const href = new URL('http://ncode.syosetu.com/n0537cm/')
   const title = '邪神アベレージ'
   test('constructor.1', async () => {
-    const outputDir = path.join(TMPDIR, 'constructor.1')
+    const outputDir = path.join(__TMPDIR, 'constructor.1')
     const series = new Series({
       novel: await getNovel(href),
       outputDir,
@@ -49,7 +51,7 @@ describe('Series', () => {
     expect(series.container.path).toBe(path.join(outputDir, title))
   })
   test('constructor.2', async () => {
-    const outputDir = path.join(TMPDIR, 'constructor.2')
+    const outputDir = path.join(__TMPDIR, 'constructor.2')
     const expectedDir = path.join(outputDir, title)
     await makeDir(expectedDir)
     fs.copyFileSync(
@@ -74,7 +76,7 @@ describe('Series', () => {
     expect(series.container.path).toBe(expectedDir)
   })
   test('serialize()', async () => {
-    const outputDir = path.join(TMPDIR, 'serialize()')
+    const outputDir = path.join(__TMPDIR, 'serialize()')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
@@ -87,7 +89,7 @@ describe('Series', () => {
     expect(() => series.container.path).toThrow()
   })
   test('update()', async () => {
-    const outputDir = path.join(TMPDIR, 'update')
+    const outputDir = path.join(__TMPDIR, 'update')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
@@ -103,7 +105,7 @@ describe('Series', () => {
     }))
   })
   test('updateIndex()', async () => {
-    const outputDir = path.join(TMPDIR, 'updateIndex')
+    const outputDir = path.join(__TMPDIR, 'updateIndex')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
