@@ -63,6 +63,11 @@ const isElementNode = (node: Node): node is HTMLElement =>
   node.nodeType === Node.ELEMENT_NODE
 
 export abstract class Context extends AbstractContext {
+  tokenizeArray (nodes: NodeList): Token[] {
+    return [...nodes].reduce((acc, cnode) => {
+      return acc.concat(this.tokenize(cnode))
+    }, [] as Token[])
+  }
   tokenize (node: Node): Token[] {
     if (node.nodeType === Node.TEXT_NODE) {
       return [{
@@ -139,21 +144,14 @@ export abstract class Context extends AbstractContext {
         return []
       }
       case 'P': {
-        let tokens: Token[] = []
-        for (const cnode of node.childNodes) {
-          tokens = tokens.concat(this.tokenize(cnode))
-        }
+        const tokens = this.tokenizeArray(node.childNodes)
         tokens.push({
           type: 'br'
         })
         return tokens
       }
       default: {
-        let tokens: Token[] = []
-        for (const cnode of node.childNodes) {
-          tokens = tokens.concat(this.tokenize(cnode))
-        }
-        return tokens
+        return this.tokenizeArray(node.childNodes)
       }
     }
     // return []
