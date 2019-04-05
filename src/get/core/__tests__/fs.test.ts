@@ -47,7 +47,7 @@ describe('Folder', () => {
     expect(cont.renameable).toBeFalsy()
     expect(() => fs.accessSync(testPath)).toThrow('ENOENT')
     await expect(cont.rename(name + '-renamed'))
-      .rejects.toThrow('can\'t be renamed')
+      .rejects.toThrow('cannot be renamed')
     expect(() => fs.accessSync(testPath + '-renamed')).toThrow('ENOENT')
   })
   test('requestFolder()', async () => {
@@ -103,6 +103,6 @@ describe('File', () => {
     await expect(file.read()).resolves.toEqual(Buffer.from('Hello World!'))
     await expect(file.read()).resolves.toEqual(Buffer.from('Hello World!'))
     await file.remove()
-    await expect(file.read()).rejects.toThrow('Filename is not set')
+    await expect(file.read()).rejects.toThrow('filename is not set')
   })
 })

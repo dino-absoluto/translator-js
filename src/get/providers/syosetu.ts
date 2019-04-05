@@ -94,11 +94,11 @@ export class SyosetuNovel implements Novel {
     } else if (hostname.indexOf('ncode.') === 0) {
       this.over18 = false
     } else {
-      throw new Error('Wrong domain')
+      throw new Error('wrong domain')
     }
     const paths = url.pathname.split('/', 2)
     if (paths.length < 2) {
-      throw new Error('Invalid pathname')
+      throw new Error('invalid pathname')
     }
     this.id = paths[1]
   }
@@ -121,13 +121,13 @@ export class SyosetuNovel implements Novel {
       new JSDOM((await got(url)).body, { url })
     const main = doc.getElementById('contents_main')
     if (!main) {
-      throw new Error('Failed to find contents')
+      throw new Error('failed to find contents')
     }
     {
       // get title
       const h1 = main.getElementsByTagName('h1')[0]
       if (!h1) {
-        throw new Error('Failed to parse header')
+        throw new Error('failed to parse header')
       }
       this.name = h1.textContent || undefined
     }
@@ -135,7 +135,7 @@ export class SyosetuNovel implements Novel {
       // parse table
       const lines = main.querySelectorAll('#noveltable1 > tbody > tr > td')
       if (lines.length !== 4) {
-        throw new Error('Failed to parse table')
+        throw new Error('failed to parse table')
       }
       this.description = trim(lines[0].textContent)
       this.author = trim(lines[1].textContent)
@@ -157,14 +157,14 @@ export class SyosetuNovel implements Novel {
         type = main.querySelector('#noveltype')
       }
       if (!type || !type.textContent) {
-        throw new Error('Failed to detect novel type')
+        throw new Error('failed to detect novel type')
       }
       if (type.textContent.trim() === '短編') {
         size = 1
       } else {
         let node = type.nextSibling
         if (!node || !node.textContent) {
-          throw new Error('Failed to detect novel size')
+          throw new Error('failed to detect novel size')
         }
         let text = node.textContent.match(/(?<=全)\d+(?=部分)/)
         if (text && text[0]) {
@@ -185,7 +185,7 @@ export class SyosetuNovel implements Novel {
       new JSDOM((await got(url)).body, { url })
     let indexBox = doc.getElementsByClassName('index_box')[0]
     if (!indexBox) {
-      throw new Error('Failed to get index_box')
+      throw new Error('failed to get index_box')
     }
     const chapters = []
     let group: string | undefined

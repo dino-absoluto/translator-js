@@ -95,7 +95,7 @@ export class Folder implements FSItem {
   async remove () {
     const { children } = this
     if (!children.size) {
-      throw new Error('Folder isn\'t empty')
+      throw new Error('folder is not empty')
     }
     const fpath = this.path
     await this.close()
@@ -105,11 +105,11 @@ export class Folder implements FSItem {
   get renameable () { return !!this.parent }
   async rename (name: string) {
     if (!this.parent) {
-      throw new Error('Folder can\'t be renamed')
+      throw new Error('folder cannot be renamed')
     }
     const newName = sanitizeName(name)
     if (!newName) {
-      throw new Error('Folder\'s name is invalid')
+      throw new Error('folder name is invalid')
     }
     const oldName = this._dirname
     this._dirname = newName
@@ -157,14 +157,14 @@ export class File implements FSItem {
   get path (): string {
     const { parent, _filename } = this
     if (!_filename) {
-      throw new Error('Filename is not set')
+      throw new Error('filename is not set')
     }
     return path.join(parent.path, _filename)
   }
 
   async access () {
     if (!this._filename) {
-      throw new Error('Filename is not set')
+      throw new Error('filename is not set')
     }
     return
   }
@@ -172,7 +172,7 @@ export class File implements FSItem {
   async rename (name: string) {
     const newName = sanitizeName(name)
     if (!newName) {
-      throw new Error('File\'s name is invalid')
+      throw new Error('filename is invalid')
     }
     const oldName = this._filename
     this._filename = newName

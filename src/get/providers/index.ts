@@ -44,7 +44,7 @@ export const getProvider = async (url: URL): Promise<Provider> => {
   }
   let value = domains.get(url.hostname)
   if (!value) {
-    throw new Error('No matching provider')
+    throw new Error('no matching provider')
   }
   return value
 }
@@ -53,7 +53,7 @@ export const getNovel = async (url: URL): Promise<Novel> => {
   const provider = await getProvider(url)
   let value = provider.fromURL(url)
   if (!value) {
-    throw new Error('Failed to create Novel instance')
+    throw new Error('failed to create Novel instance')
   }
   return value
 }
