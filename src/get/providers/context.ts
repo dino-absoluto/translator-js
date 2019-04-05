@@ -19,9 +19,20 @@
  *
  */
 /* imports */
-import { Context as AbstractContext } from './common'
+import { Context as AbstractContext, ContextCallback } from './common'
 import { flow, trim } from '../../utils/flow'
+import { JSDOM } from 'jsdom'
+/* re-exports */
+export { ContextCallback }
 /* code */
+
+const Node = flow(new JSDOM()).then(dom => {
+  return dom.window.Node
+}).get()
+
+interface TokenBr {
+  type: 'br'
+}
 
 interface TokenString {
   type: 'text'
@@ -46,17 +57,20 @@ interface TokenLink {
   text: string
 }
 
-export type Token = TokenString | TokenRuby | TokenImage | TokenLink
+export type Token = TokenBr | TokenString | TokenRuby | TokenImage | TokenLink
+
+const isElementNode = (node: Node): node is HTMLElement =>
+  node.nodeType === Node.ELEMENT_NODE
 
 export abstract class Context extends AbstractContext {
-  tokenize (node: Element): Token[] {
+  tokenize (node: Node): Token[] {
     if (node.nodeType === Node.TEXT_NODE) {
       return [{
         type: 'text',
-        text: node.textContent || ''
+        text: (node.textContent || '').replace(/^\n|\n$/g, '')
       }]
     }
-    if (node.nodeType !== Node.ELEMENT_NODE) {
+    if (!isElementNode(node)) {
       return []
     }
     switch (node.nodeName) {
@@ -94,9 +108,13 @@ export abstract class Context extends AbstractContext {
         }
       }
       case 'BR': {
+        if (flow(node.nextSibling)
+          .then(n => n.nodeType === Node.TEXT_NODE && n.textContent || undefined)
+          .then(t => t.startsWith('\n'))) {
+          return []
+        }
         return [{
-          type: 'text',
-          text: '\n'
+          type: 'br'
         }]
       }
       case 'A': {
@@ -120,9 +138,19 @@ export abstract class Context extends AbstractContext {
       case 'EMBEDED': {
         return []
       }
+      case 'P': {
+        let tokens: Token[] = []
+        for (const cnode of node.childNodes) {
+          tokens = tokens.concat(this.tokenize(cnode))
+        }
+        tokens.push({
+          type: 'br'
+        })
+        return tokens
+      }
       default: {
         let tokens: Token[] = []
-        for (const cnode of node.children) {
+        for (const cnode of node.childNodes) {
           tokens = tokens.concat(this.tokenize(cnode))
         }
         return tokens

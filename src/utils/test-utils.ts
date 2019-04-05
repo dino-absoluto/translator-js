@@ -45,3 +45,15 @@ export const hashDir = async (
   }
   return data
 }
+
+export const hash = async (data: any) => {
+  let text: string
+  if (typeof data === 'string') {
+    text = data
+  } else {
+    text = JSON.stringify(data)
+  }
+  return (hasha as any)(text, {
+    encoding: 'base64'
+  })
+}

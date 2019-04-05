@@ -19,8 +19,66 @@
  *
  */
 /* imports */
+import got from '../../../utils/syosetu-got'
+import * as pfs from '../../../utils/pfs'
+import { hash } from '../../../utils/test-utils'
+import { JSDOM } from 'jsdom'
+import { Context, ContextCallback, Token } from '../context'
 /* code */
 
+class FakeContext extends Context {
+  data: string[] = []
+  requestFile (_name: string, get: ContextCallback) {
+    let data = get(_name)
+    expect(Array.isArray(data)).toBeTruthy()
+    this.data = data as string[]
+  }
+}
+
+const fakeRender = (tokens: Token[]) => {
+  let text = ''
+  for (const tok of tokens) {
+    let tt: string
+    switch (tok.type) {
+      case 'text': {
+        tt = tok.text
+        break
+      }
+      case 'ruby': {
+        tt = `${tok.text}(${tok.ruby})`
+        break
+      }
+      case 'link': {
+        tt = `[${tok.text}](${tok.url})`
+        break
+      }
+      case 'image': {
+        tt = `![${tok.text}](${tok.url})`
+        break
+      }
+      case 'br': {
+        tt = '\n'
+        break
+      }
+      default:
+        tt = ''
+        break
+    }
+    text += tt
+  }
+  return text
+}
+
 describe('Context', () => {
-  test.todo('constructor')
+  const url = new URL('https://ncode.syosetu.com/n0537cm/21/')
+  test('constructor', async () => {
+    const { window: { document: doc } } =
+      new JSDOM((await got(url)).body, { url: url.toString() })
+    const context = new FakeContext()
+    const honbun = doc.getElementById('novel_honbun')
+    expect(honbun).not.toBeNull()
+    const toks = context.tokenize(honbun as Exclude<typeof honbun, null>)
+    // await pfs.writeFile(__dirname + '/__tmp__/context.md', fakeRender(toks))
+    expect(await hash(fakeRender(toks))).toMatchSnapshot()
+  })
 })
