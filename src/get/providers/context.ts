@@ -21,6 +21,7 @@
 /* imports */
 import { flow, trim } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
+import * as path from 'path'
 /* code */
 
 const Node = flow(new JSDOM()).then(dom => {
@@ -213,7 +214,26 @@ export abstract class Context {
 export class SimpleContext extends Context {
   text: ([string, string[]])[] = []
   bufs: ([string, Buffer])[] = []
+  names = new Set<string>()
+  getName (name: string) {
+    const { names } = this
+    if (!names.has(name)) {
+      names.add(name)
+      return name
+    }
+    const ext = path.extname(name)
+    const base = path.basename(name)
+    for (let i = 1; i < 10; i++) {
+      const name = `${base} (${i})${ext}`
+      if (!names.has(name)) {
+        names.add(name)
+        return name
+      }
+    }
+    return ''
+  }
   requestFile (name: string, get: ContextCallback) {
+    name = this.getName(name)
     let data = get(name)
     if (Array.isArray(data)) {
       this.text.push([name, data as string[]])
