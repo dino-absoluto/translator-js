@@ -19,13 +19,16 @@
  *
  */
 /* imports */
-import { setupNock } from '../../../utils/test-utils'
+import { setupNock, setupTmpDir } from '../../../utils/test-utils'
+import * as pfs from '../../../utils/pfs'
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
 import { RenderFn } from '../common'
 import { SimpleContext } from '../context'
+import * as path from 'path'
 
 /* setup */
 setupNock('providers-syosetu.json')
+const TMPDIR = setupTmpDir('get__providers-syosetu')
 
 /* code */
 describe('SyosetuNovel', () => {
@@ -83,11 +86,37 @@ describe('SyosetuChapter', () => {
     let lines: string[] = []
     const ctx = new SimpleContext()
     ;(content as RenderFn)(ctx)
-    lines = ctx.text[0] as string[]
+    lines = ctx.text[0][1]
     expect(lines.length).toBe(4)
     const data = lines.join('\n\n---\n\n')
     expect(data.length).toBeGreaterThan(3000)
     expect(data).toContain('　違うらしい。')
     expect(data).toContain('　──よし、決めた。')
+  })
+  test('fetch() with image', async () => {
+    const href = 'https://ncode.syosetu.com/n4147dw/353/'
+    const chapter = new SyosetuChapter({
+      name: '',
+      url: new URL(href)
+    })
+    expect(chapter.name).toBe('')
+    await chapter.fetch()
+    expect(chapter.name).toBe('はこにわもぐもぐ　さーしーえー')
+    const content = chapter.content
+    expect(content).not.toBeNull()
+    const ctx = new SimpleContext()
+    ;(content as RenderFn)(ctx)
+    {
+      const fpath = path.join(TMPDIR, ctx.text[0][0])
+      const lines = ctx.text[0][1]
+      expect(lines.length).toBe(2)
+      const data = lines.join('\n\n---\n\n')
+      expect(data.length).toBeGreaterThan(4000)
+      await pfs.writeFile(fpath, data)
+    }
+    for (const [name, buf] of ctx.bufs) {
+      const fpath = path.join(TMPDIR, name)
+      await pfs.writeFile(fpath, buf)
+    }
   })
 })
