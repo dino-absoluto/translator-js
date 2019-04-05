@@ -31,7 +31,7 @@ export const hashDir = async (
   files = files.sort()
   const cwd = options.cwd || path.resolve('.')
   const arrays = await Promise.all(files.map(async (fname: string) => {
-    let content = await (hasha as any).fromFile(fname, {
+    let content = await hasha.fromFile(fname, {
       encoding: 'base64'
     })
     return {
@@ -41,7 +41,7 @@ export const hashDir = async (
   }))
   const data: { [id: string]: string } = {}
   for (const { fname, content } of arrays) {
-    data[fname] = content
+    data[fname] = content || ''
   }
   return data
 }
@@ -53,7 +53,7 @@ export const hash = async (data: any) => {
   } else {
     text = JSON.stringify(data)
   }
-  return (hasha as any)(text, {
+  return hasha(text, {
     encoding: 'base64'
   })
 }
