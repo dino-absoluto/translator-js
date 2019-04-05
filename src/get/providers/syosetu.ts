@@ -22,6 +22,8 @@
 import { Provider, Novel, Chapter, RenderFn } from './common'
 import got from '../../utils/syosetu-got'
 import { trim, flow } from '../../utils/flow'
+import { download } from './utils'
+import { Context } from './context'
 import { JSDOM } from 'jsdom'
 /* code */
 
@@ -64,13 +66,25 @@ export class SyosetuChapter implements Chapter {
     ].forEach(id => flow(main.querySelector(id)).then(node => {
       nodes.push(node)
     }))
-    this.content = (fmt) => {
-      let sections = nodes.map(node =>
-        fmt.parseNode(node))
-      sections.unshift(this.name)
-      fmt.requestFile(this.name + '.txt', (_name) => {
+    const tokensArray = nodes.map(Context.tokenize)
+    const imagePromises: ReturnType<typeof download>[] = []
+    for (const tokens of tokensArray) {
+      for (const tok of tokens) {
+        if (tok.type === 'image') {
+          imagePromises.push(download(tok.url))
+        }
+      }
+    }
+    const images = await Promise.all(imagePromises)
+    this.content = (ctx) => {
+      ctx.requestFile(this.name + '.txt', (_name) => {
+        const sections = tokensArray.map(toks => ctx.render(toks))
+        sections.unshift(this.name)
         return sections
       })
+      for (const img of images) {
+        ctx.requestFile(img.name, () => img.buf)
+      }
     }
   }
 }

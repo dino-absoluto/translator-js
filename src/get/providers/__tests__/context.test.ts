@@ -37,7 +37,7 @@ describe('Context', () => {
     const context = new SimpleContext()
     const honbun = doc.getElementById('novel_honbun')
     expect(honbun).not.toBeNull()
-    const toks = context.tokenize(honbun as Exclude<typeof honbun, null>)
+    const toks = SimpleContext.tokenize(honbun as Exclude<typeof honbun, null>)
     // await pfs.writeFile(__dirname + '/__tmp__/context.md', fakeRender(toks))
     expect(await hash(context.render(toks))).toMatchSnapshot()
   })

@@ -23,6 +23,7 @@
     "got": "^9.6.0",
     "jsdom": "^14.0.0",
     "make-dir": "^3.0.0",
+    "mime": "^2.4.1",
     "mime-types": "^2.1.22",
     "p-limit": "^2.2.0",
     "yargs": "^13.2.2"
@@ -32,6 +33,7 @@
     "@types/got": "^9.4.1",
     "@types/jest": "^24.0.11",
     "@types/jsdom": "^12.2.3",
+    "@types/mime": "^2.0.1",
     "@types/nock": "^9.3.1",
     "@types/webpack": "^4.4.27",
     "@types/webpack-node-externals": "^1.6.3",

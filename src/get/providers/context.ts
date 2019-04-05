@@ -67,7 +67,7 @@ export abstract class Context {
     fn: ContextCallback): void
 
   parseNode (node: Node): string {
-    return this.render(this.tokenize(node))
+    return this.render(Context.tokenize(node))
   }
 
   render (tokens: Token[]): string {
@@ -104,13 +104,13 @@ export abstract class Context {
     return text
   }
 
-  tokenizeArray (nodes: NodeList): Token[] {
+  static tokenizeArray (nodes: NodeList): Token[] {
     return [...nodes].reduce((acc, cnode) => {
-      return acc.concat(this.tokenize(cnode))
+      return acc.concat(Context.tokenize(cnode))
     }, [] as Token[])
   }
 
-  tokenize (node: Node): Token[] {
+  static tokenize (node: Node): Token[] {
     if (node.nodeType === Node.TEXT_NODE) {
       return [{
         type: 'text',
@@ -196,14 +196,14 @@ export abstract class Context {
         return []
       }
       case 'P': {
-        const tokens = this.tokenizeArray(node.childNodes)
+        const tokens = Context.tokenizeArray(node.childNodes)
         tokens.push({
           type: 'br'
         })
         return tokens
       }
       default: {
-        return this.tokenizeArray(node.childNodes)
+        return Context.tokenizeArray(node.childNodes)
       }
     }
     // return []

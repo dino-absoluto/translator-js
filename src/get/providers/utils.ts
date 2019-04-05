@@ -22,6 +22,7 @@
 import got from '../../utils/syosetu-got'
 import { flow, trim } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
+import * as mime from 'mime'
 /* code */
 
 export const getAsDOM = async (url: string) => {
@@ -35,18 +36,34 @@ export const download = async (url: string) => {
     encoding: null
   }))
   const buf = res.body
-  const disp = res.headers['content-disposition']
-  if (disp) {
-    const name = trim(flow(disp.match(/; filename="[^"]+"/))
-      .then(a => a[1]).get())
-    if (name) {
-      return {
-        buf,
-        name
+  {
+    const disp = res.headers['content-disposition']
+    if (disp) {
+      const name = trim(flow(disp.match(/; filename="[^"]+"/))
+        .then(a => a[1]).get())
+      if (name) {
+        return {
+          buf,
+          name
+        }
+      }
+    }
+  }
+  {
+    const type = res.headers['content-type']
+    if (type) {
+      const ext = flow(trim(type.split(';')[0]))
+        .then(mime.getExtension).get()
+      if (ext) {
+        return {
+          buf,
+          name: `untitled.${ext}`
+        }
       }
     }
   }
   return {
-    buf
+    buf,
+    name: 'untitled'
   }
 }
