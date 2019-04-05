@@ -60,7 +60,7 @@ export const hashDir = async (
       encoding: 'base64'
     })
     return {
-      fname: path.relative(cwd, fname),
+      fname: path.posix.normalize(path.relative(cwd, fname)),
       content
     }
   }))
