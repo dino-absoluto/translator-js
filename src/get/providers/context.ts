@@ -65,14 +65,51 @@ export abstract class Context {
   abstract requestFile (
     name: string,
     fn: ContextCallback): void
+
   parseNode (node: Node): string {
-    return node.textContent || ''
+    return this.render(this.tokenize(node))
   }
+
+  render (tokens: Token[]): string {
+    let text = ''
+    for (const tok of tokens) {
+      let tt: string
+      switch (tok.type) {
+        case 'text': {
+          tt = tok.text
+          break
+        }
+        case 'ruby': {
+          tt = `${tok.text}(${tok.ruby})`
+          break
+        }
+        case 'link': {
+          tt = `[${tok.text}](${tok.url})`
+          break
+        }
+        case 'image': {
+          tt = `![${tok.text}](${tok.url})`
+          break
+        }
+        case 'br': {
+          tt = '\n'
+          break
+        }
+        default:
+          tt = ''
+          break
+      }
+      text += tt
+    }
+    return text
+  }
+
   tokenizeArray (nodes: NodeList): Token[] {
     return [...nodes].reduce((acc, cnode) => {
       return acc.concat(this.tokenize(cnode))
     }, [] as Token[])
   }
+
   tokenize (node: Node): Token[] {
     if (node.nodeType === Node.TEXT_NODE) {
       return [{
@@ -164,14 +201,14 @@ export abstract class Context {
 }
 
 export class SimpleContext extends Context {
-  text: (string[])[] = []
-  bufs: (Buffer)[] = []
-  requestFile (_name: string, get: ContextCallback) {
-    let data = get(_name)
+  text: ([string, string[]])[] = []
+  bufs: ([string, Buffer])[] = []
+  requestFile (name: string, get: ContextCallback) {
+    let data = get(name)
     if (Array.isArray(data)) {
-      this.text.push(data as string[])
+      this.text.push([name, data as string[]])
     } else {
-      this.bufs.push(data as Buffer)
+      this.bufs.push([name, data as Buffer])
     }
   }
 }
