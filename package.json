@@ -49,30 +49,5 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "webpack-node-externals": "^1.7.2"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "roots": [
-      "<rootDir>/src/",
-      "<rootDir>/tests/"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "<rootDir>/jest/mods"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    },
-    "testMatch": [
-      "**/?(*.)+(spec|test).(js)",
-      "**/?(*.)+(spec|test).(ts|tsx)"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "tsx",
-      "json",
-      "node"
-    ]
   }
 }
