@@ -42,7 +42,7 @@ export const getProvider = async (url: URL): Promise<Provider> => {
     await initialized
     return getProvider(url)
   }
-  let value = domains.get(url.hostname)
+  let value = domains.get(url.host)
   if (!value) {
     throw new Error('no matching provider')
   }

@@ -30,15 +30,19 @@ interface GotOptions {
   }
 }
 
-const limit = pLimit(1)
+const syosetuLimit = pLimit(1)
 
 const got = (href: gotBase.GotUrl, config: GotOptions = {}) => {
   let url = new URL(href.toString())
-  config.headers = Object.assign({}, config.headers)
-  if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
-    config.headers.cookie = cookie.serialize('over18', 'yes')
+  if (url.host.endsWith('.syosetu.com')) {
+    config.headers = Object.assign({}, config.headers)
+    if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
+      config.headers.cookie = cookie.serialize('over18', 'yes')
+    }
+    return syosetuLimit(() => gotBase(url, config))
+  } else {
+    return gotBase(href, config)
   }
-  return limit(() => gotBase(url, config))
 }
 
 export default got
