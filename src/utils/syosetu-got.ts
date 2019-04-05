@@ -22,26 +22,34 @@
 import cookie = require('cookie')
 import gotBase = require('got')
 import pLimit from 'p-limit'
+import {
+  GotUrl,
+  GotPromise,
+  GotJSONOptions,
+  GotFormOptions,
+  GotBodyOptions } from 'got'
 /* -imports */
-
-interface GotOptions {
-  headers?: {
-    cookie?: string
-  }
-}
 
 const syosetuLimit = pLimit(1)
 
-const got = (href: gotBase.GotUrl, config: GotOptions = {}) => {
+function got (url: GotUrl, options: GotJSONOptions): GotPromise<any>
+function got (url: GotUrl, options?: GotFormOptions<string>): GotPromise<string>
+function got (url: GotUrl, options: GotFormOptions<null>): GotPromise<Buffer>
+function got (url: GotUrl, options: GotBodyOptions<string>): GotPromise<string>
+function got (url: GotUrl, options?: GotBodyOptions<null>): GotPromise<Buffer>
+function got (href: gotBase.GotUrl, options?: any) {
   let url = new URL(href.toString())
   if (url.host.endsWith('.syosetu.com')) {
-    config.headers = Object.assign({}, config.headers)
-    if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
-      config.headers.cookie = cookie.serialize('over18', 'yes')
+    if (!options) {
+      options = {}
     }
-    return syosetuLimit(() => gotBase(url, config))
+    options.headers = Object.assign({}, options.headers)
+    if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
+      options.headers.cookie = cookie.serialize('over18', 'yes')
+    }
+    return syosetuLimit(() => gotBase(url, options))
   } else {
-    return gotBase(href, config)
+    return gotBase(href, options)
   }
 }
 
