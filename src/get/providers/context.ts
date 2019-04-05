@@ -19,11 +19,8 @@
  *
  */
 /* imports */
-import { Context as AbstractContext, ContextCallback } from './common'
 import { flow, trim } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
-/* re-exports */
-export { ContextCallback }
 /* code */
 
 const Node = flow(new JSDOM()).then(dom => {
@@ -62,7 +59,15 @@ export type Token = TokenBr | TokenString | TokenRuby | TokenImage | TokenLink
 const isElementNode = (node: Node): node is HTMLElement =>
   node.nodeType === Node.ELEMENT_NODE
 
-export abstract class Context extends AbstractContext {
+export type ContextCallback = (name: string) => Buffer | string[]
+
+export abstract class Context {
+  abstract requestFile (
+    name: string,
+    fn: ContextCallback): void
+  parseNode (node: Node): string {
+    return node.textContent || ''
+  }
   tokenizeArray (nodes: NodeList): Token[] {
     return [...nodes].reduce((acc, cnode) => {
       return acc.concat(this.tokenize(cnode))
@@ -155,5 +160,18 @@ export abstract class Context extends AbstractContext {
       }
     }
     // return []
+  }
+}
+
+export class SimpleContext extends Context {
+  text: (string[])[] = []
+  bufs: (Buffer)[] = []
+  requestFile (_name: string, get: ContextCallback) {
+    let data = get(_name)
+    if (Array.isArray(data)) {
+      this.text.push(data as string[])
+    } else {
+      this.bufs.push(data as Buffer)
+    }
   }
 }

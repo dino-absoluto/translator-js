@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { Provider, Novel, Chapter, Content } from './common'
+import { Provider, Novel, Chapter, RenderFn } from './common'
 import got from '../../utils/syosetu-got'
 import { trim, flow } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
@@ -30,7 +30,7 @@ export class SyosetuChapter implements Chapter {
   group?: string
   name: string
   updateId?: string
-  content?: Content
+  content?: RenderFn
   constructor (options: {
     url: URL
     group?: string

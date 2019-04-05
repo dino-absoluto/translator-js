@@ -20,10 +20,11 @@
  */
 /* imports */
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
-import { Content, ContextCallback } from '../common'
-import { Context } from '../context'
+import { RenderFn } from '../common'
 import { back as nockBack, NockBackContext } from 'nock'
 import * as path from 'path'
+/* code */
+import { SimpleContext } from '../context'
 /* code */
 
 nockBack.setMode('record')
@@ -92,15 +93,9 @@ describe('SyosetuChapter', () => {
     const content = chapter.content
     expect(content).not.toBeNull()
     let lines: string[] = []
-    ;(content as Content)(
-      new (class extends Context {
-        requestFile (_name: string, get: ContextCallback) {
-          let data = get(_name)
-          expect(Array.isArray(data)).toBeTruthy()
-          lines = data as string[]
-        }
-      })()
-    )
+    const ctx = new SimpleContext()
+    ;(content as RenderFn)(ctx)
+    lines = ctx.text[0] as string[]
     expect(lines.length).toBe(3)
     const data = lines.join('\n\n---\n\n')
     expect(data.length).toBeGreaterThan(3000)

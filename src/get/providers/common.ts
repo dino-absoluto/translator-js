@@ -19,30 +19,20 @@
  *
  */
 /* imports */
+import { Context } from './context'
 /* code */
 
 export interface Token {
   type: string
 }
 
-export type ContextCallback = (name: string) => Buffer | string[]
-export abstract class Context {
-  abstract requestFile (
-    name: string,
-    fn: ContextCallback): void
-  abstract tokenize (node: Element): Token[]
-  parseNode (node: Node): string {
-    return node.textContent || ''
-  }
-}
-
-export type Content = (fmt: Context) => void
+export type RenderFn = (ctx: Context) => void
 
 export interface ChapterData {
   group?: string
   name: string
   updateId?: string
-  content?: Content
+  content?: RenderFn
 }
 
 export interface Chapter extends ChapterData {

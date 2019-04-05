@@ -20,20 +20,11 @@
  */
 /* imports */
 import got from '../../../utils/syosetu-got'
-import * as pfs from '../../../utils/pfs'
+// import * as pfs from '../../../utils/pfs'
 import { hash } from '../../../utils/test-utils'
 import { JSDOM } from 'jsdom'
-import { Context, ContextCallback, Token } from '../context'
+import { SimpleContext, Token } from '../context'
 /* code */
-
-class FakeContext extends Context {
-  data: string[] = []
-  requestFile (_name: string, get: ContextCallback) {
-    let data = get(_name)
-    expect(Array.isArray(data)).toBeTruthy()
-    this.data = data as string[]
-  }
-}
 
 const fakeRender = (tokens: Token[]) => {
   let text = ''
@@ -74,7 +65,7 @@ describe('Context', () => {
   test('constructor', async () => {
     const { window: { document: doc } } =
       new JSDOM((await got(url)).body, { url: url.toString() })
-    const context = new FakeContext()
+    const context = new SimpleContext()
     const honbun = doc.getElementById('novel_honbun')
     expect(honbun).not.toBeNull()
     const toks = context.tokenize(honbun as Exclude<typeof honbun, null>)
