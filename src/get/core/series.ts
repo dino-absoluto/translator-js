@@ -22,6 +22,7 @@
 import { Novel, NovelData } from '../providers/common'
 import { getNovel } from '../providers'
 import { Folder, File } from './fs'
+import { EpisodeList } from './episode'
 import * as path from 'path'
 /* code */
 
@@ -35,6 +36,7 @@ interface SeriesOptions {
 
 export class Series {
   private novel?: Novel
+  private episodes?: EpisodeList
   readonly data: NovelData
   readonly container: Folder
   readonly metaFile: File
@@ -125,6 +127,18 @@ export class Series {
       await this.container.rename(name)
     }
     await this.metaFile.write(JSON.stringify(data, null, 1))
-    return
+  }
+
+  async updateIndex () {
+    await this.update()
+    if (!this.episodes) {
+      this.episodes = new EpisodeList(this.container)
+    }
+    const { novel, episodes } = this
+    if (!novel) {
+      throw new Error('novel is undefined')
+    }
+    const index = await novel.fetchIndex()
+    await episodes.updateWith(index)
   }
 }

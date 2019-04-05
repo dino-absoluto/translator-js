@@ -29,14 +29,13 @@ import makeDir = require('make-dir')
 /* setup */
 setupNock('core-series.json')
 const TMPDIR = setupTmpDir('get__core-series')
-const OUTDIR = path.join(TMPDIR, 'output')
 
 /* code */
 describe('Series', () => {
   const href = new URL('http://ncode.syosetu.com/n0537cm/')
   const title = '邪神アベレージ'
   test('constructor.1', async () => {
-    const outputDir = path.join(OUTDIR, 'constructor.1')
+    const outputDir = path.join(TMPDIR, 'constructor.1')
     const series = new Series({
       novel: await getNovel(href),
       outputDir,
@@ -51,7 +50,7 @@ describe('Series', () => {
     expect(series.container.path).toBe(path.join(outputDir, title))
   })
   test('constructor.2', async () => {
-    const outputDir = path.join(OUTDIR, 'constructor.2')
+    const outputDir = path.join(TMPDIR, 'constructor.2')
     const expectedDir = path.join(outputDir, title)
     await makeDir(expectedDir)
     fs.copyFileSync(
@@ -76,7 +75,7 @@ describe('Series', () => {
     expect(series.container.path).toBe(expectedDir)
   })
   test('serialize()', async () => {
-    const outputDir = path.join(OUTDIR, 'serialize()')
+    const outputDir = path.join(TMPDIR, 'serialize()')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
@@ -89,7 +88,7 @@ describe('Series', () => {
     expect(() => series.container.path).toThrow()
   })
   test('update()', async () => {
-    const outputDir = path.join(OUTDIR, 'update()')
+    const outputDir = path.join(TMPDIR, 'update()')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
@@ -104,4 +103,14 @@ describe('Series', () => {
       status: { completed: true, size: 82 }
     }))
   })
+  test('updateIndex()', async () => {
+    const outputDir = path.join(TMPDIR, 'updateIndex()')
+    const series = new Series({
+      novel: await getNovel(href),
+      outputDir
+    })
+    await series.ready
+    expect(() => series.container.path).toThrow()
+    await series.updateIndex()
+  }, 120000)
 })
