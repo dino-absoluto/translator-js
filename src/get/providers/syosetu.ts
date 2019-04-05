@@ -66,7 +66,8 @@ export class SyosetuChapter implements Chapter {
     }))
     this.content = (fmt) => {
       let sections = nodes.map(node =>
-        fmt.parseNode(node).trim())
+        fmt.parseNode(node))
+      sections.unshift(this.name)
       fmt.requestFile(this.name + '.txt', (_name) => {
         return sections
       })

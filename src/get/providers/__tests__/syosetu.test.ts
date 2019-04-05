@@ -84,7 +84,7 @@ describe('SyosetuChapter', () => {
     const ctx = new SimpleContext()
     ;(content as RenderFn)(ctx)
     lines = ctx.text[0] as string[]
-    expect(lines.length).toBe(3)
+    expect(lines.length).toBe(4)
     const data = lines.join('\n\n---\n\n')
     expect(data.length).toBeGreaterThan(3000)
     expect(data).toContain('　違うらしい。')
