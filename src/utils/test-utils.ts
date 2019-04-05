@@ -20,7 +20,6 @@
 /* imports */
 import globby, { GlobbyOptions } from 'globby'
 import hasha = require('hasha')
-import { back as nockBack, NockBackContext, NockBackMode } from 'nock'
 import * as path from 'path'
 import del from 'del'
 import makeDir = require('make-dir')
@@ -34,18 +33,6 @@ export const setupTmpDir = (name: string) => {
     await makeDir(fpath)
   })
   return fpath
-}
-
-export const setupNock = async (name: string, mode?: NockBackMode) => {
-  nockBack.fixtures = path.join(__TMPDIR, 'nock-fixtures')
-  nockBack.setMode(mode || 'record')
-  let nock: { nockDone: () => void; context: NockBackContext }
-  beforeAll(async () => {
-    nock = (await nockBack(name))
-  })
-  afterAll(async () => {
-    return nock.nockDone()
-  })
 }
 
 export const hashDir = async (

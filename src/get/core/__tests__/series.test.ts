@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { hashDir, setupNock, setupTmpDir } from '../../../utils/test-utils'
+import { hashDir, setupTmpDir } from '../../../utils/test-utils'
 import { Series } from '../series'
 import { getNovel } from '../../providers'
 import * as path from 'path'
@@ -27,7 +27,6 @@ import * as fs from 'fs'
 import makeDir = require('make-dir')
 
 /* setup */
-setupNock('core-series.json')
 const TMPDIR = setupTmpDir('get__core-series')
 
 /* code */

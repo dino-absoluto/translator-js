@@ -20,13 +20,12 @@
  */
 /* imports */
 // import * as pfs from '../../../utils/pfs'
-import { hash, setupNock } from '../../../utils/test-utils'
+import { hash } from '../../../utils/test-utils'
 import got from '../../../utils/syosetu-got'
 import { JSDOM } from 'jsdom'
 import { SimpleContext } from '../context'
 
 /* setup */
-setupNock('providers-context.json')
 
 /* code */
 describe('Context', () => {

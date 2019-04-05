@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { setupNock, setupTmpDir } from '../../../utils/test-utils'
+import { setupTmpDir } from '../../../utils/test-utils'
 import * as pfs from '../../../utils/pfs'
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
 import { RenderFn } from '../common'
@@ -27,7 +27,6 @@ import { SimpleContext } from '../context'
 import * as path from 'path'
 
 /* setup */
-setupNock('providers-syosetu.json')
 const TMPDIR = setupTmpDir('get__providers-syosetu')
 
 /* code */
