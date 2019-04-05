@@ -5,9 +5,9 @@ exports[`EpisodeList simple tree 1`] = `Object {}`;
 exports[`EpisodeList simple tree 2`] = `
 Object {
   "!meta/!cache.json": "vYsssrNFNi1Te3r9FQn521gQFYOmyLg4F7F/f3jVbwO0ik8/2/3/lkLzpNQK1SHxJoRZG6m2OaksRhQRtxGXqw==",
-  "!meta/001 prologue.txt": "2iZwPj8uwueUhObtxCDAZqccihVHMbqcNXkY+0ZwkjD0rpDGPKx1DV614Vqq47p8WaMvnC0Z+g0IZvGKmJ/Iow==",
-  "!meta/002 First Chapter.txt": "itrTHWYDurfUkVRtzYqljM8UDdfneYZb2ZmeNXHU9mfqmY+cnJ9oP4bO9HFDrZ4OmJ/ngfjerY+sxR2MYbOlgA==",
-  "!meta/003 2nd Chapter.txt": "8jqwCN1e8EsKnzr2XOsnZ5sBNKMl4DkgM5AhjpcyU7Kgz1PeYfUJl7NsgZ7zcAR3cA7BYnbPGZReMZjGB4piwQ==",
+  "000/001 prologue.txt": "2iZwPj8uwueUhObtxCDAZqccihVHMbqcNXkY+0ZwkjD0rpDGPKx1DV614Vqq47p8WaMvnC0Z+g0IZvGKmJ/Iow==",
+  "000/002 First Chapter.txt": "itrTHWYDurfUkVRtzYqljM8UDdfneYZb2ZmeNXHU9mfqmY+cnJ9oP4bO9HFDrZ4OmJ/ngfjerY+sxR2MYbOlgA==",
+  "000/003 2nd Chapter.txt": "8jqwCN1e8EsKnzr2XOsnZ5sBNKMl4DkgM5AhjpcyU7Kgz1PeYfUJl7NsgZ7zcAR3cA7BYnbPGZReMZjGB4piwQ==",
   "001 New group/004 3nd Chapter.txt": "3gneKWIrlMvbJFW6yAUr7iIF3HZZQZ6r5UcUAuhMqE0BnlCxwvPydvplZXSls/xF/y3QZex3nqNlTMRJR0xEkw==",
 }
 `;
@@ -15,9 +15,9 @@ Object {
 exports[`EpisodeList simple tree 3`] = `
 Object {
   "!meta/!cache.json": "0W3vebijZHAOC3rbxI/IFaNugoHaXJatpw1X36kPhGl4RhkXEHjHFRZpRYCRv5KwN9E95+HdfX1SlvhlUOK/Ng==",
-  "!meta/001 prologue.txt": "2iZwPj8uwueUhObtxCDAZqccihVHMbqcNXkY+0ZwkjD0rpDGPKx1DV614Vqq47p8WaMvnC0Z+g0IZvGKmJ/Iow==",
-  "!meta/002 First Chapter.txt": "tktxkvr7lZtCploPKCeUyXKCdaBX49yULaaOm8EYHGuN0ta6Yp7n3xztAtukh7q0hY+D+dG2nbGm42AtiVAQ6A==",
-  "!meta/003 2nd Chapter.txt": "0JWzsPXIBK3qT9tupg6c+0c9zDbI0dEkOiLeGruf64G3XgwaZx0mGQj7/ZMpm44X7e0F7JeGC4nPfXJac6M7pw==",
+  "000/001 prologue.txt": "2iZwPj8uwueUhObtxCDAZqccihVHMbqcNXkY+0ZwkjD0rpDGPKx1DV614Vqq47p8WaMvnC0Z+g0IZvGKmJ/Iow==",
+  "000/002 First Chapter.txt": "tktxkvr7lZtCploPKCeUyXKCdaBX49yULaaOm8EYHGuN0ta6Yp7n3xztAtukh7q0hY+D+dG2nbGm42AtiVAQ6A==",
+  "000/003 2nd Chapter.txt": "0JWzsPXIBK3qT9tupg6c+0c9zDbI0dEkOiLeGruf64G3XgwaZx0mGQj7/ZMpm44X7e0F7JeGC4nPfXJac6M7pw==",
   "001 New group/004 3nd Chapter.txt": "3gneKWIrlMvbJFW6yAUr7iIF3HZZQZ6r5UcUAuhMqE0BnlCxwvPydvplZXSls/xF/y3QZex3nqNlTMRJR0xEkw==",
 }
 `;
@@ -25,8 +25,8 @@ Object {
 exports[`EpisodeList simple tree 4`] = `
 Object {
   "!meta/!cache.json": "OKCkW17uNPlw41N6VDAfiOpYR0gCrg39jhHiSXOZCvrUZM/0jYMRgxoMe1y21PBHgktsqRdL8rY5lU0T6TatMA==",
-  "!meta/001 prologue.txt": "2iZwPj8uwueUhObtxCDAZqccihVHMbqcNXkY+0ZwkjD0rpDGPKx1DV614Vqq47p8WaMvnC0Z+g0IZvGKmJ/Iow==",
-  "!meta/002 First Chapter.txt": "tktxkvr7lZtCploPKCeUyXKCdaBX49yULaaOm8EYHGuN0ta6Yp7n3xztAtukh7q0hY+D+dG2nbGm42AtiVAQ6A==",
+  "000/001 prologue.txt": "2iZwPj8uwueUhObtxCDAZqccihVHMbqcNXkY+0ZwkjD0rpDGPKx1DV614Vqq47p8WaMvnC0Z+g0IZvGKmJ/Iow==",
+  "000/002 First Chapter.txt": "tktxkvr7lZtCploPKCeUyXKCdaBX49yULaaOm8EYHGuN0ta6Yp7n3xztAtukh7q0hY+D+dG2nbGm42AtiVAQ6A==",
   "001 New group/003 2nd Chapter.txt": "0JWzsPXIBK3qT9tupg6c+0c9zDbI0dEkOiLeGruf64G3XgwaZx0mGQj7/ZMpm44X7e0F7JeGC4nPfXJac6M7pw==",
   "001 New group/004 3nd Chapter.txt": "3gneKWIrlMvbJFW6yAUr7iIF3HZZQZ6r5UcUAuhMqE0BnlCxwvPydvplZXSls/xF/y3QZex3nqNlTMRJR0xEkw==",
 }

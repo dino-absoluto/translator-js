@@ -34,7 +34,7 @@ class Formatter extends AbstractFormatter {
 
   requestFile (name: string, get: (name: string) => string[] | Buffer) {
     const { files, prefix } = this
-    name = `${prefix}${name}`
+    name = `${prefix}${name}`.trim()
     if (files.has(name)) {
       return
     }
@@ -77,7 +77,7 @@ export class EpisodeList {
     const metaFile = metaDir.requestFile(
       this.compressedCache ? '!cache.json.gz' : '!cache.json')
     const folders = [
-      metaDir
+      rootDir.requestFolder('0'.padStart(this.pad0, '0'))
     ]
     this.folders = folders
     this.metaFile = metaFile
@@ -197,7 +197,7 @@ export class EpisodeList {
         groupId = groups.length + 1
         groups.push(`${
           groupId.toString().padStart(this.pad0, '0')} ${
-          ch.group || 'no name'}`)
+          ch.group || ''}`.trim())
         groupName = ch.group
       }
       ch.groupId = groupId
