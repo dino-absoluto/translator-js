@@ -93,6 +93,33 @@ export abstract class Context extends AbstractContext {
           return []
         }
       }
+      case 'BR': {
+        return [{
+          type: 'text',
+          text: '\n'
+        }]
+      }
+      case 'A': {
+        const img = node as HTMLLinkElement
+        return [{
+          type: 'image',
+          text: img.textContent || img.href,
+          url: img.href
+        }]
+      }
+      case 'IMG': {
+        const img = node as HTMLImageElement
+        return [{
+          type: 'image',
+          text: img.alt,
+          url: img.src
+        }]
+      }
+      case 'IFRAME':
+      case 'VIDEO':
+      case 'EMBEDED': {
+        return []
+      }
       default: {
         let tokens: Token[] = []
         for (const cnode of node.children) {
