@@ -21,18 +21,18 @@
 /* imports */
 /* code */
 
-export type FormatterCallback = (name: string) => Buffer | string[]
-export abstract class Formatter {
+export type ContextCallback = (name: string) => Buffer | string[]
+export abstract class Context {
   abstract requestFile (
     name: string,
-    fn: FormatterCallback): void
+    fn: ContextCallback): void
 
   parseNode (node: Node): string {
     return node.textContent || ''
   }
 }
 
-export type Content = (fmt: Formatter) => void
+export type Content = (fmt: Context) => void
 
 export interface ChapterData {
   group?: string

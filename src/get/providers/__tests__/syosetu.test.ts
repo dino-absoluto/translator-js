@@ -20,7 +20,7 @@
  */
 /* imports */
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
-import { Content, Formatter, FormatterCallback } from '../common'
+import { Content, Context, ContextCallback } from '../common'
 import { back as nockBack, NockBackContext } from 'nock'
 import * as path from 'path'
 /* code */
@@ -92,8 +92,8 @@ describe('SyosetuChapter', () => {
     expect(content).not.toBeNull()
     let lines: string[] = []
     ;(content as Content)(
-      new (class extends Formatter {
-        requestFile (_name: string, get: FormatterCallback) {
+      new (class extends Context {
+        requestFile (_name: string, get: ContextCallback) {
           let data = get(_name)
           expect(Array.isArray(data)).toBeTruthy()
           lines = data as string[]

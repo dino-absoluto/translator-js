@@ -19,12 +19,12 @@
  *
  */
 /* imports */
-import { Chapter, Formatter as AbstractFormatter } from '../providers/common'
+import { Chapter, Context as AbstractContext } from '../providers/common'
 import { Folder, File } from './fs'
 import { gunzipSync, gzipSync } from 'zlib'
 /* code */
 
-class Formatter extends AbstractFormatter {
+class Context extends AbstractContext {
   readonly files = new Map<string, string[] | Buffer>()
   readonly prefix: string
   constructor (prefix: string) {
@@ -163,14 +163,14 @@ export class EpisodeList {
     if (!folder) {
       throw new Error(`Folder must not be ${folder}`)
     }
-    const format = new Formatter(
+    const context = new Context(
       `${(index + 1).toString().padStart(this.pad0, '0')} `)
     if (ch.content) {
-      ch.content(format)
+      ch.content(context)
     }
     // write files
     const files = []
-    for (const [name, data] of format.files) {
+    for (const [name, data] of context.files) {
       let buf: Buffer
       if (data instanceof Buffer) {
         buf = data
