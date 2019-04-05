@@ -22,18 +22,13 @@
 import { EpisodeList } from '../episode'
 import { Folder } from '../fs'
 import { Chapter, ChapterData, RenderFn } from '../../providers/common'
-import { hashDir } from '../../../utils/test-utils'
+import { hashDir, setupTmpDir } from '../../../utils/test-utils'
 import * as path from 'path'
-import del from 'del'
-import makeDir = require('make-dir')
+
+/* setup */
+const TMPDIR = setupTmpDir('get__core-episode')
+
 /* code */
-
-const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-episode')
-beforeAll(async () => {
-  await del(path.join(TMPDIR, '*'))
-  return makeDir(TMPDIR)
-})
-
 interface FakeData extends ChapterData {
   group?: string | undefined
   name: string

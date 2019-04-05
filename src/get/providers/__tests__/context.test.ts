@@ -19,13 +19,16 @@
  *
  */
 /* imports */
-import got from '../../../utils/syosetu-got'
 // import * as pfs from '../../../utils/pfs'
-import { hash } from '../../../utils/test-utils'
+import { hash, setupNock } from '../../../utils/test-utils'
+import got from '../../../utils/syosetu-got'
 import { JSDOM } from 'jsdom'
 import { SimpleContext, Token } from '../context'
-/* code */
 
+/* setup */
+setupNock('providers-context.json')
+
+/* code */
 const fakeRender = (tokens: Token[]) => {
   let text = ''
   for (const tok of tokens) {

@@ -22,24 +22,16 @@
 import { Folder } from '../fs'
 import * as path from 'path'
 import * as fs from 'fs'
-import del from 'del'
-import makeDir = require('make-dir')
+import { setupTmpDir } from '../../../utils/test-utils'
+
+/* setup */
+const TMPDIR = setupTmpDir('get__core-fs')
+
 /* code */
-
-const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-fs')
-
-beforeAll(async () => {
-  await del(path.join(TMPDIR, '*'))
-  return makeDir(TMPDIR)
-})
-
 describe('Folder', () => {
   const tmpDir = new Folder(null, path.join(TMPDIR, 'Folder'))
   expect(tmpDir.path).toBe(TMPDIR + '/Folder')
   const TMPPATH = tmpDir.path
-  beforeEach(async () => {
-    await del(path.join(TMPPATH, '*'))
-  })
   test('constructor.2', async () => {
     const name = 'cont1'
     const testPath = path.join(TMPPATH, name)
@@ -67,9 +59,6 @@ describe('Folder', () => {
 describe('File', () => {
   const tmpDir = new Folder(null, path.join(TMPDIR, 'File'))
   const TMPPATH = tmpDir.path
-  beforeEach(async () => {
-    await del(path.join(TMPPATH, '*'))
-  })
   test('constructor()', async () => {
     const name = 'constructor.txt'
     const testPath = path.join(TMPPATH, name)
@@ -77,7 +66,7 @@ describe('File', () => {
     expect(file.path).toBe(testPath)
   })
   test('simple manipulation', async () => {
-    const name = 'access.txt'
+    const name = 'simple.txt'
     const testPath = path.join(TMPPATH, name)
     const file = tmpDir.requestFile(name)
     expect(file.path).toBe(testPath)
@@ -86,7 +75,7 @@ describe('File', () => {
     await file.remove()
   })
   test('simple write-read', async () => {
-    const name = 'access.txt'
+    const name = 'wr.txt'
     const testPath = path.join(TMPPATH, name)
     const file = tmpDir.requestFile(name)
     expect(file.path).toBe(testPath)
@@ -94,7 +83,7 @@ describe('File', () => {
     await expect(file.read()).resolves.toEqual(Buffer.from('Hello World!'))
   })
   test('simple read-write-read', async () => {
-    const name = 'access.txt'
+    const name = 'rwr.txt'
     const testPath = path.join(TMPPATH, name)
     const file = tmpDir.requestFile(name)
     expect(file.path).toBe(testPath)

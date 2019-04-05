@@ -19,27 +19,15 @@
  *
  */
 /* imports */
+import { setupNock } from '../../../utils/test-utils'
 import { SyosetuNovel, SyosetuChapter } from '../syosetu'
 import { RenderFn } from '../common'
-import { back as nockBack, NockBackContext } from 'nock'
-import * as path from 'path'
-/* code */
 import { SimpleContext } from '../context'
+
+/* setup */
+setupNock('providers-syosetu.json')
+
 /* code */
-
-nockBack.setMode('record')
-nockBack.fixtures = path.resolve(__dirname, '__tmp__/nock-fixtures/')
-
-let nock: { nockDone: () => void; context: NockBackContext }
-
-beforeAll(async () => {
-  nock = (await nockBack('syosetu.json'))
-})
-
-afterAll(async () => {
-  return nock.nockDone()
-})
-
 describe('SyosetuNovel', () => {
   const href = 'http://ncode.syosetu.com/n0537cm/'
   test('constructor', async () => {

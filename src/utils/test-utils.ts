@@ -20,8 +20,33 @@
 /* imports */
 import globby, { GlobbyOptions } from 'globby'
 import hasha = require('hasha')
+import { back as nockBack, NockBackContext } from 'nock'
 import * as path from 'path'
-/* -imports */
+import del from 'del'
+import makeDir = require('make-dir')
+
+/* code */
+export const __TMPDIR = path.resolve('__tmp__/jest/')
+export const setupTmpDir = (name: string) => {
+  const fpath = path.join(__TMPDIR, name)
+  beforeAll(async () => {
+    await del(path.join(fpath, '*'))
+    await makeDir(fpath)
+  })
+  return fpath
+}
+
+export const setupNock = async (name: string) => {
+  nockBack.fixtures = path.join(__TMPDIR, 'nock-fixtures')
+  nockBack.setMode('record')
+  let nock: { nockDone: () => void; context: NockBackContext }
+  beforeAll(async () => {
+    nock = (await nockBack(name))
+  })
+  afterAll(async () => {
+    return nock.nockDone()
+  })
+}
 
 export const hashDir = async (
   patt: string | ReadonlyArray<string>,

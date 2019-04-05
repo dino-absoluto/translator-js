@@ -21,8 +21,8 @@
 /* imports */
 import { getProvider } from '..'
 import Syosetu from '../syosetu'
-/* code */
 
+/* code */
 describe('module providers', () => {
   test('getProvider()', async () => {
     expect(await getProvider(new URL('http://ncode.syosetu.com/n0537cm/')))

@@ -19,31 +19,19 @@
  *
  */
 /* imports */
+import { setupNock, setupTmpDir } from '../../../utils/test-utils'
 import { Series } from '../series'
 import { getNovel } from '../../providers'
-import { back as nockBack, NockBackContext } from 'nock'
-import del from 'del'
 import * as path from 'path'
 import * as fs from 'fs'
 import makeDir = require('make-dir')
-/* code */
 
-const TMPDIR = path.resolve('__tmp__/jest-tmp/get__core-series')
+/* setup */
+setupNock('core-series.json')
+const TMPDIR = setupTmpDir('get__core-series')
 const OUTDIR = path.join(TMPDIR, 'output')
-nockBack.setMode('record')
-nockBack.fixtures = path.resolve(TMPDIR, 'nock-fixtures/')
 
-let nock: { nockDone: () => void; context: NockBackContext }
-
-beforeAll(async () => {
-  await del(path.join(OUTDIR, '*'))
-  nock = (await nockBack('syosetu.json'))
-})
-
-afterAll(async () => {
-  return nock.nockDone()
-})
-
+/* code */
 describe('Series', () => {
   const href = new URL('http://ncode.syosetu.com/n0537cm/')
   const title = '邪神アベレージ'
