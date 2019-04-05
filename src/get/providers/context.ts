@@ -19,4 +19,88 @@
  *
  */
 /* imports */
+import { Context as AbstractContext } from './common'
+import { flow, trim } from '../../utils/flow'
 /* code */
+
+interface TokenString {
+  type: 'text'
+  text: string
+}
+
+interface TokenRuby {
+  type: 'ruby'
+  text: string
+  ruby: string
+}
+
+interface TokenImage {
+  type: 'image'
+  url: string
+  text: string
+}
+
+interface TokenLink {
+  type: 'link'
+  url: string
+  text: string
+}
+
+export type Token = TokenString | TokenRuby | TokenImage | TokenLink
+
+export abstract class Context extends AbstractContext {
+  tokenize (node: Element): Token[] {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return [{
+        type: 'text',
+        text: node.textContent || ''
+      }]
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) {
+      return []
+    }
+    switch (node.nodeName) {
+      case 'RUBY': {
+        const text = trim(flow(node.querySelector('rb'))
+          .then(rb => rb.textContent)
+          .get() ||
+        flow([...node.children]).then(children => {
+          let text = ''
+          for (const node of children) {
+            if (node.nodeType === Node.TEXT_NODE) {
+              text += node.textContent
+            }
+          }
+          return text
+        }).get() || node.textContent)
+        if (text) {
+          const ruby = flow(node.querySelector('rt')).then(rt => {
+            return trim(rt.textContent)
+          }).get()
+          if (ruby && text !== ruby) {
+            return [{
+              type: 'ruby',
+              text,
+              ruby
+            }]
+          } else {
+            return [{
+              type: 'text',
+              text
+            }]
+          }
+        } else {
+          return []
+        }
+      }
+      default: {
+        let tokens: Token[] = []
+        for (const cnode of node.children) {
+          tokens = tokens.concat(this.tokenize(cnode))
+        }
+        return tokens
+      }
+    }
+    // return []
+  }
+}
