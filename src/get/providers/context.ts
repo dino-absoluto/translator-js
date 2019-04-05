@@ -165,12 +165,22 @@ export abstract class Context {
         }]
       }
       case 'A': {
-        const img = node as HTMLLinkElement
-        return [{
-          type: 'image',
-          text: img.textContent || img.href,
-          url: img.href
-        }]
+        const a = node as HTMLLinkElement
+        const tok: Token = {
+          type: 'link',
+          text: a.textContent || a.href,
+          url: a.href
+        }
+        const tokens = [...a.querySelectorAll('img')].reduce(
+          (all, node) => all.concat(this.tokenize(node)), [] as Token[])
+        if (tokens.length) {
+          tokens.push({
+            type: 'br'
+          })
+          tokens.push(tok)
+          return tokens
+        }
+        return [tok]
       }
       case 'IMG': {
         const img = node as HTMLImageElement
