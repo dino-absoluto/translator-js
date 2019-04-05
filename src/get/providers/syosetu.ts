@@ -1,5 +1,5 @@
 /**
- * @file index.ts
+ * @file Syosetu provider
  * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
