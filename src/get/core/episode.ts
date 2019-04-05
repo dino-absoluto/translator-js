@@ -19,6 +19,7 @@
  *
  */
 /* imports */
+import { flow } from '../../utils/flow'
 import { Chapter } from '../providers/common'
 import { Context as AbstractContext } from '../providers/context'
 import { Folder, File } from './fs'
@@ -176,7 +177,14 @@ export class EpisodeList {
       if (data instanceof Buffer) {
         buf = data
       } else {
-        buf = Buffer.from(data.join('\n\n---\n\n'))
+        buf = flow(data.join('\n\n---\n\n'))
+          .then(text => {
+            if (text[text.length - 1] !== '\n') {
+              return text + '\n'
+            } else {
+              return text
+            }
+          }).then(Buffer.from).get()
       }
       files.push(name)
       const file = folder.requestFile(name)
