@@ -20,6 +20,7 @@
  */
 /* imports */
 import { Novel, NovelData } from '../providers/common'
+import { getNovel } from '../providers'
 import { Folder, File } from './fs'
 import * as path from 'path'
 /* code */
@@ -28,18 +29,22 @@ interface SeriesOptions {
   outputDir: string
   basename?: string
   data?: NovelData
+  overwite?: boolean
+  novel?: Novel
 }
 
 export class Series {
-  private readonly novel: Novel
+  private novel?: Novel
   readonly data: NovelData
   readonly container: Folder
   readonly metaFile: File
   readonly ready: Promise<void>
-  constructor (novel: Novel, options: SeriesOptions) {
-    const data = Object.assign({}, novel, options.data)
+  readonly overwite: boolean
+  constructor (options: SeriesOptions) {
+    const data = Object.assign({}, options.novel, options.data)
     this.data = data
-    this.novel = novel
+    this.novel = options.novel
+    this.overwite = !!options.overwite
     let container: Folder
     const name = options.basename || this.data.name
     if (options.basename) {
@@ -53,19 +58,46 @@ export class Series {
     this.container = container
     this.metaFile = metaFile
     if (name) {
-      this.ready = (async () => {
-        try {
-          const buffer = await metaFile.read()
-          const json = JSON.parse(buffer.toString())
-          Object.assign(data, json)
-        } catch (err) {
-          if (err.code !== 'ENOENT') {
-            throw err
-          }
-        }
-      })()
+      this.ready = this.load()
     } else {
       this.ready = Promise.resolve()
+    }
+  }
+
+  private async verify (data: any): Promise<NovelData | undefined> {
+    if (!data || typeof data !== 'object') {
+      return
+    }
+    if (data.sourceURL) {
+      if (!this.overwite) {
+        throw new Error('unsupported older version')
+      } else {
+        try {
+          const url = new URL(data.sourceURL)
+          this.novel = await getNovel(url)
+        } catch {
+          throw new Error('failed to get novel')
+        }
+      }
+    }
+    if (data.id) {
+      return data
+    }
+  }
+
+  async load () {
+    const { metaFile, data, data: { name } } = this
+    if (!name) {
+      return
+    }
+    try {
+      const buffer = await metaFile.read()
+      const json = JSON.parse(buffer.toString())
+      Object.assign(data, await this.verify(json))
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
     }
   }
 
@@ -81,6 +113,9 @@ export class Series {
 
   async update () {
     const { novel, data } = this
+    if (!novel) {
+      throw new Error('novel is undefined')
+    }
     if (!this.hasMeta()) {
       await novel.fetch()
     }

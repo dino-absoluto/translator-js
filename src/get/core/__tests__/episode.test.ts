@@ -21,7 +21,7 @@
 /* imports */
 import { EpisodeList } from '../episode'
 import { Folder } from '../fs'
-import { Chapter, ChapterData, Content } from '../../providers/common'
+import { Chapter, ChapterData, RenderFn } from '../../providers/common'
 import { hashDir } from '../../../utils/test-utils'
 import * as path from 'path'
 import del from 'del'
@@ -45,7 +45,7 @@ class FakeChapter implements Chapter {
   group?: string | undefined
   name: string = ''
   updateId?: string | undefined
-  content?: Content
+  content?: RenderFn
   private text: string = ''
   constructor (options: FakeData) {
     Object.assign(this, options)

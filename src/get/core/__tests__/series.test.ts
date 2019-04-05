@@ -49,7 +49,8 @@ describe('Series', () => {
   const title = '邪神アベレージ'
   test('constructor.1', async () => {
     const outputDir = path.join(OUTDIR, 'constructor.1')
-    const series = new Series(await getNovel(href), {
+    const series = new Series({
+      novel: await getNovel(href),
       outputDir,
       data: {
         id: 'n0537cm',
@@ -68,7 +69,8 @@ describe('Series', () => {
     fs.copyFileSync(
       path.join(__dirname, 'testdata/index.json'),
       path.join(expectedDir, 'index.json'))
-    const series = new Series(await getNovel(href), {
+    const series = new Series({
+      novel: await getNovel(href),
       outputDir,
       data: {
         id: 'n0537cm',
@@ -87,7 +89,8 @@ describe('Series', () => {
   })
   test('serialize()', async () => {
     const outputDir = path.join(OUTDIR, 'serialize()')
-    const series = new Series(await getNovel(href), {
+    const series = new Series({
+      novel: await getNovel(href),
       outputDir
     })
     await series.ready
@@ -99,7 +102,8 @@ describe('Series', () => {
   })
   test('update()', async () => {
     const outputDir = path.join(OUTDIR, 'update()')
-    const series = new Series(await getNovel(href), {
+    const series = new Series({
+      novel: await getNovel(href),
       outputDir
     })
     await series.ready
