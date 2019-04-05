@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { setupNock, setupTmpDir } from '../../../utils/test-utils'
+import { hashDir, setupNock, setupTmpDir } from '../../../utils/test-utils'
 import { Series } from '../series'
 import { getNovel } from '../../providers'
 import * as path from 'path'
@@ -88,7 +88,7 @@ describe('Series', () => {
     expect(() => series.container.path).toThrow()
   })
   test('update()', async () => {
-    const outputDir = path.join(TMPDIR, 'update()')
+    const outputDir = path.join(TMPDIR, 'update')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
@@ -104,7 +104,7 @@ describe('Series', () => {
     }))
   })
   test('updateIndex()', async () => {
-    const outputDir = path.join(TMPDIR, 'updateIndex()')
+    const outputDir = path.join(TMPDIR, 'updateIndex')
     const series = new Series({
       novel: await getNovel(href),
       outputDir
@@ -112,5 +112,8 @@ describe('Series', () => {
     await series.ready
     expect(() => series.container.path).toThrow()
     await series.updateIndex()
+    expect(await hashDir(path.join(outputDir, '**/*'), {
+      cwd: outputDir
+    })).toMatchSnapshot()
   }, 120000)
 })
