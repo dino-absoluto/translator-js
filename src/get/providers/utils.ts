@@ -19,25 +19,23 @@
  *
  */
 /* imports */
-import got from '../../utils/syosetu-got'
 import { flow, trim } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
 import * as mime from 'mime'
-/* code */
+import fetch from 'node-fetch'
 
-export const getAsDOM = async (url: string) => {
+/* code */
+export const fetchDOM = async (url: string) => {
   let { window: { document: doc } } =
-    new JSDOM((await got(url)).body, { url })
+    new JSDOM(await (await fetch(url)).text(), { url })
   return doc
 }
 
-export const download = async (url: string) => {
-  const res = (await got(url, {
-    encoding: null
-  }))
-  const buf = res.body
+export const fetchFile = async (url: string) => {
+  const res = await fetch(url)
+  const buf = await res.buffer()
   {
-    const disp = res.headers['content-disposition']
+    const disp = res.headers.get('content-disposition')
     if (disp) {
       const name = trim(flow(disp.match(/; filename="[^"]+"/))
         .then(a => a[1]).get())
@@ -50,7 +48,7 @@ export const download = async (url: string) => {
     }
   }
   {
-    const type = res.headers['content-type']
+    const type = res.headers.get('content-type')
     if (type) {
       const ext = flow(trim(type.split(';')[0]))
         .then(mime.getExtension).get()

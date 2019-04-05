@@ -20,11 +20,9 @@
  */
 /* imports */
 import { Provider, Novel, Chapter, RenderFn } from './common'
-import got from '../../utils/syosetu-got'
 import { trim, flow } from '../../utils/flow'
-import { download } from './utils'
+import { fetchDOM, fetchFile } from './utils'
 import { Context } from './context'
-import { JSDOM } from 'jsdom'
 /* code */
 
 export class SyosetuChapter implements Chapter {
@@ -46,9 +44,8 @@ export class SyosetuChapter implements Chapter {
   }
 
   async fetch () {
-    const { url } = this
-    let { window: { document: doc } } =
-      new JSDOM((await got(url)).body, { url: url.toString() })
+    const url = this.url.toString()
+    const doc = await fetchDOM(url)
     const main = doc.getElementById('novel_contents')
     if (!main) {
       return
@@ -67,11 +64,11 @@ export class SyosetuChapter implements Chapter {
       nodes.push(node)
     }))
     const tokensArray = nodes.map(Context.tokenize)
-    const imagePromises: ReturnType<typeof download>[] = []
+    const imagePromises: ReturnType<typeof fetchFile>[] = []
     for (const tokens of tokensArray) {
       for (const tok of tokens) {
         if (tok.type === 'image') {
-          imagePromises.push(download(tok.url))
+          imagePromises.push(fetchFile(tok.url))
         }
       }
     }
@@ -132,8 +129,7 @@ export class SyosetuNovel implements Novel {
 
   async fetch () {
     const url = this.infoURL
-    let { window: { document: doc } } =
-      new JSDOM((await got(url)).body, { url })
+    const doc = await fetchDOM(url)
     const main = doc.getElementById('contents_main')
     if (!main) {
       throw new Error('failed to find contents')
@@ -196,8 +192,7 @@ export class SyosetuNovel implements Novel {
 
   async fetchIndex () {
     const url = this.indexURL
-    let { window: { document: doc } } =
-      new JSDOM((await got(url)).body, { url })
+    const doc = await fetchDOM(url)
     let indexBox = doc.getElementsByClassName('index_box')[0]
     if (!indexBox) {
       throw new Error('failed to get index_box')
