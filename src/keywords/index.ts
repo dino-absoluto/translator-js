@@ -21,6 +21,8 @@
 /* imports */
 import { JSDOM } from 'jsdom'
 import fetch from '../utils/syosetu-fetch'
+import { clearLine, cursorTo } from 'readline'
+import chalk from 'chalk'
 
 const getURL = (page: number, subdomain = 'yomou') => {
   if (subdomain !== 'yomou') {
@@ -92,6 +94,7 @@ const batches: [SubDomain, number][] = [
 ]
 
 const generate = async (multiplier = 10) => {
+  const { stdout } = process
   const map: { [id: string]: KeywordsMap } = {
     yomou: {},
     noc: {},
@@ -101,11 +104,15 @@ const generate = async (multiplier = 10) => {
   for (const [subdomain, pages] of batches) {
     const MAX = multiplier * pages
     for (let i = 1; i <= MAX; ++i) {
-      console.log(`Fetching from ${subdomain}/page ${i}`)
+      clearLine(stdout, 0)
+      cursorTo(stdout, 0)
+      stdout.write(chalk`Fetching from {green ${
+        subdomain}}{gray /}{green page-${i.toString()}}`)
       const url = getURL(i, subdomain)
       await get(url, map[subdomain])
     }
   }
+  console.log()
   for (const [subdomain, subMap] of Object.entries(map)) {
     map[subdomain] = sort(subMap)
   }
