@@ -19,4 +19,8 @@
  *
  */
 /* imports */
+/* exports */
+export {
+  Series, SeriesOptions
+} from './series'
 /* code */

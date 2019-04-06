@@ -75,6 +75,21 @@ describe('Series', () => {
     }))
     expect(series.container.path).toBe(expectedDir)
   })
+  test('constructor.3', async () => {
+    const outputDir = path.join(__TMPDIR, 'constructor.3')
+    const series = new Series({
+      sourceURL: href.toString(),
+      outputDir,
+      data: {
+        id: 'n0537cm',
+        name: title
+      }
+    })
+    expect(() => series.container.path).not.toThrow()
+    await series.ready
+    expect(series.data.name).toBe('邪神アベレージ')
+    expect(series.container.path).toBe(path.join(outputDir, title))
+  })
   test('serialize()', async () => {
     const outputDir = path.join(__TMPDIR, 'serialize()')
     const series = new Series({

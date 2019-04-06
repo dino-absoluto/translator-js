@@ -26,8 +26,9 @@ import { EpisodeList } from './episode'
 import * as path from 'path'
 /* code */
 
-interface SeriesOptions {
+export interface SeriesOptions {
   outputDir: string
+  sourceURL?: string
   basename?: string
   data?: NovelData
   overwite?: boolean
@@ -59,10 +60,22 @@ export class Series {
     const metaFile = container.requestFile('index.json')
     this.container = container
     this.metaFile = metaFile
-    if (name) {
-      this.ready = this.load()
-    } else {
-      this.ready = Promise.resolve()
+    this.ready = (async () => {
+      if (!this.novel && options.sourceURL) {
+        await this.loadURL(options.sourceURL)
+      }
+      if (name) {
+        await this.load()
+      }
+    })()
+  }
+
+  private async loadURL (sourceURL: string) {
+    try {
+      const url = new URL(sourceURL)
+      this.novel = await getNovel(url)
+    } catch {
+      throw new Error('failed to get novel')
     }
   }
 
@@ -73,7 +86,7 @@ export class Series {
     if (data.sourceURL) {
       if (!this.overwite) {
         throw new Error('unsupported older version')
-      } else {
+      } else if (!this.novel) {
         try {
           const url = new URL(data.sourceURL)
           this.novel = await getNovel(url)
