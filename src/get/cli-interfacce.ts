@@ -42,26 +42,45 @@ type Source = SourceURL | SourceFolder
 interface CmdOptions extends SharedOptions {
   sources?: Source[]
   name?: string[]
-  targetDir?: string
+  outputDir?: string
+  overwrite?: boolean
 }
 
-export const handler: Cmd.Handler = (argv: CmdOptions) => {
+export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   if (!argv.sources) {
     throw new Error('no sources specified')
   }
+  // console.log(argv)
+  const outputDir = argv.outputDir || path.resolve('download')
+  const { Series } = await import('.')
   const names = argv.name || []
-  for (const src of argv.sources) {
-    // if (src.type === 'url') {
-    // }
+  const novels = argv.sources.map(src => {
+    if (src.type === 'url') {
+      return new Series({
+        overwrite: argv.overwrite,
+        outputDir,
+        sourceURL: src.url.toString(),
+        basename: names.shift()
+      })
+    } else {
+      return new Series({
+        overwrite: argv.overwrite,
+        outputDir: path.dirname(src.fpath),
+        basename: path.basename(src.fpath)
+      })
+    }
+  })
+  for (const novel of novels) {
+    await novel.ready
+    await novel.updateIndex()
   }
-  console.log(argv)
 }
 
 export const command: Cmd.Command = 'get [<sources>..]'
 export const describe: Cmd.Describe = 'Download novel from sources'
 export const builder: Cmd.Builder = yargs =>
   yargs.strict()
-  .usage('$0 get [--target-dir=<path>] [options] [<URL> | <path>..]')
+  .usage('$0 get [--output-dir=<path>] [options] [<URL> | <path>..]')
   .coerce('sources', (values: ArgString): Source[] => {
     if (!Array.isArray(values)) {
       values = [ values ]
@@ -80,13 +99,13 @@ export const builder: Cmd.Builder = yargs =>
       }
     })
   })
-  .option('target-dir', {
+  .option('output-dir', {
     type: 'string',
     default: 'download',
     requiresArg: true,
     coerce: values => {
       if (Array.isArray(values)) {
-        throw new Error('--target-dir was used twice')
+        throw new Error('--output-dir was used twice')
       }
       return path.normalize(values)
     },
@@ -102,4 +121,9 @@ export const builder: Cmd.Builder = yargs =>
       return values
     },
     desc: 'Hint to name new folder'
+  })
+  .option('overwrite', {
+    type: 'boolean',
+    default: true,
+    desc: 'Force overwriting exist data'
   })

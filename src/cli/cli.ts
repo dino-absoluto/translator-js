@@ -27,11 +27,15 @@ try {
   yargs
     .command(cmdGet)
     .help()
-    .fail((msg) => {
+    .fail((msg, err) => {
       yargs.showHelp()
-      console.error(chalk.red(msg))
+      if (err) {
+        console.log(chalk.red(err.stack || ''))
+      } else {
+        console.error(chalk.red(msg))
+      }
     })
     .parse()
 } catch (err) {
-  console.error(chalk.red((err || '').toString()))
+  console.error(chalk.red((err.stack || '').toString()))
 }
