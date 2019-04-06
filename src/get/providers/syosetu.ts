@@ -110,7 +110,7 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
 
   constructor (url: URL) {
     const hostname = url.hostname
-    if (hostname.indexOf('over18.') === 0) {
+    if (hostname.indexOf('novel18.') === 0) {
       this.over18 = true
     } else if (hostname.indexOf('ncode.') === 0) {
       this.over18 = false
@@ -126,7 +126,7 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
   }
 
   get rootURL () {
-    return `https://${this.over18 ? 'over18' : 'ncode'}.syosetu.com/`
+    return `https://${this.over18 ? 'novel18' : 'ncode'}.syosetu.com/`
   }
 
   get infoURL () {
@@ -142,6 +142,7 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
     const doc = await fetchDOM(url)
     const main = doc.getElementById('contents_main')
     if (!main) {
+      console.log(doc.body.innerHTML)
       throw new Error('failed to find contents')
     }
     {
@@ -264,7 +265,7 @@ const fromURL = (url: URL) => {
 const Syosetu: Provider = {
   acceptDomains: [
     'ncode.syosetu.com',
-    'over18.syosetu.com'
+    'novel18.syosetu.com'
   ],
   fromURL
 }

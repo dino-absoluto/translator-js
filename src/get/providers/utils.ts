@@ -22,7 +22,7 @@
 import { flow, trim } from '../../utils/flow'
 import { JSDOM } from 'jsdom'
 import * as mime from 'mime'
-import fetch from 'node-fetch'
+import fetch from '../../utils/syosetu-fetch'
 
 /* code */
 export const fetchDOM = async (url: string) => {
