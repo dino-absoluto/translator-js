@@ -196,6 +196,7 @@ export class EpisodeList {
       `${(index + 1).toString().padStart(this.pad0, '0')} `)
     if (ch.content) {
       ch.content(context)
+      delete ch.content
     }
     // write files
     const files = []
