@@ -20,6 +20,8 @@
  */
 /* imports */
 import { CommandStructure, SharedArgv } from '../cli/shared'
+// import * as path from 'path'
+import chalk from 'chalk'
 /* code */
 
 interface CmdOptions extends SharedArgv {
@@ -27,17 +29,33 @@ interface CmdOptions extends SharedArgv {
 }
 
 const handler = (argv: CmdOptions) => {
-  console.log(argv)
+  if (Array.isArray(argv['target-dir'])) {
+    throw new Error('--target-dir was used twice')
+  }
+  // console.log(argv)
 }
 
 const info: CommandStructure = {
   name: 'get [<sources>..]',
   description: 'Download novel from sources',
   init: yargs =>
-    yargs.usage('$0 get [--target-dir=<path>] [options] [<URL> | <path>..]')
+    yargs.strict()
+    .usage('$0 get [--target-dir=<path>] [options] [<URL> | <path>..]')
+    .option('target-dir', {
+      type: 'string',
+      default: './download',
+      requiresArg: true,
+      desc: 'Output directory'
+    })
     .option('name', {
       type: 'string',
+      requiresArg: true,
       desc: 'Set containing folder name'
+    })
+    .fail(err => {
+      yargs.showHelp()
+      console.error(chalk`{red ${err}}`)
+      return
     })
     ,
   handler

@@ -21,8 +21,17 @@
 /* imports */
 import { parser as yargs } from './shared'
 import cmdGet from '../get/cli-interfacce'
+import chalk from 'chalk'
 
-yargs
-  .command(cmdGet.name, cmdGet.description, cmdGet.init, cmdGet.handler)
-  .help()
-  .parse()
+try {
+  yargs
+    .command(cmdGet.name, cmdGet.description, cmdGet.init, cmdGet.handler)
+    .help()
+    .fail((msg) => {
+      yargs.showHelp()
+      console.error(chalk.red(msg))
+    })
+    .parse()
+} catch (err) {
+  console.error(chalk.red((err || '').toString()))
+}
