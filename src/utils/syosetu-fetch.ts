@@ -27,7 +27,9 @@ import pLimit from 'p-limit'
 const syosetuLimit = pLimit(1)
 
 function fetch (href: string | Request, init?: RequestInit) {
-  let url = new URL(href.toString())
+  let url = typeof href === 'string'
+    ? new URL(href.toString())
+    : new URL(href.url)
   if (url.host.endsWith('syosetu.com')) {
     if (!init) {
       init = {}
