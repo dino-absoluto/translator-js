@@ -231,8 +231,9 @@ export class EpisodeList {
     let count = 1
     for (const chapter of chapters) {
       const ch: Chapter & EpisodeData = chapter
-      if (ch.group !== groupName || ++count > 50) {
-        count = 0
+      ++count
+      if (ch.group !== groupName || count > 50) {
+        count = 1
         groupId = groups.length + 1
         groups.push(`${
           groupId.toString().padStart(this.pad0, '0')} ${
