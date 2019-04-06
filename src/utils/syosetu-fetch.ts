@@ -20,37 +20,27 @@
  */
 /* imports */
 import cookie = require('cookie')
-import gotBase = require('got')
+import nodeFetch, { Request, RequestInit, Headers } from 'node-fetch'
 import pLimit from 'p-limit'
-import {
-  GotUrl,
-  GotPromise,
-  GotJSONOptions,
-  GotFormOptions,
-  GotBodyOptions } from 'got'
 /* -imports */
 
 const syosetuLimit = pLimit(1)
 
-function got (url: GotUrl, options: GotJSONOptions): GotPromise<any>
-function got (url: GotUrl, options?: GotFormOptions<string>): GotPromise<string>
-function got (url: GotUrl, options: GotFormOptions<null>): GotPromise<Buffer>
-function got (url: GotUrl, options: GotBodyOptions<string>): GotPromise<string>
-function got (url: GotUrl, options?: GotBodyOptions<null>): GotPromise<Buffer>
-function got (href: gotBase.GotUrl, options?: any) {
+function fetch (href: string | Request, init?: RequestInit) {
   let url = new URL(href.toString())
-  if (url.host.endsWith('.syosetu.com')) {
-    if (!options) {
-      options = {}
+  if (url.host.endsWith('syosetu.com')) {
+    if (!init) {
+      init = {}
     }
-    options.headers = Object.assign({}, options.headers)
+    const headers = new Headers(init.headers)
+    init.headers = headers
     if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
-      options.headers.cookie = cookie.serialize('over18', 'yes')
+      headers.set('Cookie', cookie.serialize('over18', 'yes'))
     }
-    return syosetuLimit(() => gotBase(url, options))
+    return syosetuLimit(() => nodeFetch(href, init))
   } else {
-    return gotBase(href, options)
+    return nodeFetch(href, init)
   }
 }
 
-export default got
+export default fetch

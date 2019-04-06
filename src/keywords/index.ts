@@ -20,7 +20,7 @@
  */
 /* imports */
 import { JSDOM } from 'jsdom'
-import got from '../utils/syosetu-got'
+import fetch from '../utils/syosetu-fetch'
 
 const getURL = (page: number, subdomain = 'yomou') => {
   if (subdomain !== 'yomou') {
@@ -35,8 +35,8 @@ interface KeywordsMap {
   [id: string]: number
 }
 
-const fetch = async (href: string, map: KeywordsMap = {}) => {
-  const body = (await got(href)).body
+const get = async (href: string, map: KeywordsMap = {}) => {
+  const body = await (await fetch(href)).text()
   const procLink = (links: NodeListOf<Node>) => {
     for (const node of links) {
       const text = (node.textContent || '').trim()
@@ -103,7 +103,7 @@ const generate = async (multiplier = 10) => {
     for (let i = 1; i <= MAX; ++i) {
       console.log(`Fetching from ${subdomain}/page ${i}`)
       const url = getURL(i, subdomain)
-      await fetch(url, map[subdomain])
+      await get(url, map[subdomain])
     }
   }
   for (const [subdomain, subMap] of Object.entries(map)) {

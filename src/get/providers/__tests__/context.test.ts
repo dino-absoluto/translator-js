@@ -21,21 +21,21 @@
 /* imports */
 // import * as pfs from '../../../utils/pfs'
 import { hash, setup } from '../../../utils/test-utils'
-import got from '../../../utils/syosetu-got'
+import fetch from '../../../utils/syosetu-fetch'
 import { JSDOM } from 'jsdom'
 import { SimpleContext } from '../context'
 
 /* setup */
-const { __TMPDIR } = setup(__filename, {
+const {} = setup(__filename, {
   network: true
 })
 
 /* code */
 describe('Context', () => {
-  const url = new URL('https://ncode.syosetu.com/n0537cm/21/')
+  const url = 'https://ncode.syosetu.com/n0537cm/21/'
   test('constructor', async () => {
     const { window: { document: doc } } =
-      new JSDOM((await got(url)).body, { url: url.toString() })
+      new JSDOM(await (await fetch(url)).text(), { url: url.toString() })
     const context = new SimpleContext()
     const honbun = doc.getElementById('novel_honbun')
     expect(honbun).not.toBeNull()

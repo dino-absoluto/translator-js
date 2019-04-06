@@ -21,7 +21,7 @@
 /* imports */
 import chalk from 'chalk'
 import * as path from 'path'
-import { promises as fsPromises } from 'fs'
+import * as pfs from './utils/pfs'
 /* -imports */
 
 interface CommandOptions {
@@ -33,7 +33,7 @@ const cmdKeywords = async (options: CommandOptions) => {
   const output = path.join(options.output || './download/', 'keywords.json')
   const sum = (await import('./keywords')).default
   const MULTIPLIER = Math.max(1, options.multiplier || 0)
-  fsPromises.writeFile(output, JSON.stringify(await sum(MULTIPLIER), null, 1))
+  pfs.writeFile(output, JSON.stringify(await sum(MULTIPLIER), null, 1))
 }
 
 console.log(chalk`{blueBright Generating keywords!}`)
