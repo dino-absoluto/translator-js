@@ -22,9 +22,11 @@
 import { Novel, NovelData } from '../providers/common'
 import { getNovel } from '../providers'
 import { Folder, File } from './fs'
-import { EpisodeList } from './episode'
+import { EpisodeList, ProgressFn } from './episode'
 import * as path from 'path'
 /* code */
+
+type SeriesProgressFn = (series: Series, c: number, total: number) => void
 
 export interface SeriesOptions {
   outputDir: string
@@ -146,7 +148,11 @@ export class Series {
     await this.metaFile.write(JSON.stringify(data, null, 1))
   }
 
-  async updateIndex () {
+  async updateIndex (onProgress?: SeriesProgressFn) {
+    let progress: ProgressFn | undefined
+    if (onProgress) {
+      progress = onProgress.bind(undefined, this)
+    }
     await this.update()
     if (!this.episodes) {
       this.episodes = new EpisodeList(this.container)
@@ -156,6 +162,6 @@ export class Series {
       throw new Error('novel is undefined')
     }
     const index = await novel.fetchIndex()
-    await episodes.updateWith(index)
+    await episodes.updateWith(index, progress)
   }
 }

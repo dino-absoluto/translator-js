@@ -27,7 +27,7 @@ import { gunzipSync, gzipSync } from 'zlib'
 import throttle = require('lodash/throttle')
 /* code */
 
-type ProgressFn = (done: number, total: number) => void
+export type ProgressFn = (done: number, total: number) => void
 
 class Context extends AbstractContext {
   readonly files = new Map<string, string[] | Buffer>()
@@ -92,24 +92,28 @@ export class EpisodeList {
     this.ready = this.load()
   }
 
-  async updateWith (newData: Chapter[], progress: ProgressFn) {
+  async updateWith (newData: Chapter[], progress?: ProgressFn) {
     const { data: { episodes } } = this
     const { groups, chapters } = this.preprocess(newData)
     await this.updateGroups(groups)
     const tasks: { index: number, chapter: Chapter }[] = []
     for (const [index, chapter] of chapters.entries()) {
-      if (this.pingEpisode(index, chapter)) {
+      if (await this.pingEpisode(index, chapter)) {
         tasks.push({
           index, chapter
         })
       }
     }
     let count = 0
+    const length = tasks.length
+    if (progress) {
+      progress(0, length)
+    }
     for (const { index, chapter } of tasks) {
       await this.updateEpisode(index, chapter)
       await this.saveThrottle()
       if (progress) {
-        progress(++count, tasks.length)
+        progress(++count, length)
       }
     }
     episodes.length = chapters.length

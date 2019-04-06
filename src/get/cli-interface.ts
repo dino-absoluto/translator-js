@@ -21,6 +21,9 @@
 /* imports */
 import { SharedOptions, Cmd } from '../cli/shared'
 import * as path from 'path'
+import chalk from 'chalk'
+import Progress = require('progress')
+import cliTruncate = require('cli-truncate')
 
 /* code */
 const CWD = path.resolve('.')
@@ -71,8 +74,26 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     }
   })
   for (const novel of novels) {
+    const columns = process.stdout.columns || 40
+    let prg: Progress | undefined
     await novel.ready
-    await novel.updateIndex()
+    await novel.updateIndex((novel, _c, total) => {
+      if (prg) {
+        prg.tick()
+      } else {
+        const limit = Math.floor(columns / 2) - total.toString().length * 2
+        const name = cliTruncate(`${novel.data.name || 'unknown'}`, limit)
+        prg = new Progress(
+            chalk`:bar {gray [:current/:total]} ${name}`, {
+              complete: '█',
+              incomplete: '░',
+              // incomplete: chalk.gray('░'),
+              width: Math.floor(columns / 3),
+              clear: false,
+              total
+            })
+      }
+    })
   }
 }
 
