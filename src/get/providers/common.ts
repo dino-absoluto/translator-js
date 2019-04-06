@@ -41,6 +41,7 @@ export interface Chapter extends ChapterData {
 
 export interface NovelData {
   readonly id: string
+  readonly url?: string
   name?: string
   author?: string
   description?: string

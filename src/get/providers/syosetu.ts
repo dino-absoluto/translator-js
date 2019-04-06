@@ -19,7 +19,7 @@
  *
  */
 /* imports */
-import { Provider, Novel, Chapter, RenderFn } from './common'
+import { Provider, Novel, NovelData, Chapter, RenderFn } from './common'
 import { trim, flow } from '../../utils/flow'
 import { fetchDOM, fetchFile } from './utils'
 import { Context } from './context'
@@ -86,8 +86,14 @@ export class SyosetuChapter implements Chapter {
   }
 }
 
-export class SyosetuNovel implements Novel {
+interface SyosetuNovelData extends NovelData {
+  readonly over18?: boolean
+  readonly url: string
+}
+
+export class SyosetuNovel implements Novel, SyosetuNovelData {
   readonly id: string
+  readonly url: string
   readonly over18: boolean
   name?: string
   author?: string
@@ -113,6 +119,7 @@ export class SyosetuNovel implements Novel {
       throw new Error('invalid pathname')
     }
     this.id = paths[1]
+    this.url = this.indexURL
   }
 
   get rootURL () {

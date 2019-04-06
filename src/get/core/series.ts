@@ -31,7 +31,7 @@ export interface SeriesOptions {
   sourceURL?: string
   basename?: string
   data?: NovelData
-  overwite?: boolean
+  overwrite?: boolean
   novel?: Novel
 }
 
@@ -42,14 +42,15 @@ export class Series {
   readonly container: Folder
   readonly metaFile: File
   readonly ready: Promise<void>
-  readonly overwite: boolean
+  readonly overwrite: boolean
   constructor (options: SeriesOptions) {
     const data = Object.assign({}, options.novel, options.data)
     this.data = data
     this.novel = options.novel
-    this.overwite = !!options.overwite
+    this.overwrite = !!options.overwrite
     let container: Folder
     const name = options.basename || this.data.name
+    data.name = name
     if (options.basename) {
       container = new Folder(null,
         path.join(options.outputDir,options.basename))
@@ -84,7 +85,7 @@ export class Series {
       return
     }
     if (data.sourceURL) {
-      if (!this.overwite) {
+      if (!this.overwrite) {
         throw new Error('unsupported older version')
       } else if (!this.novel) {
         try {
@@ -109,6 +110,9 @@ export class Series {
       const buffer = await metaFile.read()
       const json = JSON.parse(buffer.toString())
       Object.assign(data, await this.verify(json))
+      if (!this.novel && data.url) {
+        await this.loadURL(data.url)
+      }
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw err
