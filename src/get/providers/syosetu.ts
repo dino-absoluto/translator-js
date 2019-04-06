@@ -74,14 +74,17 @@ export class SyosetuChapter implements Chapter {
     }
     const images = await Promise.all(imagePromises)
     this.content = (ctx) => {
+      for (const img of images) {
+        ctx.requestFile(img.name, filename => {
+          ctx.mapURL(img.url, filename)
+          return img.buf
+        })
+      }
       ctx.requestFile(this.name + '.txt', (_name) => {
         const sections = tokensArray.map(toks => ctx.render(toks))
         sections.unshift(this.name)
         return sections
       })
-      for (const img of images) {
-        ctx.requestFile(img.name, () => img.buf)
-      }
     }
   }
 }

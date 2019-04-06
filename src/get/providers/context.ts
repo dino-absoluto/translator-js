@@ -64,10 +64,11 @@ const isElementNode = (node: Node): node is HTMLElement =>
 export type ContextCallback = (name: string) => Buffer | string[]
 
 export abstract class Context {
+  private names = new Set<string>()
+  private urls = new Map<string, string>()
   abstract requestFile (
     name: string,
     fn: ContextCallback): void
-  names = new Set<string>()
   resolveName (name: string) {
     name = path.normalize(trim(name) || '')
     if (name === '.') {
@@ -91,6 +92,14 @@ export abstract class Context {
     return ''
   }
 
+  mapURL (url: string, filename: string) {
+    this.urls.set(url, filename)
+  }
+
+  resolveURL (url: string): string {
+    return this.urls.get(url) || url
+  }
+
   parseNode (node: Node): string {
     return this.render(Context.tokenize(node))
   }
@@ -109,11 +118,11 @@ export abstract class Context {
           break
         }
         case 'link': {
-          tt = `[${tok.text}](${tok.url})`
+          tt = `[${tok.text}](${this.resolveURL(tok.url)})`
           break
         }
         case 'image': {
-          tt = `![${tok.text}](${tok.url})`
+          tt = `![${tok.text}](${this.resolveURL(tok.url)})`
           break
         }
         case 'br': {

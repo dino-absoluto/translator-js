@@ -41,6 +41,7 @@ export const fetchFile = async (url: string) => {
         .then(a => a[1]).value)
       if (name) {
         return {
+          url,
           buf,
           name
         }
@@ -54,6 +55,7 @@ export const fetchFile = async (url: string) => {
         .then(mime.getExtension).value
       if (ext) {
         return {
+          url,
           buf,
           name: `untitled.${ext}`
         }
@@ -61,6 +63,7 @@ export const fetchFile = async (url: string) => {
     }
   }
   return {
+    url,
     buf,
     name: 'untitled'
   }
