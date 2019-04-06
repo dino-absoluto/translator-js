@@ -37,11 +37,13 @@ class Context extends AbstractContext {
 
   requestFile (name: string, get: (name: string) => string[] | Buffer) {
     const { files, prefix } = this
-    name = this.resolveName(`${prefix}${name}`.trim())
-    if (files.has(name)) {
-      return
-    }
-    files.set(name, get(name))
+    flow(this.resolveName(`${prefix}${name}`.trim()))
+    .then(name => {
+      if (files.has(name)) {
+        return
+      }
+      files.set(name, get(name))
+    })
   }
 }
 
