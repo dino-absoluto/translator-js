@@ -61,21 +61,22 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   const names = argv.name || []
   const novels = argv.sources.map(src => {
     if (src.type === 'url') {
-      return new Series({
+      return {
         overwrite: argv.overwrite,
         outputDir,
         sourceURL: src.url.toString(),
         basename: names.shift()
-      })
+      }
     } else {
-      return new Series({
+      return {
         overwrite: argv.overwrite,
         outputDir: path.dirname(src.fpath),
         basename: path.basename(src.fpath)
-      })
+      }
     }
   })
-  for (const novel of novels) {
+  for (const novelData of novels) {
+    const novel = new Series(novelData)
     const columns = process.stdout.columns || 40
     let prg: Progress | undefined
     await novel.ready
