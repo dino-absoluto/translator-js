@@ -33,6 +33,15 @@ export interface UpdateOptions {
   checkFs?: boolean
 }
 
+export interface UpdateItem {
+  index: number
+  chapter: Chapter
+}
+export interface UpdateReport {
+  updates: UpdateItem[]
+  news: UpdateItem[]
+}
+
 class Context extends AbstractContext {
   readonly files = new Map<string, string[] | Buffer>()
   readonly prefix: string
@@ -100,13 +109,24 @@ export class EpisodeList {
     const { data: { episodes } } = this
     const { groups, chapters } = this.preprocess(newData)
     const { progress } = options
+    const report: UpdateReport = {
+      updates: [],
+      news: []
+    }
+    const oldLength = episodes.length
     await this.updateGroups(groups)
-    const tasks: { index: number, chapter: Chapter }[] = []
+    const tasks: UpdateItem[] = []
     for (const [index, chapter] of chapters.entries()) {
       if (await this.pingEpisode(index, chapter, options)) {
-        tasks.push({
+        const item: UpdateItem = {
           index, chapter
-        })
+        }
+        tasks.push(item)
+        if (index < oldLength) {
+          report.updates.push(item)
+        } else {
+          report.news.push(item)
+        }
       }
     }
     let count = 0
@@ -122,7 +142,8 @@ export class EpisodeList {
       }
     }
     episodes.length = chapters.length
-    return this.saveThrottle.flush()
+    await this.saveThrottle.flush()
+    return report
   }
 
   private encode (data: object) {

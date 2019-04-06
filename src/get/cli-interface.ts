@@ -78,26 +78,38 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     const columns = process.stdout.columns || 40
     let prg: Progress | undefined
     await novel.ready
-    await novel.updateIndex({
+    const report = await novel.updateIndex({
       onProgress: (novel, _c, total) => {
         if (prg) {
           prg.tick()
         } else {
           const limit = Math.floor(columns / 2) - total.toString().length * 2
-          const name = cliTruncate(`${novel.data.name || 'unknown'}`, limit)
+          const name = cliTruncate(`${
+            path.basename(novel.container.name || 'unknown')}`, limit)
           prg = new Progress(
-            chalk`:bar {gray [:current/:total]} ${name}`, {
+            chalk`{gray [{green :bar}] [:current/:total]} ${name}`, {
               complete: '█',
               incomplete: '░',
-              // incomplete: chalk.gray('░'),
               width: Math.floor(columns / 3),
-              clear: false,
+              clear: true,
               total
             })
         }
       },
       checkFs
     })
+    console.log(chalk`{gray [{yellow ${
+      report.updates.length.toString()
+    } updated}, {green ${
+      report.news.length.toString()
+    } new}]} ${
+      path.basename(novel.container.name || 'unknown')
+    }`)
+    for (const { index, chapter } of report.news) {
+      console.log(chalk`{green ${
+        index.toString().padStart(3, '0')
+      }} ${chapter.name}`)
+    }
   }
 }
 
