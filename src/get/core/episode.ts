@@ -24,6 +24,7 @@ import { Chapter } from '../providers/common'
 import { Context as AbstractContext } from '../providers/context'
 import { Folder, File } from './fs'
 import { gunzipSync, gzipSync } from 'zlib'
+import throttle = require('lodash/throttle')
 /* code */
 
 class Context extends AbstractContext {
@@ -63,6 +64,7 @@ export class EpisodeList {
   private metaFile: File
   private compressedCache: boolean
   private pad0: number = 3
+  private saveThrottle = throttle(this.save.bind(this), 3000)
   constructor (rootDir: Folder, options: {
     compressedCache?: boolean
     pad0?: number
@@ -92,9 +94,10 @@ export class EpisodeList {
     await this.updateGroups(groups)
     for (const [index, chapter] of chapters.entries()) {
       await this.updateEpisode(index, chapter)
+      await this.saveThrottle()
     }
     episodes.length = chapters.length
-    return this.save()
+    return this.saveThrottle.flush()
   }
 
   private encode (data: object) {
