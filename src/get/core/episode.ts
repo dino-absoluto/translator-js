@@ -37,7 +37,7 @@ class Context extends AbstractContext {
 
   requestFile (name: string, get: (name: string) => string[] | Buffer) {
     const { files, prefix } = this
-    name = `${prefix}${name}`.trim()
+    name = this.resolveName(`${prefix}${name}`.trim())
     if (files.has(name)) {
       return
     }
