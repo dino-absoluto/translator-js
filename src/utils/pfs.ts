@@ -20,29 +20,13 @@
  */
 /* imports */
 import * as fs from 'fs'
+import { promisify } from 'util'
+
 /* code */
-
-const wrap = (fn: any): any => {
-  return (...argv: any[]) => {
-    return new Promise((resolve, reject) => {
-      fn(...argv, (err: Error, data: any) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(data)
-        }
-      })
-    })
-  }
-}
-
-export const readFile:
-  typeof fs.promises.readFile = wrap(fs.readFile)
-export const writeFile:
-  typeof fs.promises.writeFile = wrap(fs.writeFile)
-export const rename:
-  typeof fs.promises.rename = wrap(fs.rename)
-export const unlink:
-  typeof fs.promises.unlink = wrap(fs.unlink)
-export const rmdir:
-  typeof fs.promises.rmdir = wrap(fs.rmdir)
+export { constants } from 'fs'
+export const readFile = promisify(fs.readFile)
+export const writeFile = promisify(fs.writeFile)
+export const rename = promisify(fs.rename)
+export const unlink = promisify(fs.unlink)
+export const rmdir = promisify(fs.rmdir)
+export const access = promisify(fs.access)
