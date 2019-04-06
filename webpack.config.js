@@ -21,14 +21,15 @@
 /* imports */
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
+const merge = require('lodash/merge')
 
-module.exports = {
+const defaultConfigs = {
   mode: 'development',
   target: 'node',
   entry: './src/cli/cli.ts',
   output: {
     pathinfo: false,
-    filename: 'index.js',
+    filename: 'cli.js',
     path: path.resolve(__dirname, '__tmp__/new')
   },
   devtool: 'source-map',
@@ -62,3 +63,19 @@ module.exports = {
     splitChunks: false,
   }
 }
+
+module.exports = [
+  merge({}, defaultConfigs, {
+    name: 'dev',
+    output: {
+      path: path.resolve(__dirname, '__tmp__/bin')
+    }
+  }),
+  merge({}, defaultConfigs, {
+    name: 'minify',
+    mode: 'production',
+    output: {
+      path: path.resolve(__dirname, 'dist/')
+    }
+  })
+]
