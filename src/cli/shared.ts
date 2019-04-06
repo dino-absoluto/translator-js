@@ -24,17 +24,20 @@ import yargs = require('yargs')
 export const parser = yargs.strict(true)
   .usage('$0 <cmd> [args]')
   .demandCommand(1)
+  .group([ 'help', 'version' ], 'Info:')
   .option('pedantic', {
     default: true,
+    hidden: true,
     type: 'boolean',
     desc: 'Exit on first error'
   })
 export type Parser = typeof parser
-export type SharedArgv = typeof parser.argv
+export type SharedOptions = typeof parser.argv
 
-export interface CommandStructure {
-  name: string
-  description: string
-  init: (yargs: Parser) => Parser
-  handler: (argv: SharedArgv) => void
+export namespace Cmd {
+  export type Command = string | string[]
+  export type Aliases = string | string[]
+  export type Describe = string | false
+  export type Builder = (yargs: Parser) => Parser
+  export type Handler = (argv: SharedOptions) => void
 }

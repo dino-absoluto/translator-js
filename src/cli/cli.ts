@@ -20,12 +20,12 @@
  */
 /* imports */
 import { parser as yargs } from './shared'
-import cmdGet from '../get/cli-interfacce'
+import * as cmdGet from '../get/cli-interfacce'
 import chalk from 'chalk'
 
 try {
   yargs
-    .command(cmdGet.name, cmdGet.description, cmdGet.init, cmdGet.handler)
+    .command(cmdGet)
     .help()
     .fail((msg) => {
       yargs.showHelp()

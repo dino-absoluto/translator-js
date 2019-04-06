@@ -19,46 +19,87 @@
  *
  */
 /* imports */
-import { CommandStructure, SharedArgv } from '../cli/shared'
-// import * as path from 'path'
-import chalk from 'chalk'
+import { SharedOptions, Cmd } from '../cli/shared'
+import * as path from 'path'
+
 /* code */
+const CWD = path.resolve('.')
 
-interface CmdOptions extends SharedArgv {
-  name?: string
+type ArgString = string | string[]
+
+interface SourceURL {
+  type: 'url'
+  url: URL
 }
 
-const handler = (argv: CmdOptions) => {
-  if (Array.isArray(argv['target-dir'])) {
-    throw new Error('--target-dir was used twice')
+interface SourceFolder {
+  type: 'folder'
+  fpath: string
+}
+
+type Source = SourceURL | SourceFolder
+
+interface CmdOptions extends SharedOptions {
+  sources?: Source[]
+  name?: string[]
+  targetDir?: string
+}
+
+export const handler: Cmd.Handler = (argv: CmdOptions) => {
+  if (!argv.sources) {
+    throw new Error('no sources specified')
   }
-  // console.log(argv)
+  const names = argv.name || []
+  for (const src of argv.sources) {
+    // if (src.type === 'url') {
+    // }
+  }
+  console.log(argv)
 }
 
-const info: CommandStructure = {
-  name: 'get [<sources>..]',
-  description: 'Download novel from sources',
-  init: yargs =>
-    yargs.strict()
-    .usage('$0 get [--target-dir=<path>] [options] [<URL> | <path>..]')
-    .option('target-dir', {
-      type: 'string',
-      default: './download',
-      requiresArg: true,
-      desc: 'Output directory'
+export const command: Cmd.Command = 'get [<sources>..]'
+export const describe: Cmd.Describe = 'Download novel from sources'
+export const builder: Cmd.Builder = yargs =>
+  yargs.strict()
+  .usage('$0 get [--target-dir=<path>] [options] [<URL> | <path>..]')
+  .coerce('sources', (values: ArgString): Source[] => {
+    if (!Array.isArray(values)) {
+      values = [ values ]
+    }
+    return values.map(a => {
+      try {
+        return {
+          type: 'url',
+          url: new URL(a)
+        } as SourceURL
+      } catch {
+        return {
+          type: 'folder',
+          fpath: path.relative(CWD, path.resolve(a))
+        } as SourceFolder
+      }
     })
-    .option('name', {
-      type: 'string',
-      requiresArg: true,
-      desc: 'Set containing folder name'
-    })
-    .fail(err => {
-      yargs.showHelp()
-      console.error(chalk`{red ${err}}`)
-      return
-    })
-    ,
-  handler
-}
-
-export default info
+  })
+  .option('target-dir', {
+    type: 'string',
+    default: 'download',
+    requiresArg: true,
+    coerce: values => {
+      if (Array.isArray(values)) {
+        throw new Error('--target-dir was used twice')
+      }
+      return path.normalize(values)
+    },
+    desc: 'Output directory'
+  })
+  .option('name', {
+    type: 'string',
+    requiresArg: true,
+    coerce: values => {
+      if (!Array.isArray(values)) {
+        return [ values ]
+      }
+      return values
+    },
+    desc: 'Hint to name new folder'
+  })
