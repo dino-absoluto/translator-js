@@ -19,30 +19,10 @@
  *
  */
 /* imports */
+const makeDir = require('make-dir')
 /* exports */
-module.exports = {
-  testEnvironment: 'node',
-  globalSetup: '<rootDir>/jest/global-setup.js',
-  roots: [
-    '<rootDir>/src/',
-    '<rootDir>/tests/'
-  ],
-  moduleDirectories: [
-    'node_modules',
-    '<rootDir>/jest/mods'
-  ],
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest'
-  },
-  testMatch: [
-    "**/?(*.)+(spec|test).(js)",
-    "**/?(*.)+(spec|test).(ts|tsx)"
-  ],
-  moduleFileExtensions: [
-    'js',
-    'ts',
-    'tsx',
-    'json',
-    'node'
-  ]
+module.exports = async () => {
+  const tmpDir = __dirname + '/../__tmp__'
+  await makeDir(tmpDir)
+  process.chdir(tmpDir)
 }
