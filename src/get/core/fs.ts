@@ -42,7 +42,7 @@ const sanitizeName = (name?: string) => {
 interface FSItem {
   parent?: Folder
   path: string
-  access (): Promise<void>
+  real (): Promise<void>
   remove (): Promise<void>
   close (): Promise<void>
   rename (name: string): Promise<void>
@@ -76,7 +76,7 @@ export class Folder implements FSItem {
     return _dirname
   }
 
-  async access () {
+  async real () {
     if (this._accessed) {
       return
     } else {
@@ -162,7 +162,7 @@ export class File implements FSItem {
     return path.join(parent.path, _filename)
   }
 
-  async access () {
+  async real () {
     if (!this._filename) {
       throw new Error('filename is not set')
     }
@@ -199,7 +199,7 @@ export class File implements FSItem {
   }
 
   async remove () {
-    await this.access()
+    await this.real()
     const fpath = this.path
     await this.close()
     try {
@@ -212,13 +212,13 @@ export class File implements FSItem {
   }
 
   async read () {
-    await this.access()
+    await this.real()
     return pfs.readFile(this.path)
   }
 
   async write (content: string | Buffer) {
-    await this.parent.access()
-    await this.access()
+    await this.parent.real()
+    await this.real()
     await pfs.writeFile(this.path, content)
   }
 }

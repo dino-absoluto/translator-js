@@ -68,7 +68,7 @@ describe('EpisodeList', () => {
     const rootDir = new Folder(null, tmpPath)
     const eplist = new EpisodeList(rootDir, {
     })
-    await rootDir.access()
+    await rootDir.real()
     await eplist.ready
     expect(await hashDir(path.join(tmpPath, '**/*'), {
       cwd: tmpPath
