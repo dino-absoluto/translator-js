@@ -24,6 +24,7 @@ import { Chapter } from '../providers/common'
 import { Context as AbstractContext } from '../providers/context'
 import { Folder, File } from './fs'
 import { gunzipSync, gzipSync } from 'zlib'
+import pLimit from 'p-limit'
 import throttle = require('lodash/throttle')
 /* code */
 
@@ -113,6 +114,7 @@ export class EpisodeList {
       updates: [],
       news: []
     }
+    const limit = pLimit(2)
     const oldLength = episodes.length
     await this.updateGroups(groups)
     const tasks: UpdateItem[] = []
@@ -134,13 +136,15 @@ export class EpisodeList {
     if (progress) {
       progress(0, length)
     }
-    for (const { index, chapter } of tasks) {
-      await this.updateEpisode(index, chapter, options)
-      await this.saveThrottle()
-      if (progress) {
-        progress(++count, length)
-      }
-    }
+    await Promise.all(tasks.map(({ index, chapter }) => {
+      return limit(async () => {
+        await this.updateEpisode(index, chapter, options)
+        await this.saveThrottle()
+        if (progress) {
+          progress(++count, length)
+        }
+      })
+    }))
     episodes.length = chapters.length
     await this.saveThrottle.flush()
     return report
