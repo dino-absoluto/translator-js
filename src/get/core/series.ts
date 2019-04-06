@@ -165,8 +165,9 @@ export class Series {
     if (!novel) {
       throw new Error('novel is undefined')
     }
+    await episodes.ready
     const index = await novel.fetchIndex()
-    await episodes.updateWith(index, {
+    return episodes.updateWith(index, {
       progress,
       checkFs
     })

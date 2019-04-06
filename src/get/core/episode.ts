@@ -28,6 +28,10 @@ import throttle = require('lodash/throttle')
 /* code */
 
 export type ProgressFn = (done: number, total: number) => void
+export interface UpdateOptions {
+  progress?: ProgressFn
+  checkFs?: boolean
+}
 
 class Context extends AbstractContext {
   readonly files = new Map<string, string[] | Buffer>()
@@ -92,17 +96,14 @@ export class EpisodeList {
     this.ready = this.load()
   }
 
-  async updateWith (newData: Chapter[], options: {
-    progress?: ProgressFn
-    checkFs?: boolean
-  } = {}) {
+  async updateWith (newData: Chapter[], options: UpdateOptions = {}) {
     const { data: { episodes } } = this
     const { groups, chapters } = this.preprocess(newData)
-    const { progress, checkFs = false } = options
+    const { progress } = options
     await this.updateGroups(groups)
     const tasks: { index: number, chapter: Chapter }[] = []
     for (const [index, chapter] of chapters.entries()) {
-      if (await this.pingEpisode(index, chapter, checkFs)) {
+      if (await this.pingEpisode(index, chapter, options)) {
         tasks.push({
           index, chapter
         })
@@ -114,7 +115,7 @@ export class EpisodeList {
       progress(0, length)
     }
     for (const { index, chapter } of tasks) {
-      await this.updateEpisode(index, chapter, checkFs)
+      await this.updateEpisode(index, chapter, options)
       await this.saveThrottle()
       if (progress) {
         progress(++count, length)
@@ -159,7 +160,7 @@ export class EpisodeList {
   private async isEpisodeUptodate (
     ep: EpisodeData,
     ch: Chapter & EpisodeData,
-    checkFs: boolean = false
+    options: UpdateOptions
   ): Promise<boolean> {
     if (!ep.files || !ep.files.length) {
       return false
@@ -174,7 +175,7 @@ export class EpisodeList {
     if (!folder) {
       throw new Error(`Folder must not be ${folder}`)
     }
-    if (!checkFs) {
+    if (!options.checkFs) {
       return true
     }
     try {
@@ -192,7 +193,7 @@ export class EpisodeList {
   private async pingEpisode (
     index: number,
     ch: Chapter & EpisodeData,
-    checkFs: boolean = false
+    options: UpdateOptions
   ) {
     const { data: { episodes } } = this
     let ep = episodes[index]
@@ -200,7 +201,7 @@ export class EpisodeList {
       ep = {}
       episodes[index] = ep
     }
-    if (await this.isEpisodeUptodate(ep, ch, checkFs)) {
+    if (await this.isEpisodeUptodate(ep, ch, options)) {
       return false
     }
     return ep
@@ -209,9 +210,9 @@ export class EpisodeList {
   private async updateEpisode (
     index: number,
     ch: Chapter & EpisodeData,
-    checkFs: boolean = false
+    options: UpdateOptions
   ) {
-    const ep = await this.pingEpisode(index, ch, checkFs)
+    const ep = await this.pingEpisode(index, ch, options)
     if (!ep) {
       return
     }
