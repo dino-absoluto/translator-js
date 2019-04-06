@@ -88,7 +88,7 @@ export class Series {
     }
     if (data.sourceURL) {
       if (!this.overwrite) {
-        throw new Error('unsupported older version')
+        throw new Error('unsupported older version, use overwrite to refresh')
       } else if (!this.novel) {
         try {
           const url = new URL(data.sourceURL)
