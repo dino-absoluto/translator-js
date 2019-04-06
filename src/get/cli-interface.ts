@@ -114,7 +114,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
       }} ${chapter.name}`)
     }
     if (report.news.length > MAX_LOG) {
-      console.log(chalk`...and {green ${newsLength.toString()}} more chapters`)
+      console.log(chalk`{gray ...}and {green ${newsLength.toString()}} more chapters`)
     }
   }
 }
