@@ -1,5 +1,5 @@
 /**
- * @file index.mjs
+ * @file CLI interface
  * @author Dino <dinoabsoluto+dev@gmail.com>
  * @license
  * This file is part of translator-js.
@@ -19,25 +19,10 @@
  *
  */
 /* imports */
-import chalk from 'chalk'
-import * as path from 'path'
-import * as pfs from './utils/pfs'
-/* -imports */
+import { parser as yargs } from './shared'
+import cmdGet from '../get/cli-interfacce'
 
-interface CommandOptions {
-  output?: string
-  multiplier?: number
-}
-
-const cmdKeywords = async (options: CommandOptions) => {
-  const output = path.join(options.output || './download/', 'keywords.json')
-  const sum = (await import('./keywords')).default
-  const MULTIPLIER = Math.max(1, options.multiplier || 0)
-  pfs.writeFile(output, JSON.stringify(await sum(MULTIPLIER), null, 1))
-}
-
-console.log(chalk`{blueBright Generating keywords!}`)
-
-cmdKeywords({ multiplier: 50 }).catch(err => {
-  console.error(err)
-})
+yargs
+  .command(cmdGet.name, cmdGet.description, cmdGet.init, cmdGet.handler)
+  .help()
+  .parse()

@@ -25,7 +25,7 @@ const nodeExternals = require('webpack-node-externals')
 module.exports = {
   mode: 'development',
   target: 'node',
-  entry: './src/index.ts',
+  entry: './src/cli/cli.ts',
   output: {
     pathinfo: false,
     filename: 'index.js',
