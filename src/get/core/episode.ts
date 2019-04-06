@@ -205,10 +205,10 @@ export class EpisodeList {
     let groupId = 0
     let groupName: string | undefined
     const groups = []
-    let count = 0
+    let count = 1
     for (const chapter of chapters) {
       const ch: Chapter & EpisodeData = chapter
-      if (ch.group !== groupName || count > 50) {
+      if (ch.group !== groupName || ++count > 50) {
         count = 0
         groupId = groups.length + 1
         groups.push(`${
