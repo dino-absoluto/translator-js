@@ -20,7 +20,7 @@
  */
 /* imports */
 import { parser as yargs } from './shared'
-import * as cmdGet from '../get/cli-interfacce'
+import * as cmdGet from '../get/cli-interface'
 import chalk from 'chalk'
 
 try {
