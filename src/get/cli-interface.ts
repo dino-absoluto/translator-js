@@ -27,6 +27,7 @@ import cliTruncate = require('cli-truncate')
 
 /* code */
 const CWD = path.resolve('.')
+const MAX_LOG = 20
 
 type ArgString = string | string[]
 
@@ -105,10 +106,14 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     } new}]} ${
       path.basename(novel.container.name || 'unknown')
     }`)
-    for (const { index, chapter } of report.news) {
+    const newsLength = report.news.length
+    for (const { index, chapter } of report.news.slice(0, MAX_LOG)) {
       console.log(chalk`{green ${
         index.toString().padStart(3, '0')
       }} ${chapter.name}`)
+    }
+    if (report.news.length > MAX_LOG) {
+      console.log(chalk`...and {green ${newsLength.toString()}} more chapters`)
     }
   }
 }
