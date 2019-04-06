@@ -112,7 +112,9 @@ const generate = async (multiplier = 10) => {
       await get(url, map[subdomain])
     }
   }
-  console.log()
+  clearLine(stdout, 0)
+  cursorTo(stdout, 0)
+  console.log(chalk`{green Done!}`)
   for (const [subdomain, subMap] of Object.entries(map)) {
     map[subdomain] = sort(subMap)
   }

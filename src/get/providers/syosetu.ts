@@ -152,10 +152,10 @@ export class SyosetuNovel implements Novel {
       this.author = trim(lines[1].textContent)
       this.keywords = flow(trim(lines[2].textContent)).then(
         s => s.split(/\s+/g)
-      ).get()
+      ).value
       this.genre = flow(trim(lines[3].textContent)).then(
         s => s.split('〔', 1)[0]
-      ).get()
+      ).value
     }
     {
       // status

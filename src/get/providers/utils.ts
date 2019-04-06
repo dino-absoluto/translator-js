@@ -38,7 +38,7 @@ export const fetchFile = async (url: string) => {
     const disp = res.headers.get('content-disposition')
     if (disp) {
       const name = trim(flow(disp.match(/; filename="[^"]+"/))
-        .then(a => a[1]).get())
+        .then(a => a[1]).value)
       if (name) {
         return {
           buf,
@@ -51,7 +51,7 @@ export const fetchFile = async (url: string) => {
     const type = res.headers.get('content-type')
     if (type) {
       const ext = flow(trim(type.split(';')[0]))
-        .then(mime.getExtension).get()
+        .then(mime.getExtension).value
       if (ext) {
         return {
           buf,

@@ -38,8 +38,6 @@ const cmdKeywords = async (options: CommandOptions) => {
 
 console.log(chalk`{blueBright Generating keywords!}`)
 
-cmdKeywords({ multiplier: 50 }).then(() => {
-  console.log(chalk`{green Done!}`)
-}).catch(err => {
+cmdKeywords({ multiplier: 50 }).catch(err => {
   console.error(err)
 })

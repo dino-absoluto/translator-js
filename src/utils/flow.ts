@@ -40,8 +40,6 @@ export const flow = <T> (value: T) => {
         return flow<O>(undefined as unknown as O)
       }
     },
-    get () {
-      return value
-    }
+    value
   }
 }

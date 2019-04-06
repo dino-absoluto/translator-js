@@ -187,7 +187,7 @@ export class EpisodeList {
             } else {
               return text
             }
-          }).then(Buffer.from).get()
+          }).then(Buffer.from).value
       }
       files.push(name)
       const file = folder.requestFile(name)

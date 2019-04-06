@@ -26,7 +26,7 @@ import * as path from 'path'
 
 const Node = flow(new JSDOM()).then(dom => {
   return dom.window.Node
-}).get()
+}).value
 
 interface TokenBr {
   type: 'br'
@@ -125,7 +125,7 @@ export abstract class Context {
       case 'RUBY': {
         const text = trim(flow(node.querySelector('rb'))
           .then(rb => rb.textContent)
-          .get() ||
+          .value ||
         flow([...node.children]).then(children => {
           let text = ''
           for (const node of children) {
@@ -134,11 +134,11 @@ export abstract class Context {
             }
           }
           return text
-        }).get() || node.textContent)
+        }).value || node.textContent)
         if (text) {
           const ruby = flow(node.querySelector('rt')).then(rt => {
             return trim(rt.textContent)
-          }).get()
+          }).value
           if (ruby && text !== ruby) {
             return [{
               type: 'ruby',

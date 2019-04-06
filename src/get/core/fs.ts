@@ -36,7 +36,7 @@ const sanitizeName = (name?: string) => {
         return
       }
       return name
-    }).get()
+    }).value
 }
 
 interface FSItem {
