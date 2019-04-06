@@ -198,6 +198,10 @@ export class File implements FSItem {
     this.parent.children.delete(this)
   }
 
+  async access (mode?: number) {
+    return pfs.access(this.path, mode)
+  }
+
   async remove () {
     await this.real()
     const fpath = this.path

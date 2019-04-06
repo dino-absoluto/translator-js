@@ -92,13 +92,17 @@ export class EpisodeList {
     this.ready = this.load()
   }
 
-  async updateWith (newData: Chapter[], progress?: ProgressFn) {
+  async updateWith (newData: Chapter[], options: {
+    progress?: ProgressFn
+    checkFs?: boolean
+  } = {}) {
     const { data: { episodes } } = this
     const { groups, chapters } = this.preprocess(newData)
+    const { progress, checkFs = false } = options
     await this.updateGroups(groups)
     const tasks: { index: number, chapter: Chapter }[] = []
     for (const [index, chapter] of chapters.entries()) {
-      if (await this.pingEpisode(index, chapter)) {
+      if (await this.pingEpisode(index, chapter, checkFs)) {
         tasks.push({
           index, chapter
         })
@@ -110,7 +114,7 @@ export class EpisodeList {
       progress(0, length)
     }
     for (const { index, chapter } of tasks) {
-      await this.updateEpisode(index, chapter)
+      await this.updateEpisode(index, chapter, checkFs)
       await this.saveThrottle()
       if (progress) {
         progress(++count, length)
@@ -152,7 +156,11 @@ export class EpisodeList {
     data.groups = groups
   }
 
-  private testEpisode (ep: EpisodeData, ch: Chapter & EpisodeData): boolean {
+  private async isEpisodeUptodate (
+    ep: EpisodeData,
+    ch: Chapter & EpisodeData,
+    checkFs: boolean = false
+  ): Promise<boolean> {
     if (!ep.files || !ep.files.length) {
       return false
     }
@@ -162,24 +170,48 @@ export class EpisodeList {
     if (ch.groupId && ep.groupId !== ch.groupId) {
       return false
     }
-    return true
+    const folder = this.folders[ep.groupId || 0]
+    if (!folder) {
+      throw new Error(`Folder must not be ${folder}`)
+    }
+    if (!checkFs) {
+      return true
+    }
+    try {
+      for (const fpath of ep.files) {
+        const file = folder.requestFile(fpath)
+        await file.access()
+        await file.close()
+      }
+      return true
+    } catch {
+      return false
+    }
   }
 
-  private async pingEpisode (index: number, ch: Chapter & EpisodeData) {
+  private async pingEpisode (
+    index: number,
+    ch: Chapter & EpisodeData,
+    checkFs: boolean = false
+  ) {
     const { data: { episodes } } = this
     let ep = episodes[index]
     if (!ep) {
       ep = {}
       episodes[index] = ep
     }
-    if (this.testEpisode(ep, ch)) {
+    if (await this.isEpisodeUptodate(ep, ch, checkFs)) {
       return false
     }
     return ep
   }
 
-  private async updateEpisode (index: number, ch: Chapter & EpisodeData) {
-    const ep = await this.pingEpisode(index, ch)
+  private async updateEpisode (
+    index: number,
+    ch: Chapter & EpisodeData,
+    checkFs: boolean = false
+  ) {
+    const ep = await this.pingEpisode(index, ch, checkFs)
     if (!ep) {
       return
     }

@@ -54,6 +54,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     throw new Error('no sources specified')
   }
   // console.log(argv)
+  const checkFs = !!argv.checkFs
   const outputDir = argv.outputDir || path.resolve('download')
   const { Series } = await import('.')
   const names = argv.name || []
@@ -77,13 +78,14 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     const columns = process.stdout.columns || 40
     let prg: Progress | undefined
     await novel.ready
-    await novel.updateIndex((novel, _c, total) => {
-      if (prg) {
-        prg.tick()
-      } else {
-        const limit = Math.floor(columns / 2) - total.toString().length * 2
-        const name = cliTruncate(`${novel.data.name || 'unknown'}`, limit)
-        prg = new Progress(
+    await novel.updateIndex({
+      onProgress: (novel, _c, total) => {
+        if (prg) {
+          prg.tick()
+        } else {
+          const limit = Math.floor(columns / 2) - total.toString().length * 2
+          const name = cliTruncate(`${novel.data.name || 'unknown'}`, limit)
+          prg = new Progress(
             chalk`:bar {gray [:current/:total]} ${name}`, {
               complete: '█',
               incomplete: '░',
@@ -92,7 +94,9 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
               clear: false,
               total
             })
-      }
+        }
+      },
+      checkFs
     })
   }
 }
@@ -147,4 +151,9 @@ export const builder: Cmd.Builder = yargs =>
     type: 'boolean',
     default: false,
     desc: 'Force overwriting exist data'
+  })
+  .option('check-fs', {
+    type: 'boolean',
+    default: false,
+    desc: 'Download missing files'
   })

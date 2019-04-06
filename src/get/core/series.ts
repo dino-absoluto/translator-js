@@ -148,7 +148,11 @@ export class Series {
     await this.metaFile.write(JSON.stringify(data, null, 1))
   }
 
-  async updateIndex (onProgress?: SeriesProgressFn) {
+  async updateIndex (options: {
+    onProgress?: SeriesProgressFn,
+    checkFs?: boolean
+  } = {}) {
+    const { onProgress, checkFs = false } = options
     let progress: ProgressFn | undefined
     if (onProgress) {
       progress = onProgress.bind(undefined, this)
@@ -162,6 +166,9 @@ export class Series {
       throw new Error('novel is undefined')
     }
     const index = await novel.fetchIndex()
-    await episodes.updateWith(index, progress)
+    await episodes.updateWith(index, {
+      progress,
+      checkFs
+    })
   }
 }
