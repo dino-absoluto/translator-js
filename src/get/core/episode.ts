@@ -27,6 +27,8 @@ import { gunzipSync, gzipSync } from 'zlib'
 import throttle = require('lodash/throttle')
 /* code */
 
+type ProgressFn = (done: number, total: number) => void
+
 class Context extends AbstractContext {
   readonly files = new Map<string, string[] | Buffer>()
   readonly prefix: string
@@ -90,13 +92,25 @@ export class EpisodeList {
     this.ready = this.load()
   }
 
-  async updateWith (newData: Chapter[]) {
+  async updateWith (newData: Chapter[], progress: ProgressFn) {
     const { data: { episodes } } = this
     const { groups, chapters } = this.preprocess(newData)
     await this.updateGroups(groups)
+    const tasks: { index: number, chapter: Chapter }[] = []
     for (const [index, chapter] of chapters.entries()) {
+      if (this.pingEpisode(index, chapter)) {
+        tasks.push({
+          index, chapter
+        })
+      }
+    }
+    let count = 0
+    for (const { index, chapter } of tasks) {
       await this.updateEpisode(index, chapter)
       await this.saveThrottle()
+      if (progress) {
+        progress(++count, tasks.length)
+      }
     }
     episodes.length = chapters.length
     return this.saveThrottle.flush()
@@ -147,7 +161,7 @@ export class EpisodeList {
     return true
   }
 
-  private async updateEpisode (index: number, ch: Chapter & EpisodeData) {
+  private async pingEpisode (index: number, ch: Chapter & EpisodeData) {
     const { data: { episodes } } = this
     let ep = episodes[index]
     if (!ep) {
@@ -155,6 +169,14 @@ export class EpisodeList {
       episodes[index] = ep
     }
     if (this.testEpisode(ep, ch)) {
+      return false
+    }
+    return ep
+  }
+
+  private async updateEpisode (index: number, ch: Chapter & EpisodeData) {
+    const ep = await this.pingEpisode(index, ch)
+    if (!ep) {
       return
     }
     if (ep.files) {
