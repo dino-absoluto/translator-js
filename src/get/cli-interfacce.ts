@@ -124,6 +124,6 @@ export const builder: Cmd.Builder = yargs =>
   })
   .option('overwrite', {
     type: 'boolean',
-    default: true,
+    default: false,
     desc: 'Force overwriting exist data'
   })
