@@ -23,6 +23,7 @@
 import { clearLine, cursorTo } from 'readline'
 import clamp = require('lodash/clamp')
 import stringWidth = require('string-width')
+
 /* code */
 // █████▒░░░░░░░░░
 // ██████▓░░░░░░░░
@@ -39,8 +40,10 @@ const getLength = (() => {
   }
 })()
 
-interface ProgressElement {
-  parent?: ProgressParentElement
+export namespace Progress {
+
+interface Element {
+  parent?: ParentElement
   width?: number
   minWidth?: number
   maxWidth?: number
@@ -49,27 +52,27 @@ interface ProgressElement {
   render (maxWidth?: number): string
 }
 
-interface ProgressParentElement extends ProgressElement {
-  addItem (...items: ProgressElement[]): void
-  removeItem (...items: ProgressElement[]): void
+interface ParentElement extends Element {
+  addItem (...items: Element[]): void
+  removeItem (...items: Element[]): void
   update (): void
 }
 
-interface ProgressItemOptions {
+interface ItemOptions {
   width?: number
   minWidth?: number
   maxWidth?: number
   flex?: number
 }
 
-export abstract class ProgressItem implements ProgressElement {
-  _parent?: ProgressParentElement
+export abstract class Item implements Element {
+  _parent?: ParentElement
   width?: number
   minWidth?: number
   maxWidth?: number
   flex?: number
 
-  constructor (options?: ProgressItemOptions) {
+  constructor (options?: ItemOptions) {
     if (options) {
       this.width = options.width
       this.minWidth = options.minWidth
@@ -111,16 +114,16 @@ export abstract class ProgressItem implements ProgressElement {
   }
 }
 
-interface ProgressSpinnerStyle {
+interface SpinnerStyle {
   interval: number
   frames: string[]
   width: number
 }
 
-export class ProgressSpinner extends ProgressItem {
+export class Spinner extends Item {
   private interval?: ReturnType<typeof setInterval>
   width = 1
-  style: ProgressSpinnerStyle = {
+  style: SpinnerStyle = {
     interval: 80,
     width: 1,
     frames: [
@@ -166,9 +169,9 @@ export class ProgressSpinner extends ProgressItem {
   }
 }
 
-export class ProgressText extends ProgressItem {
+export class Text extends Item {
   _text = ''
-  constructor (options?: ProgressItemOptions & {
+  constructor (options?: ItemOptions & {
     text?: string
   }) {
     super(options)
@@ -205,11 +208,11 @@ export class ProgressText extends ProgressItem {
   }
 }
 
-export class ProgressBar extends ProgressItem {
+export class Bar extends Item {
   symbols = [ '░', '▒', '▓', '█' ]
   _ratio = 0
 
-  constructor (options?: ProgressItemOptions & {
+  constructor (options?: ItemOptions & {
     symbols?: string[]
     ratio?: number
   }) {
@@ -251,14 +254,14 @@ export class ProgressBar extends ProgressItem {
     if (!allowed) {
       return ''
     }
-    return ProgressBar.renderBar(this.symbols, ratio, allowed).join('')
+    return Bar.renderBar(this.symbols, ratio, allowed).join('')
   }
 }
 
-export class ProgressGroup
-  extends ProgressItem
-  implements ProgressParentElement {
-  protected items: ProgressElement[] = []
+export class Group
+  extends Item
+  implements ParentElement {
+  protected items: Element[] = []
   private calculated: number[] = []
   private flexSum: number = 0
 
@@ -266,14 +269,14 @@ export class ProgressGroup
     return
   }
 
-  addItem (...newItems: ProgressElement[]) {
+  addItem (...newItems: Element[]) {
     for (const item of newItems) {
       this.items.push(item)
       item.parent = this
     }
   }
 
-  removeItem (...itemsTobeRemoved: ProgressElement[]) {
+  removeItem (...itemsTobeRemoved: Element[]) {
     const { items } = this
     for (const item of itemsTobeRemoved) {
       const index = items.indexOf(item)
@@ -339,9 +342,10 @@ export class ProgressGroup
   }
 }
 
-export class Progress extends ProgressGroup {
+export class Progress extends Group {
   stream = process.stdout
   flex = 1
+  count = 0
 
   clear () {
     const { stream } = this
@@ -358,9 +362,8 @@ export class Progress extends ProgressGroup {
     const text = this.render(columns)
     cursorTo(stream, 0)
     stream.write(text)
+    this.count++
   }
+}
 
-  stop () {
-    this.clearItems()
-  }
 }

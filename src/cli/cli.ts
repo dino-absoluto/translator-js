@@ -22,7 +22,7 @@
 import { parser as yargs } from './shared'
 import * as cmdGet from '../get/cli-interface'
 import chalk from 'chalk'
-import { Progress, ProgressBar, ProgressText, ProgressSpinner } from '../utils/progress'
+import { Progress } from '../utils/progress'
 
 try {
   yargs
@@ -40,24 +40,24 @@ try {
       yargs =>
         yargs,
       async _argv => {
-        const progress = new Progress()
-        const barLeft = new ProgressBar({
+        const progress = new Progress.Progress()
+        const barLeft = new Progress.Bar({
           width: 20
         })
         progress.addItem(barLeft)
-        progress.addItem(new ProgressText({ text: ' ' }))
-        progress.addItem(new ProgressText({
+        progress.addItem(new Progress.Text({ text: ' ' }))
+        progress.addItem(new Progress.Text({
           text: chalk.green('Hello World!')
         }))
-        progress.addItem(new ProgressText({ text: ' ' }))
-        const spinner = new ProgressSpinner()
+        progress.addItem(new Progress.Text({ text: ' ' }))
+        const spinner = new Progress.Spinner()
         progress.addItem(spinner)
-        progress.addItem(new ProgressText({ text: ' ' }))
-        progress.addItem(new ProgressText({
+        progress.addItem(new Progress.Text({ text: ' ' }))
+        progress.addItem(new Progress.Text({
           text: 'Hello World!'
         }))
-        progress.addItem(new ProgressText({ text: ' ' }))
-        const bar = new ProgressBar({
+        progress.addItem(new Progress.Text({ text: ' ' }))
+        const bar = new Progress.Bar({
           width: 20,
           flex: 4,
           ratio: .1
@@ -75,11 +75,12 @@ try {
             bar.ratio = 0
             if (count++ > 3) {
               clearInterval(loop)
-              progress.stop()
+              progress.clearItems()
               console.log()
+              console.log(progress.count)
             }
           }
-        }, 150)
+        }, 160)
         return
       })
     .parse()
