@@ -43,7 +43,6 @@ const getLength = (() => {
 export namespace Progress {
 
 interface Element {
-  parent?: ParentElement
   width?: number
   minWidth?: number
   maxWidth?: number
@@ -52,9 +51,16 @@ interface Element {
   render (maxWidth?: number): string
 }
 
+interface ChildElement extends Element {
+  parent?: ParentElement
+  mounted (): void
+  willUnmount (): void
+}
+
 interface ParentElement extends Element {
-  addItem (...items: Element[]): void
-  removeItem (...items: Element[]): void
+  children: ChildElement[]
+  addItem (...items: ChildElement[]): void
+  removeItem (...items: ChildElement[]): void
   update (): void
 }
 
@@ -65,8 +71,8 @@ interface ItemOptions {
   flex?: number
 }
 
-export abstract class Item implements Element {
-  _parent?: ParentElement
+export abstract class Item implements Element, ChildElement {
+  parent?: ParentElement
   width?: number
   minWidth?: number
   maxWidth?: number
@@ -81,21 +87,11 @@ export abstract class Item implements Element {
     }
   }
 
-  get parent () { return this._parent }
-  set parent (nParent) {
-    this._parent = nParent
-    if (nParent) {
-      this.mounted()
-    } else {
-      this.willUnmount()
-    }
-  }
+  abstract render (maxWidth?: number): string
+  abstract calculateWidth (): number
 
   mounted () { return }
   willUnmount () { return }
-
-  abstract render (maxWidth?: number): string
-  abstract calculateWidth (): number
 
   update () {
     const { parent } = this
@@ -261,7 +257,7 @@ export class Bar extends Item {
 export class Group
   extends Item
   implements ParentElement {
-  protected items: Element[] = []
+  readonly children: ChildElement[] = []
   private calculated: number[] = []
   private flexSum: number = 0
 
@@ -269,38 +265,39 @@ export class Group
     return
   }
 
-  addItem (...newItems: Element[]) {
+  addItem (...newItems: ChildElement[]) {
+    const { children } = this
     for (const item of newItems) {
-      this.items.push(item)
+      children.push(item)
       item.parent = this
     }
   }
 
-  removeItem (...itemsTobeRemoved: Element[]) {
-    const { items } = this
+  removeItem (...itemsTobeRemoved: ChildElement[]) {
+    const { children } = this
     for (const item of itemsTobeRemoved) {
-      const index = items.indexOf(item)
+      const index = children.indexOf(item)
       if (index >= 0) {
-        this.items.splice(index, 1)
+        children.splice(index, 1)
         item.parent = undefined
       }
     }
   }
 
   clearItems () {
-    const { items } = this
-    for (const item of items) {
+    const { children } = this
+    for (const item of children) {
       item.parent = undefined
     }
-    items.length = 0
+    children.length = 0
   }
 
   calculateWidth () {
-    const { items, calculated } = this
+    const { children, calculated } = this
     let flexSum = 0
     let sum = 0
     calculated.length = 0
-    for (const item of items) {
+    for (const item of children) {
       const width = item.calculateWidth()
       sum += width
       flexSum += item.width ? 0 : (item.flex || 0)
@@ -317,12 +314,12 @@ export class Group
     const actual = this.calculateWidth()
     const allowed = this.requestWidth(
       this.flex ? Number.MAX_SAFE_INTEGER : actual, maxWidth)
-    const { items, flexSum, calculated } = this
+    const { children, flexSum, calculated } = this
     const perFlex = (allowed - actual) / flexSum
     let total = allowed - actual
     let maxFlex = 0
     let maxFlexIndex = -1
-    for (const [index, item] of items.entries()) {
+    for (const [index, item] of children.entries()) {
       const flex = item.width ? 0 : (item.flex || 0)
       if (flex > maxFlex) {
         maxFlex = flex
@@ -336,7 +333,7 @@ export class Group
       calculated[maxFlexIndex] += total
       total = 0
     }
-    return items.map((item, index) => {
+    return children.map((item, index) => {
       return item.render(calculated[index])
     }).join('')
   }
