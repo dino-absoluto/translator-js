@@ -22,7 +22,7 @@
 import { parser as yargs } from './shared'
 import * as cmdGet from '../get/cli-interface'
 import chalk from 'chalk'
-import { Progress, ProgressBar } from '../utils/progress'
+import { Progress, ProgressBar, ProgressText } from '../utils/progress'
 
 try {
   yargs
@@ -41,16 +41,25 @@ try {
         yargs,
       async _argv => {
         const progress = new Progress()
-        const bar = new ProgressBar()
-        const bar2 = new ProgressBar()
-        bar.flex = 1
-        bar.ratio = .3
-        bar2.flex = 2
-        bar2.ratio = .21
+        const bar = new ProgressBar({
+          flex: 4,
+          ratio: .1
+        })
+        progress.addItem(new ProgressBar({
+          flex: 1
+        }))
+        progress.addItem(new ProgressText({
+          text: 'Hello World!',
+          flex: 1
+        }))
         progress.addItem(bar)
-        progress.addItem(bar2)
         progress.update()
-        bar.ratio = .9
+        const loop = setInterval(() => {
+          bar.ratio += .05
+          if (bar.ratio >= 1) {
+            clearInterval(loop)
+          }
+        }, 100)
         return
       })
     .parse()

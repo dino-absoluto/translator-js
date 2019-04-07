@@ -39,13 +39,19 @@ interface ProgressElement {
   flex?: number
   calculateWidth (): number
   render (maxWidth?: number): string
-  update (data?: unknown): void
 }
 
 interface ProgressParentElement extends ProgressElement {
   addItem (...items: ProgressElement[]): void
   removeItem (...items: ProgressElement[]): void
   update (): void
+}
+
+interface ProgressItemOptions {
+  width?: number
+  minWidth?: number
+  maxWidth?: number
+  flex?: number
 }
 
 export abstract class ProgressItem implements ProgressElement {
@@ -55,12 +61,22 @@ export abstract class ProgressItem implements ProgressElement {
   maxWidth?: number
   flex?: number
 
+  constructor (options?: ProgressItemOptions) {
+    if (options) {
+      this.width = options.width
+      this.minWidth = options.minWidth
+      this.maxWidth = options.maxWidth
+      this.flex = options.flex
+    }
+  }
+
   abstract render (maxWidth?: number): string
   abstract calculateWidth (): number
 
   update () {
-    const { parent } = this
-    parent && parent.update()
+    if (this.parent) {
+      this.parent.update()
+    }
   }
 
   protected requestWidth (need: number, maxWidth?: number): number {
@@ -73,10 +89,64 @@ export abstract class ProgressItem implements ProgressElement {
   }
 }
 
+export class ProgressText extends ProgressItem {
+  _text = ''
+  constructor (options?: ProgressItemOptions & {
+    text?: string
+  }) {
+    super(options)
+    if (options) {
+      this.text = options.text || ''
+    }
+  }
+
+  get text () { return this._text }
+  set text (value: string) {
+    this._text = value
+    this.update()
+  }
+
+  calculateWidth () {
+    let { text } = this
+    return this.requestWidth(text.length)
+  }
+
+  render (maxWidth?: number) {
+    let { text } = this
+    const needed = this.flex ? Number.MAX_SAFE_INTEGER : text.length
+    const allowed = this.requestWidth(needed, maxWidth)
+    if (text.length > allowed) {
+      return text.substr(0, allowed - 1) + '…'
+    } else if (this.flex) {
+      const space = allowed - text.length
+      const left = Math.floor(space / 2)
+      const right = space - left
+      return ' '.repeat(left) + text + ' '.repeat(right)
+    }
+    return text
+  }
+}
+
 export class ProgressBar extends ProgressItem {
   symbols = [ '░', '▒', '▓', '█' ]
-  flex = 1
-  private _ratio = 0
+  _ratio = 0
+
+  constructor (options?: ProgressItemOptions & {
+    symbols?: string[]
+    ratio?: number
+  }) {
+    super(options)
+    if (options) {
+      this.symbols = options.symbols || this.symbols
+      this._ratio = options.ratio || this._ratio
+    }
+  }
+
+  get ratio () { return this._ratio }
+  set ratio (value: number) {
+    this._ratio = clamp(value, 0, 1)
+    this.update()
+  }
 
   static renderBar (symbols: string[], ratio: number, width: number): string[] {
     const stage = symbols.length - 1
@@ -96,19 +166,14 @@ export class ProgressBar extends ProgressItem {
   }
 
   render (maxWidth?: number) {
+    let { ratio } = this
     const needed = this.flex ? Number.MAX_SAFE_INTEGER : 0
     const allowed = this.requestWidth(needed, maxWidth)
-    const ratio = clamp(this._ratio, 0, 1)
+    ratio = clamp(ratio, 0, 1)
     if (!allowed) {
       return ''
     }
     return ProgressBar.renderBar(this.symbols, ratio, allowed).join('')
-  }
-
-  get ratio () { return this._ratio }
-  set ratio (ratio: number) {
-    this._ratio = clamp(ratio, 0, 1)
-    this.update()
   }
 }
 
@@ -125,8 +190,8 @@ export class ProgressGroup
 
   addItem (...newItems: ProgressItem[]) {
     for (const item of newItems) {
-      item.parent = this
       this.items.push(item)
+      item.parent = this
     }
   }
 
@@ -135,8 +200,8 @@ export class ProgressGroup
     for (const item of itemsTobeRemoved) {
       const index = items.indexOf(item)
       if (index >= 0) {
-        delete item.parent
         this.items.splice(index, 1)
+        delete item.parent
       }
     }
   }
