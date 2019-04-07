@@ -57,13 +57,12 @@ try {
         progress.addItem(new Progress.Spinner())
         progress.addItem(new Progress.Text({ text: ' ' }))
         progress.addItem(new Progress.Text({
-          text: 'Hello World!',
-          flex: 2
+          text: 'Hello World!'
         }))
         progress.addItem(new Progress.Text({ text: ' ' }))
         const bar = new Progress.Bar({
-          width: 25,
-          flex: 4,
+          width: 40,
+          flex: 1,
           ratio: .1
         })
         progress.addItem(bar)

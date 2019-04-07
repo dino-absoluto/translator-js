@@ -21,7 +21,9 @@
 /* imports */
 // import chalk from 'chalk'
 import { clearLine, cursorTo } from 'readline'
-import clamp = require('lodash/clamp')
+import _clamp = require('lodash/clamp')
+import _defaults = require('lodash/defaults')
+import _orderBy = require('lodash/orderBy')
 import stringWidth = require('string-width')
 
 /* code */
@@ -46,12 +48,18 @@ interface Element {
   width?: number
   minWidth?: number
   maxWidth?: number
-  flex?: number
+  flexGrow: number
+  flexShrink: number
+  /** Calculate uninhibited length */
   calculateWidth (): number
+  /** Render item with max-width */
   render (maxWidth?: number): string
+  /** Trigger an update */
+  update (): void
 }
 
 interface ChildElement extends Element {
+  id?: number
   parent?: ParentElement
   mounted (parent: ParentElement): void
   willUnmount (parent: ParentElement): void
@@ -63,7 +71,6 @@ interface ParentElement extends Element {
   children: ChildElement[]
   addItem (...items: ChildElement[]): void
   removeItem (...items: ChildElement[]): void
-  update (): void
   addFrameEvent (cb: FrameFn): void
   removeFrameEvent (cb: FrameFn): void
 }
@@ -73,23 +80,64 @@ interface ItemOptions {
   minWidth?: number
   maxWidth?: number
   flex?: number
+  flexGrow?: number
+  flexShrink?: number
 }
 
 export abstract class Item implements Element, ChildElement {
+  id?: number
   _parent?: ParentElement
   width?: number
-  minWidth?: number
-  maxWidth?: number
-  flex?: number
+  _minWidth: number = 0
+  _maxWidth: number = Number.MAX_SAFE_INTEGER
+  _flexGrow: number = 0
+  _flexShrink: number = 0
   private willUpdate = false
 
   constructor (options?: ItemOptions) {
     if (options) {
       this.width = options.width
-      this.minWidth = options.minWidth
-      this.maxWidth = options.maxWidth
-      this.flex = options.flex
+      this.minWidth = options.minWidth || 0
+      this.maxWidth = options.maxWidth || Number.MAX_SAFE_INTEGER
+      if (options.flex) {
+        this.flex = options.flex
+      }
+      if (options.flexGrow) {
+        this.flexGrow = options.flexGrow
+      }
+      if (options.flexShrink) {
+        this.flexShrink = options.flexShrink
+      }
     }
+  }
+
+  get minWidth () { return this._minWidth }
+  get maxWidth () { return this._maxWidth }
+  set minWidth (width: number) {
+    this._minWidth = Math.max(width || 0, 0)
+  }
+  set maxWidth (width: number) {
+    this._maxWidth = Math.min(width || Number.MAX_SAFE_INTEGER,
+      Number.MAX_SAFE_INTEGER)
+  }
+
+  private isFlexible () {
+    return !(this.width || (this.minWidth === this.maxWidth))
+  }
+
+  get flexGrow () { return this.isFlexible() ? this._flexGrow : 0 }
+  set flexGrow (flex: number) {
+    this._flexGrow = Math.max(0, flex || 0)
+  }
+
+  get flexShrink () { return this.isFlexible() ? this._flexShrink : 0 }
+  set flexShrink (flex: number) {
+    this._flexShrink = Math.max(0, flex || 0)
+  }
+
+  set flex (flex: number) {
+    this.flexGrow = flex
+    this.flexShrink = flex
   }
 
   get parent () { return this._parent }
@@ -125,15 +173,6 @@ export abstract class Item implements Element, ChildElement {
   abstract calculateWidth (): number
   mounted (_parent: ParentElement) { return }
   willUnmount (_parent: ParentElement) { return }
-
-  protected requestWidth (need: number, maxWidth?: number): number {
-    let minWidth
-    minWidth = Math.max(this.minWidth || 0, 0)
-    maxWidth = Math.min(maxWidth || this.maxWidth || Number.MAX_SAFE_INTEGER,
-      Number.MAX_SAFE_INTEGER)
-    const width = clamp(this.width || need, minWidth, maxWidth)
-    return width
-  }
 }
 
 interface SpinnerStyle {
@@ -163,7 +202,7 @@ export class Spinner extends Item {
   frame = 0
 
   calculateWidth () {
-    return this.requestWidth(this.style.width)
+    return this.style.width
   }
 
   mounted (parent: ParentElement) {
@@ -190,7 +229,9 @@ export class Text extends Item {
   constructor (options?: ItemOptions & {
     text?: string
   }) {
-    super(options)
+    super(_defaults(options, {
+      flexShrink: 1
+    }))
     if (options) {
       this.text = options.text || ''
     }
@@ -201,24 +242,39 @@ export class Text extends Item {
     this._text = value
     this.update()
   }
+  get length () { return getLength(this.text) }
 
   calculateWidth () {
     let { text } = this
-    return this.requestWidth(getLength(text))
+    return _clamp(getLength(text), this.minWidth, this.maxWidth)
+  }
+
+  grow (width: number) {
+    let { text } = this
+    const space = width - this.length
+    const left = Math.floor(space / 2)
+    const right = space - left
+    return ' '.repeat(left) + text + ' '.repeat(right)
+  }
+
+  shrink (width: number) {
+    if (width <= 0) {
+      return ''
+    }
+    return this.text.substr(0, width - 1) + '…'
   }
 
   render (maxWidth?: number) {
     let { text } = this
-    const length = getLength(text)
-    const needed = this.flex ? Number.MAX_SAFE_INTEGER : length
-    const allowed = this.requestWidth(needed, maxWidth)
-    if (length > allowed) {
-      return text.substr(0, allowed - 1) + '…'
-    } else if (this.flex) {
-      const space = allowed - length
-      const left = Math.floor(space / 2)
-      const right = space - left
-      return ' '.repeat(left) + text + ' '.repeat(right)
+    const growable = !!(maxWidth && this.flexGrow)
+    const shrinkable = !!this.flexShrink
+    maxWidth = Math.min(
+      maxWidth != null ? maxWidth : Number.MAX_SAFE_INTEGER, this.maxWidth)
+    const length = this.length
+    if (growable && length < maxWidth) {
+      return this.grow(maxWidth)
+    } else if (shrinkable && length > maxWidth) {
+      return this.shrink(maxWidth)
     }
     return text
   }
@@ -232,16 +288,19 @@ export class Bar extends Item {
     symbols?: string[]
     ratio?: number
   }) {
-    super(options)
+    super(_defaults(options, {
+      minWidth: 5
+    }))
     if (options) {
       this.symbols = options.symbols || this.symbols
       this._ratio = options.ratio || this._ratio
+      // this.flex = options.flex || 0
     }
   }
 
   get ratio () { return this._ratio }
   set ratio (value: number) {
-    this._ratio = clamp(value, 0, 1)
+    this._ratio = _clamp(value, 0, 1)
     this.update()
   }
 
@@ -259,18 +318,22 @@ export class Bar extends Item {
   }
 
   calculateWidth () {
-    return this.requestWidth(0)
+    return _clamp(this.width || 0, this.minWidth, this.maxWidth)
   }
 
   render (maxWidth?: number) {
     let { ratio } = this
-    const needed = this.flex ? Number.MAX_SAFE_INTEGER : 0
-    const allowed = this.requestWidth(needed, maxWidth)
-    ratio = clamp(ratio, 0, 1)
-    if (!allowed) {
-      return ''
+    const growable = !!(maxWidth && this.flexGrow)
+    const shrinkable = !!this.flexShrink
+    maxWidth = Math.min(maxWidth || Number.MAX_SAFE_INTEGER, this.maxWidth)
+    let width = this.calculateWidth()
+    if (growable && width < maxWidth) {
+      width = maxWidth
+    } else if (shrinkable && width > maxWidth) {
+      width = maxWidth
     }
-    return Bar.renderBar(this.symbols, ratio, allowed).join('')
+    const text = Bar.renderBar(this.symbols, ratio, width).join('')
+    return text
   }
 }
 
@@ -278,10 +341,18 @@ export class Group
   extends Item
   implements ParentElement {
   readonly children: ChildElement[] = []
-  private calculated: number[] = []
-  private flexSum: number = 0
+  flexGrowSum: number = 0
+  flexShrinkSum: number = 0
+  growableChildren: ChildElement[] = []
+  shrinkableChildren: ChildElement[] = []
+
   private frameEvents = new Set<FrameFn>()
   private interval?: ReturnType<typeof setTimeout>
+
+  get flexGrow () { return this.flexGrowSum }
+  get flexShrink () { return this.flexShrinkSum }
+  set flexGrow (_flex: number) { return }
+  set flexShrink (_flex: number) { return }
 
   onFrame = () => {
     for (const fn of this.frameEvents) {
@@ -312,9 +383,12 @@ export class Group
   addItem (...newItems: ChildElement[]) {
     const { children } = this
     for (const item of newItems) {
+      const id = children.length
       children.push(item)
       item.parent = this
+      item.id = id
     }
+    this.updateFlex()
   }
 
   removeItem (...itemsTobeRemoved: ChildElement[]) {
@@ -324,8 +398,10 @@ export class Group
       if (index >= 0) {
         children.splice(index, 1)
         item.parent = undefined
+        item.id = undefined
       }
     }
+    this.updateFlex()
   }
 
   clearItems () {
@@ -336,50 +412,119 @@ export class Group
     children.length = 0
   }
 
-  calculateWidth () {
-    const { children, calculated } = this
-    let flexSum = 0
-    let sum = 0
-    calculated.length = 0
+  updateFlex () {
+    const {
+      children,
+      growableChildren,
+      shrinkableChildren } = this
+    let flexGrowSum = 0
+    let flexShrinkSum = 0
+    growableChildren.length = 0
+    shrinkableChildren.length = 0
     for (const item of children) {
-      const width = item.calculateWidth()
-      sum += width
-      flexSum += item.width ? 0 : (item.flex || 0)
-      calculated.push(width)
+      if (item.flexGrow) {
+        flexGrowSum += item.flexGrow
+        growableChildren.push(item)
+      }
+      if (item.flexShrink) {
+        flexShrinkSum += item.flexShrink
+        shrinkableChildren.push(item)
+      }
     }
-    this.flexSum = flexSum
-    return sum
+    _orderBy(growableChildren, [ 'flexGrow', 'id' ], [ 'desc', 'asc' ])
+    _orderBy(shrinkableChildren, [ 'flexShrink', 'id' ], [ 'desc', 'asc' ])
+    this.flexGrowSum = flexGrowSum
+    this.flexShrinkSum = flexShrinkSum
+  }
+
+  private growRound (
+    widths: number[],
+    delta: number, method: typeof Math.ceil) {
+    const { growableChildren } = this
+    let perFlex = delta / this.flexGrow
+    for (const item of growableChildren) {
+      const adjust = method(item.flexGrow * perFlex)
+      if (item.id) {
+        delta -= adjust
+        widths[item.id] += adjust
+      }
+      if (delta === 0) {
+        break
+      }
+    }
+    return delta
+  }
+  private grow (widths: number[], delta: number) {
+    delta = this.growRound(widths, delta, Math.floor)
+    if (delta > 0) {
+      delta = this.growRound(widths, delta, Math.ceil)
+    }
+  }
+
+  private shrinkRound (
+    widths: number[],
+    delta: number, method: typeof Math.ceil) {
+    const { shrinkableChildren } = this
+    let totalBasis = 0
+    const bases = shrinkableChildren.map(item => {
+      const id = item.id as number
+      const basis = widths[id] * item.flexShrink
+      totalBasis += basis
+      return basis
+    })
+    const perFlex = delta / totalBasis
+    for (const [index, item] of shrinkableChildren.entries()) {
+      const basis = bases[index]
+      const adjust = method(basis * perFlex)
+      const id = item.id as number
+      delta -= adjust
+      widths[id] -= adjust
+      if (delta === 0) {
+        break
+      }
+    }
+    return delta
+  }
+
+  private shrink (widths: number[], delta: number) {
+    const { shrinkableChildren } = this
+    delta = this.shrinkRound(widths, delta, Math.floor)
+    if (delta > 0) {
+      const id = shrinkableChildren[0].id as number
+      widths[id] -= delta
+    }
   }
 
   render (maxWidth?: number) {
-    if (maxWidth && maxWidth <= 0) {
-      return ''
+    const { children } = this
+    const growable = !!(maxWidth && this.flexGrow)
+    const shrinkable = !!this.flexShrink
+    maxWidth = Math.min(maxWidth || Number.MAX_SAFE_INTEGER, this.maxWidth)
+    const widths: number[] = []
+    let wantWidth = 0
+    for (const item of children) {
+      const width = item.calculateWidth()
+      widths.push(width)
+      wantWidth += width
     }
-    const actual = this.calculateWidth()
-    const allowed = this.requestWidth(
-      this.flex ? Number.MAX_SAFE_INTEGER : actual, maxWidth)
-    const { children, flexSum, calculated } = this
-    const perFlex = (allowed - actual) / flexSum
-    let total = allowed - actual
-    let maxFlex = 0
-    let maxFlexIndex = -1
-    for (const [index, item] of children.entries()) {
-      const flex = item.width ? 0 : (item.flex || 0)
-      if (flex > maxFlex) {
-        maxFlex = flex
-        maxFlexIndex = index
-      }
-      const adjust = Math.round(perFlex * flex)
-      total -= adjust
-      calculated[index] += adjust
+    if (growable && wantWidth < maxWidth) {
+      this.grow(widths, maxWidth - wantWidth)
+    } else if (shrinkable && wantWidth > maxWidth) {
+      this.shrink(widths, wantWidth - maxWidth)
     }
-    if (total !== 0 && maxFlexIndex >= 0) {
-      calculated[maxFlexIndex] += total
-      total = 0
-    }
-    return children.map((item, index) => {
-      return item.render(calculated[index])
+    return this.children.map((item, id) => {
+      return item.render(widths[id])
     }).join('')
+  }
+
+  calculateWidth () {
+    const { children } = this
+    let sum = 0
+    for (const item of children) {
+      const width = item.calculateWidth()
+      sum += width
+    }
+    return sum
   }
 }
 
