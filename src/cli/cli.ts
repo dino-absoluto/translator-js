@@ -41,7 +41,7 @@ try {
         yargs,
       async _argv => {
         const progress = new Progress.Progress()
-        const group = new Progress.Group()
+        const group = new Progress.Group({ flex: 1 })
         const barLeft = new Progress.Bar({
           width: 20
         })
@@ -53,12 +53,12 @@ try {
         progress.addItem(group)
         const spinner = new Progress.Spinner()
         group.addItem(spinner)
-        progress.addItem(new Progress.Text({ text: ' ' }))
         progress.addItem(spinner)
         progress.addItem(new Progress.Spinner())
         progress.addItem(new Progress.Text({ text: ' ' }))
         progress.addItem(new Progress.Text({
-          text: 'Hello World!'
+          text: 'Hello World!',
+          flex: 2
         }))
         progress.addItem(new Progress.Text({ text: ' ' }))
         const bar = new Progress.Bar({
