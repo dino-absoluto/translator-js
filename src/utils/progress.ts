@@ -367,8 +367,12 @@ export class Group
   private frameEvents = new Set<FrameFn>()
   private interval?: ReturnType<typeof setTimeout>
 
-  get flexGrow () { return this.flexGrowSum }
-  get flexShrink () { return this.flexShrinkSum }
+  get flexGrow () {
+    return this.flexGrowSum && this.growableChildren.length / this.children.length
+  }
+  get flexShrink () {
+    return this.flexShrinkSum && this.shrinkableChildren.length / this.children.length
+  }
   set flexGrow (_flex: number) { return }
   set flexShrink (_flex: number) { return }
 
