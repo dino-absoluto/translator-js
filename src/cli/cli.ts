@@ -41,28 +41,39 @@ try {
         yargs,
       async _argv => {
         const progress = new Progress()
-        const bar = new ProgressBar({
-          flex: 4,
-          ratio: .1
-        })
         progress.addItem(new ProgressBar({
+          width: 20,
           flex: 1
         }))
+        progress.addItem(new ProgressText({ text: ' ' }))
         progress.addItem(new ProgressText({
           text: 'Hello World!',
           flex: 1
         }))
+        progress.addItem(new ProgressText({ text: ' ' }))
         const spinner = new ProgressSpinner()
         progress.addItem(spinner)
+        progress.addItem(new ProgressText({ text: ' ' }))
+        progress.addItem(new ProgressText({
+          text: 'Hello World!',
+          flex: 1
+        }))
+        progress.addItem(new ProgressText({ text: ' ' }))
+        const bar = new ProgressBar({
+          width: 20,
+          flex: 4,
+          ratio: .1
+        })
         progress.addItem(bar)
         progress.update()
         const loop = setInterval(() => {
-          bar.ratio += .05
+          bar.ratio += .015
           if (bar.ratio >= 1) {
             clearInterval(loop)
-            spinner.stop()
+            progress.stop()
+            console.log()
           }
-        }, 200)
+        }, 150)
         return
       })
     .parse()

@@ -248,7 +248,7 @@ export class ProgressBar extends ProgressItem {
 export class ProgressGroup
   extends ProgressItem
   implements ProgressParentElement {
-  private items: ProgressElement[] = []
+  protected items: ProgressElement[] = []
   private calculated: number[] = []
   private flexSum: number = 0
 
@@ -256,22 +256,30 @@ export class ProgressGroup
     return
   }
 
-  addItem (...newItems: ProgressItem[]) {
+  addItem (...newItems: ProgressElement[]) {
     for (const item of newItems) {
       this.items.push(item)
       item.parent = this
     }
   }
 
-  removeItem (...itemsTobeRemoved: ProgressItem[]) {
+  removeItem (...itemsTobeRemoved: ProgressElement[]) {
     const { items } = this
     for (const item of itemsTobeRemoved) {
       const index = items.indexOf(item)
       if (index >= 0) {
         this.items.splice(index, 1)
-        delete item.parent
+        item.parent = undefined
       }
     }
+  }
+
+  clearItems () {
+    const { items } = this
+    for (const item of items) {
+      item.parent = undefined
+    }
+    items.length = 0
   }
 
   calculateWidth () {
@@ -282,7 +290,7 @@ export class ProgressGroup
     for (const item of items) {
       const width = item.calculateWidth()
       sum += width
-      flexSum += item.flex || 0
+      flexSum += item.width ? 0 : (item.flex || 0)
       calculated.push(width)
     }
     this.flexSum = flexSum
@@ -302,17 +310,18 @@ export class ProgressGroup
     let maxFlex = 0
     let maxFlexIndex = -1
     for (const [index, item] of items.entries()) {
-      const flex = item.flex || 0
+      const flex = item.width ? 0 : (item.flex || 0)
       if (flex > maxFlex) {
         maxFlex = flex
         maxFlexIndex = index
       }
-      const adjust = Math.round(perFlex * (item.flex || 0))
+      const adjust = Math.round(perFlex * flex)
       total -= adjust
       calculated[index] += adjust
     }
     if (total !== 0 && maxFlexIndex >= 0) {
       calculated[maxFlexIndex] += total
+      total = 0
     }
     return items.map((item, index) => {
       return item.render(calculated[index])
@@ -336,7 +345,12 @@ export class Progress extends ProgressGroup {
 
   update () {
     const { stream, columns } = this
+    const text = this.render(columns)
     cursorTo(stream, 0)
-    stream.write(this.render(columns))
+    stream.write(text)
+  }
+
+  stop () {
+    this.clearItems()
   }
 }
