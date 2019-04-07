@@ -22,14 +22,22 @@
 // import chalk from 'chalk'
 import { clearLine, cursorTo } from 'readline'
 import clamp = require('lodash/clamp')
-
+import stringWidth = require('string-width')
 /* code */
 // █████▒░░░░░░░░░
 // ██████▓░░░░░░░░
 // █████████████▓░
 // █▓▒░▒▓█
 
-// const getLength = (text: string) => text.length
+const getLength = (() => {
+  try {
+    // throw new Error('a')
+    const getLength: typeof stringWidth = require('string-width')
+    return getLength
+  } catch {
+    return (text: string) => text.length
+  }
+})()
 
 interface ProgressElement {
   parent?: ProgressParentElement
@@ -111,6 +119,7 @@ interface ProgressSpinnerStyle {
 
 export class ProgressSpinner extends ProgressItem {
   private interval?: ReturnType<typeof setInterval>
+  width = 1
   style: ProgressSpinnerStyle = {
     interval: 80,
     width: 1,
@@ -176,17 +185,18 @@ export class ProgressText extends ProgressItem {
 
   calculateWidth () {
     let { text } = this
-    return this.requestWidth(text.length)
+    return this.requestWidth(getLength(text))
   }
 
   render (maxWidth?: number) {
     let { text } = this
-    const needed = this.flex ? Number.MAX_SAFE_INTEGER : text.length
+    const length = getLength(text)
+    const needed = this.flex ? Number.MAX_SAFE_INTEGER : length
     const allowed = this.requestWidth(needed, maxWidth)
-    if (text.length > allowed) {
+    if (length > allowed) {
       return text.substr(0, allowed - 1) + '…'
     } else if (this.flex) {
-      const space = allowed - text.length
+      const space = allowed - length
       const left = Math.floor(space / 2)
       const right = space - left
       return ' '.repeat(left) + text + ' '.repeat(right)

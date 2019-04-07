@@ -41,22 +41,20 @@ try {
         yargs,
       async _argv => {
         const progress = new Progress()
-        progress.addItem(new ProgressBar({
-          width: 20,
-          flex: 1
-        }))
+        const barLeft = new ProgressBar({
+          width: 20
+        })
+        progress.addItem(barLeft)
         progress.addItem(new ProgressText({ text: ' ' }))
         progress.addItem(new ProgressText({
-          text: 'Hello World!',
-          flex: 1
+          text: chalk.green('Hello World!')
         }))
         progress.addItem(new ProgressText({ text: ' ' }))
         const spinner = new ProgressSpinner()
         progress.addItem(spinner)
         progress.addItem(new ProgressText({ text: ' ' }))
         progress.addItem(new ProgressText({
-          text: 'Hello World!',
-          flex: 1
+          text: 'Hello World!'
         }))
         progress.addItem(new ProgressText({ text: ' ' }))
         const bar = new ProgressBar({
@@ -66,12 +64,20 @@ try {
         })
         progress.addItem(bar)
         progress.update()
+        let count = 0
         const loop = setInterval(() => {
+          barLeft.ratio += 0.03
           bar.ratio += .015
+          if (barLeft.ratio >= 1) {
+            barLeft.ratio = 0
+          }
           if (bar.ratio >= 1) {
-            clearInterval(loop)
-            progress.stop()
-            console.log()
+            bar.ratio = 0
+            if (count++ > 3) {
+              clearInterval(loop)
+              progress.stop()
+              console.log()
+            }
           }
         }, 150)
         return
