@@ -81,7 +81,7 @@ try {
               console.log(progress.count)
             }
           }
-        }, 160)
+        }, 40)
         return
       })
     .parse()
