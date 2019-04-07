@@ -81,7 +81,7 @@ interface ItemOptions {
   flex?: number
   flexGrow?: number
   flexShrink?: number
-  postProcess?: (value: string) => string
+  postProcess?: (...values: string[]) => string
 }
 
 export abstract class Item implements Element, ChildElement {
@@ -92,7 +92,7 @@ export abstract class Item implements Element, ChildElement {
   _maxWidth: number = Number.MAX_SAFE_INTEGER
   _flexGrow: number = 0
   _flexShrink: number = 0
-  postProcess?: (value: string) => string
+  postProcess?: (...values: string[]) => string
   private willUpdate = false
 
   constructor (options?: ItemOptions) {
@@ -154,11 +154,11 @@ export abstract class Item implements Element, ChildElement {
     }
   }
 
-  protected wrap (text: string): string {
+  protected wrap (...text: string[]): string {
     if (this.postProcess) {
-      return this.postProcess(text)
+      return this.postProcess(...text)
     }
-    return text
+    return text.join('')
   }
 
   update () {
@@ -369,8 +369,7 @@ export class Bar extends Item {
     } else if (shrinkable && width > maxWidth) {
       width = maxWidth
     }
-    const text = Bar.renderBar(this.symbols, ratio, width).join('')
-    return this.wrap(text)
+    return this.wrap(...Bar.renderBar(this.symbols, ratio, width))
   }
 }
 

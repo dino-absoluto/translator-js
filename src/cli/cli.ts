@@ -44,7 +44,9 @@ try {
         const group = new Progress.Group({ flex: 1 })
         const barLeft = new Progress.Bar({
           width: 20,
-          postProcess: chalk.green
+          postProcess: (...cols) => {
+            return chalk.green(cols[0]) + chalk.yellow(cols[1]) + chalk.gray(cols[2])
+          }
         })
         group.addItem(new Progress.Space({ flex: 1 }))
         group.addItem(barLeft)
