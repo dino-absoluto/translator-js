@@ -53,13 +53,14 @@ try {
         group.addItem(new Progress.Text({ text: '⸩', flexShrink: 0 }))
         group.addItem(new Progress.Space())
         group.addItem(new Progress.Text({
-          text: 'Hello World! Welcome to Hell!!!!!',
+          text: 'Hello!',
+          flex: 1,
+          align: Progress.TextAlignment.Left,
           postProcess: chalk.green
         }))
         progress.addItem(group)
         const spinner = new Progress.Spinner({ postProcess: chalk.blue })
         group.addItem(spinner)
-        group.addItem(new Progress.Space({ flex: 1 }))
         progress.addItem(spinner)
         progress.addItem(new Progress.Spinner({ postProcess: chalk.yellow }))
         progress.addItem(new Progress.Space())

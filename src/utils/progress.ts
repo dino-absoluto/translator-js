@@ -234,16 +234,25 @@ export class Spinner extends Item {
   }
 }
 
+export enum TextAlignment {
+  Left = 'left',
+  Center = 'center',
+  Right = 'right'
+}
+
 export class Text extends Item {
   _text = ''
+  align: TextAlignment = TextAlignment.Center
   constructor (options?: ItemOptions & {
     text?: string
+    align?: TextAlignment
   }) {
     super(_defaults(options, {
       flexShrink: 1
     }))
     if (options) {
-      this.text = options.text || ''
+      this.text = options.text || this.text
+      this.align = options.align || this.align
     }
   }
 
@@ -261,7 +270,12 @@ export class Text extends Item {
   grow (width: number) {
     let { text } = this
     const space = width - this.length
-    const left = Math.floor(space / 2)
+    let left = 0
+    if (this.align === TextAlignment.Center) {
+      left = Math.floor(space / 2)
+    } else if (this.align === TextAlignment.Right) {
+      left = space
+    }
     const right = space - left
     return ' '.repeat(left) + text + ' '.repeat(right)
   }
