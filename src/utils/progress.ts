@@ -280,16 +280,8 @@ export class Text extends Item {
 }
 
 export class Space extends Item {
-  constructor (options?: ItemOptions & {
-    text?: string
-  }) {
-    super(_defaults(options, {
-      width: 1
-    }))
-  }
-
   calculateWidth () {
-    return _clamp(this.width || 0, this.minWidth, this.maxWidth)
+    return _clamp(this.width || 1, this.minWidth, this.maxWidth)
   }
 
   render (maxWidth?: number) {
@@ -298,9 +290,9 @@ export class Space extends Item {
     maxWidth = Math.min(
       maxWidth != null ? maxWidth : Number.MAX_SAFE_INTEGER, this.maxWidth)
     const width = this.calculateWidth()
-    if ((growable && length < maxWidth) ||
-      (shrinkable && length > maxWidth)) {
-      ' '.repeat(maxWidth)
+    if ((growable && width < maxWidth) ||
+      (shrinkable && width > maxWidth)) {
+      return ' '.repeat(maxWidth)
     }
     return ' '.repeat(width)
   }
