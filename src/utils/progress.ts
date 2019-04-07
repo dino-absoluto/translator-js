@@ -76,7 +76,7 @@ interface ItemOptions {
 }
 
 export abstract class Item implements Element, ChildElement {
-  parent?: ParentElement
+  _parent?: ParentElement
   width?: number
   minWidth?: number
   maxWidth?: number
@@ -89,6 +89,18 @@ export abstract class Item implements Element, ChildElement {
       this.minWidth = options.minWidth
       this.maxWidth = options.maxWidth
       this.flex = options.flex
+    }
+  }
+
+  get parent () { return this._parent }
+  set parent (parent: ParentElement | undefined) {
+    const { _parent } = this
+    if (_parent) {
+      this.willUnmount(_parent)
+    }
+    this._parent = parent
+    if (parent) {
+      this.mounted(parent)
     }
   }
 
@@ -302,7 +314,6 @@ export class Group
     for (const item of newItems) {
       children.push(item)
       item.parent = this
-      item.mounted(this)
     }
   }
 
@@ -312,7 +323,6 @@ export class Group
       const index = children.indexOf(item)
       if (index >= 0) {
         children.splice(index, 1)
-        item.willUnmount(this)
         item.parent = undefined
       }
     }
@@ -321,7 +331,6 @@ export class Group
   clearItems () {
     const { children } = this
     for (const item of children) {
-      item.willUnmount(this)
       item.parent = undefined
     }
     children.length = 0
