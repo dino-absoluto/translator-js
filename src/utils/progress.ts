@@ -462,10 +462,9 @@ export class Group
     let perFlex = delta / this.flexGrow
     for (const item of growableChildren) {
       const adjust = method(item.flexGrow * perFlex)
-      if (item.id) {
-        delta -= adjust
-        widths[item.id] += adjust
-      }
+      const id = item.id as number
+      delta -= adjust
+      widths[id] += adjust
       if (delta === 0) {
         break
       }
@@ -530,9 +529,10 @@ export class Group
     } else if (shrinkable && wantWidth > maxWidth) {
       this.shrink(widths, wantWidth - maxWidth)
     }
-    return this.children.map((item, id) => {
+    let text = this.children.map((item, id) => {
       return item.render(widths[id])
     }).join('')
+    return text
   }
 
   calculateWidth () {

@@ -53,6 +53,7 @@ try {
         progress.addItem(group)
         const spinner = new Progress.Spinner()
         group.addItem(spinner)
+        group.addItem(new Progress.Space({ flex: 1 }))
         progress.addItem(spinner)
         progress.addItem(new Progress.Spinner())
         progress.addItem(new Progress.Space())
@@ -61,7 +62,7 @@ try {
         }))
         progress.addItem(new Progress.Space())
         const bar = new Progress.Bar({
-          width: 40,
+          width: 20,
           flex: 1,
           ratio: .1
         })
