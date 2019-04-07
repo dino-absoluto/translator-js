@@ -465,7 +465,7 @@ export class Group
     const { growableChildren } = this
     let perFlex = delta / this.flexGrow
     for (const item of growableChildren) {
-      const adjust = method(item.flexGrow * perFlex)
+      const adjust = _clamp(method(item.flexGrow * perFlex), 0, delta)
       const id = item.id as number
       delta -= adjust
       widths[id] += adjust
@@ -475,10 +475,11 @@ export class Group
     }
     return delta
   }
-  private grow (widths: number[], delta: number) {
+  private grow (widths: number[], wantWidth: number, maxWidth: number) {
+    let delta = maxWidth - wantWidth
     delta = this.growRound(widths, delta, Math.floor)
     if (delta > 0) {
-      delta = this.growRound(widths, delta, Math.ceil)
+      delta = this.growRound(widths, delta, Math.round)
     }
   }
 
@@ -496,7 +497,7 @@ export class Group
     const perFlex = delta / totalBasis
     for (const [index, item] of shrinkableChildren.entries()) {
       const basis = bases[index]
-      const adjust = method(basis * perFlex)
+      const adjust = _clamp(method(basis * perFlex), 0, delta)
       const id = item.id as number
       delta -= adjust
       widths[id] -= adjust
@@ -507,12 +508,13 @@ export class Group
     return delta
   }
 
-  private shrink (widths: number[], delta: number) {
-    const { shrinkableChildren } = this
+  private shrink (widths: number[], wantWidth: number, maxWidth: number) {
+    let delta = wantWidth - maxWidth
     delta = this.shrinkRound(widths, delta, Math.floor)
+    // console.log(wantWidth, maxWidth, delta, widths)
     if (delta > 0) {
-      const id = shrinkableChildren[0].id as number
-      widths[id] -= delta
+      delta = this.shrinkRound(widths, delta, Math.ceil)
+      // console.log(wantWidth, maxWidth, delta, widths)
     }
   }
 
@@ -529,9 +531,9 @@ export class Group
       wantWidth += width
     }
     if (growable && wantWidth < maxWidth) {
-      this.grow(widths, maxWidth - wantWidth)
+      this.grow(widths, wantWidth, maxWidth)
     } else if (shrinkable && wantWidth > maxWidth) {
-      this.shrink(widths, wantWidth - maxWidth)
+      this.shrink(widths, wantWidth, maxWidth)
     }
     let text = this.children.map((item, id) => {
       return item.render(widths[id])
