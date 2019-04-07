@@ -302,6 +302,10 @@ export class Text extends Item {
     } else if (shrinkable && length > maxWidth) {
       return this.wrap(this.shrink(maxWidth))
     }
+    const { minWidth } = this
+    if (length < minWidth) {
+      return this.wrap(this.grow(minWidth))
+    }
     return this.wrap(text)
   }
 }
