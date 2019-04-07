@@ -81,6 +81,7 @@ export abstract class Item implements Element, ChildElement {
   minWidth?: number
   maxWidth?: number
   flex?: number
+  private willUpdate = false
 
   constructor (options?: ItemOptions) {
     if (options) {
@@ -91,17 +92,27 @@ export abstract class Item implements Element, ChildElement {
     }
   }
 
-  abstract render (maxWidth?: number): string
-  abstract calculateWidth (): number
-  mounted (_parent: ParentElement) { return }
-  willUnmount (_parent: ParentElement) { return }
-
   update () {
+    if (this.willUpdate) {
+      return
+    }
+    this.willUpdate = true
+    setImmediate(() => this.onUpdate())
+    return false
+  }
+
+  onUpdate () {
+    this.willUpdate = false
     const { parent } = this
     if (parent) {
       parent.update()
     }
   }
+
+  abstract render (maxWidth?: number): string
+  abstract calculateWidth (): number
+  mounted (_parent: ParentElement) { return }
+  willUnmount (_parent: ParentElement) { return }
 
   protected requestWidth (need: number, maxWidth?: number): number {
     let minWidth
@@ -260,8 +271,6 @@ export class Group
   private frameEvents = new Set<FrameFn>()
   private interval?: ReturnType<typeof setTimeout>
 
-  update () { return }
-
   onFrame = () => {
     for (const fn of this.frameEvents) {
       fn()
@@ -380,7 +389,8 @@ export class Progress extends Group {
     return this.stream.columns || 40
   }
 
-  update () {
+  onUpdate () {
+    super.onUpdate()
     const { stream, columns } = this
     const text = this.render(columns)
     cursorTo(stream, 0)
