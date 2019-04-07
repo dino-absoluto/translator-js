@@ -43,22 +43,26 @@ try {
         const progress = new Progress.Progress()
         const group = new Progress.Group({ flex: 1 })
         const barLeft = new Progress.Bar({
-          width: 20
+          width: 20,
+          postProcess: chalk.green
         })
+        group.addItem(new Progress.Space({ flex: 1 }))
         group.addItem(barLeft)
         group.addItem(new Progress.Space())
         group.addItem(new Progress.Text({
-          text: 'Hello World!'
+          text: 'Hello World! Welcome to Hell!!!!!',
+          postProcess: chalk.red
         }))
         progress.addItem(group)
-        const spinner = new Progress.Spinner()
+        const spinner = new Progress.Spinner({ postProcess: chalk.blue })
         group.addItem(spinner)
         group.addItem(new Progress.Space({ flex: 1 }))
         progress.addItem(spinner)
-        progress.addItem(new Progress.Spinner())
+        progress.addItem(new Progress.Spinner({ postProcess: chalk.yellow }))
         progress.addItem(new Progress.Space())
         progress.addItem(new Progress.Text({
-          text: 'Hello World!'
+          text: 'Hello World!',
+          postProcess: chalk.gray
         }))
         progress.addItem(new Progress.Space())
         const bar = new Progress.Bar({

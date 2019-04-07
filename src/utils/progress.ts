@@ -81,6 +81,7 @@ interface ItemOptions {
   flex?: number
   flexGrow?: number
   flexShrink?: number
+  postProcess?: (value: string) => string
 }
 
 export abstract class Item implements Element, ChildElement {
@@ -91,6 +92,7 @@ export abstract class Item implements Element, ChildElement {
   _maxWidth: number = Number.MAX_SAFE_INTEGER
   _flexGrow: number = 0
   _flexShrink: number = 0
+  postProcess?: (value: string) => string
   private willUpdate = false
 
   constructor (options?: ItemOptions) {
@@ -98,6 +100,7 @@ export abstract class Item implements Element, ChildElement {
       this.width = options.width
       this.minWidth = options.minWidth || 0
       this.maxWidth = options.maxWidth || Number.MAX_SAFE_INTEGER
+      this.postProcess = options.postProcess
       if (options.flex) {
         this.flex = options.flex
       }
@@ -149,6 +152,13 @@ export abstract class Item implements Element, ChildElement {
     if (parent) {
       this.mounted(parent)
     }
+  }
+
+  protected wrap (text: string): string {
+    if (this.postProcess) {
+      return this.postProcess(text)
+    }
+    return text
   }
 
   update () {
@@ -220,7 +230,7 @@ export class Spinner extends Item {
       return ''
     }
     let { frame, style: { frames } } = this
-    return frames[frame % frames.length]
+    return this.wrap(frames[frame % frames.length])
   }
 }
 
@@ -274,11 +284,11 @@ export class Text extends Item {
       maxWidth != null ? maxWidth : Number.MAX_SAFE_INTEGER, this.maxWidth)
     const length = this.length
     if (growable && length < maxWidth) {
-      return this.grow(maxWidth)
+      return this.wrap(this.grow(maxWidth))
     } else if (shrinkable && length > maxWidth) {
-      return this.shrink(maxWidth)
+      return this.wrap(this.shrink(maxWidth))
     }
-    return text
+    return this.wrap(text)
   }
 }
 
@@ -360,7 +370,7 @@ export class Bar extends Item {
       width = maxWidth
     }
     const text = Bar.renderBar(this.symbols, ratio, width).join('')
-    return text
+    return this.wrap(text)
   }
 }
 
@@ -550,7 +560,7 @@ export class Group
     let text = this.children.map((item, id) => {
       return item.render(widths[id])
     }).join('')
-    return text
+    return this.wrap(text)
   }
 
   calculateWidth () {
