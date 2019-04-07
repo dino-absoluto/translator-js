@@ -53,15 +53,19 @@ interface Element {
 
 interface ChildElement extends Element {
   parent?: ParentElement
-  mounted (): void
-  willUnmount (): void
+  mounted (parent: ParentElement): void
+  willUnmount (parent: ParentElement): void
 }
+
+type FrameFn = () => void
 
 interface ParentElement extends Element {
   children: ChildElement[]
   addItem (...items: ChildElement[]): void
   removeItem (...items: ChildElement[]): void
   update (): void
+  addFrameEvent (cb: FrameFn): void
+  removeFrameEvent (cb: FrameFn): void
 }
 
 interface ItemOptions {
@@ -89,9 +93,8 @@ export abstract class Item implements Element, ChildElement {
 
   abstract render (maxWidth?: number): string
   abstract calculateWidth (): number
-
-  mounted () { return }
-  willUnmount () { return }
+  mounted (_parent: ParentElement) { return }
+  willUnmount (_parent: ParentElement) { return }
 
   update () {
     const { parent } = this
@@ -117,7 +120,6 @@ interface SpinnerStyle {
 }
 
 export class Spinner extends Item {
-  private interval?: ReturnType<typeof setInterval>
   width = 1
   style: SpinnerStyle = {
     interval: 80,
@@ -141,20 +143,15 @@ export class Spinner extends Item {
     return this.requestWidth(this.style.width)
   }
 
-  start () {
-    this.interval = setInterval(this.eventLoop, this.style.interval)
+  mounted (parent: ParentElement) {
+    parent.addFrameEvent(this.onFrame)
   }
 
-  stop () {
-    if (this.interval) {
-      clearInterval(this.interval)
-    }
+  willUnmount (parent: ParentElement) {
+    parent.removeFrameEvent(this.onFrame)
   }
 
-  mounted () { this.start() }
-  willUnmount () { this.stop() }
-
-  eventLoop = () => {
+  onFrame = () => {
     this.frame = (this.frame + 1) % this.style.frames.length
     this.update()
   }
@@ -260,9 +257,35 @@ export class Group
   readonly children: ChildElement[] = []
   private calculated: number[] = []
   private flexSum: number = 0
+  private frameEvents = new Set<FrameFn>()
+  private interval?: ReturnType<typeof setTimeout>
 
-  update () {
-    return
+  update () { return }
+
+  onFrame = () => {
+    for (const fn of this.frameEvents) {
+      fn()
+    }
+  }
+
+  addFrameEvent (cb: FrameFn) {
+    const { frameEvents } = this
+    frameEvents.add(cb)
+    if (frameEvents.size > 0) {
+      if (!this.interval) {
+        this.interval = setInterval(this.onFrame, 80)
+      }
+    }
+  }
+
+  removeFrameEvent (cb: FrameFn) {
+    this.frameEvents.delete(cb)
+    if (this.frameEvents.size === 0) {
+      if (this.interval) {
+        clearInterval(this.interval)
+      }
+      this.interval = undefined
+    }
   }
 
   addItem (...newItems: ChildElement[]) {
@@ -270,6 +293,7 @@ export class Group
     for (const item of newItems) {
       children.push(item)
       item.parent = this
+      item.mounted(this)
     }
   }
 
@@ -279,6 +303,7 @@ export class Group
       const index = children.indexOf(item)
       if (index >= 0) {
         children.splice(index, 1)
+        item.willUnmount(this)
         item.parent = undefined
       }
     }
@@ -287,6 +312,7 @@ export class Group
   clearItems () {
     const { children } = this
     for (const item of children) {
+      item.willUnmount(this)
       item.parent = undefined
     }
     children.length = 0

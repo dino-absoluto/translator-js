@@ -47,18 +47,19 @@ try {
         progress.addItem(barLeft)
         progress.addItem(new Progress.Text({ text: ' ' }))
         progress.addItem(new Progress.Text({
-          text: chalk.green('Hello World!')
+          text: 'Hello World!'
         }))
         progress.addItem(new Progress.Text({ text: ' ' }))
         const spinner = new Progress.Spinner()
         progress.addItem(spinner)
+        progress.addItem(new Progress.Spinner())
         progress.addItem(new Progress.Text({ text: ' ' }))
         progress.addItem(new Progress.Text({
           text: 'Hello World!'
         }))
         progress.addItem(new Progress.Text({ text: ' ' }))
         const bar = new Progress.Bar({
-          width: 20,
+          width: 25,
           flex: 4,
           ratio: .1
         })
