@@ -245,8 +245,7 @@ export class Text extends Item {
   get length () { return getLength(this.text) }
 
   calculateWidth () {
-    let { text } = this
-    return _clamp(getLength(text), this.minWidth, this.maxWidth)
+    return _clamp(this.length, this.minWidth, this.maxWidth)
   }
 
   grow (width: number) {
@@ -277,6 +276,33 @@ export class Text extends Item {
       return this.shrink(maxWidth)
     }
     return text
+  }
+}
+
+export class Space extends Item {
+  constructor (options?: ItemOptions & {
+    text?: string
+  }) {
+    super(_defaults(options, {
+      width: 1
+    }))
+  }
+
+  calculateWidth () {
+    return _clamp(this.width || 0, this.minWidth, this.maxWidth)
+  }
+
+  render (maxWidth?: number) {
+    const growable = !!(maxWidth && this.flexGrow)
+    const shrinkable = !!this.flexShrink
+    maxWidth = Math.min(
+      maxWidth != null ? maxWidth : Number.MAX_SAFE_INTEGER, this.maxWidth)
+    const width = this.calculateWidth()
+    if ((growable && length < maxWidth) ||
+      (shrinkable && length > maxWidth)) {
+      ' '.repeat(maxWidth)
+    }
+    return ' '.repeat(width)
   }
 }
 

@@ -46,7 +46,7 @@ try {
           width: 20
         })
         group.addItem(barLeft)
-        group.addItem(new Progress.Text({ text: ' ' }))
+        group.addItem(new Progress.Space())
         group.addItem(new Progress.Text({
           text: 'Hello World!'
         }))
@@ -55,11 +55,11 @@ try {
         group.addItem(spinner)
         progress.addItem(spinner)
         progress.addItem(new Progress.Spinner())
-        progress.addItem(new Progress.Text({ text: ' ' }))
+        progress.addItem(new Progress.Space())
         progress.addItem(new Progress.Text({
           text: 'Hello World!'
         }))
-        progress.addItem(new Progress.Text({ text: ' ' }))
+        progress.addItem(new Progress.Space())
         const bar = new Progress.Bar({
           width: 40,
           flex: 1,
