@@ -34,7 +34,6 @@ import stringWidth = require('string-width')
 
 const getLength = (() => {
   try {
-    // throw new Error('a')
     const getLength: typeof stringWidth = require('string-width')
     return getLength
   } catch {
@@ -176,7 +175,6 @@ export abstract class Item implements Element, ChildElement {
 }
 
 interface SpinnerStyle {
-  interval: number
   frames: string[]
   width: number
 }
@@ -184,7 +182,6 @@ interface SpinnerStyle {
 export class Spinner extends Item {
   width = 1
   style: SpinnerStyle = {
-    interval: 80,
     width: 1,
     frames: [
       '⠋',
@@ -218,7 +215,10 @@ export class Spinner extends Item {
     this.update()
   }
 
-  render () {
+  render (maxWidth?: number) {
+    if (maxWidth === 0) {
+      return ''
+    }
     let { frame, style: { frames } } = this
     return frames[frame % frames.length]
   }
@@ -264,6 +264,9 @@ export class Text extends Item {
   }
 
   render (maxWidth?: number) {
+    if (maxWidth === 0) {
+      return ''
+    }
     let { text } = this
     const growable = !!(maxWidth && this.flexGrow)
     const shrinkable = !!this.flexShrink
@@ -285,6 +288,9 @@ export class Space extends Item {
   }
 
   render (maxWidth?: number) {
+    if (maxWidth === 0) {
+      return ''
+    }
     const growable = !!(maxWidth && this.flexGrow)
     const shrinkable = !!this.flexShrink
     maxWidth = Math.min(
@@ -340,6 +346,9 @@ export class Bar extends Item {
   }
 
   render (maxWidth?: number) {
+    if (maxWidth === 0) {
+      return ''
+    }
     let { ratio } = this
     const growable = !!(maxWidth && this.flexGrow)
     const shrinkable = !!this.flexShrink
@@ -519,6 +528,9 @@ export class Group
   }
 
   render (maxWidth?: number) {
+    if (maxWidth === 0) {
+      return ''
+    }
     const { children } = this
     const growable = !!(maxWidth && this.flexGrow)
     const shrinkable = !!this.flexShrink
