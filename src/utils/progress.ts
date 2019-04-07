@@ -55,7 +55,7 @@ interface ProgressItemOptions {
 }
 
 export abstract class ProgressItem implements ProgressElement {
-  parent?: ProgressParentElement
+  _parent?: ProgressParentElement
   width?: number
   minWidth?: number
   maxWidth?: number
@@ -70,12 +70,26 @@ export abstract class ProgressItem implements ProgressElement {
     }
   }
 
+  get parent () { return this._parent }
+  set parent (nParent) {
+    this._parent = nParent
+    if (nParent) {
+      this.mounted()
+    } else {
+      this.willUnmount()
+    }
+  }
+
+  mounted () { return }
+  willUnmount () { return }
+
   abstract render (maxWidth?: number): string
   abstract calculateWidth (): number
 
   update () {
-    if (this.parent) {
-      this.parent.update()
+    const { parent } = this
+    if (parent) {
+      parent.update()
     }
   }
 
@@ -86,6 +100,60 @@ export abstract class ProgressItem implements ProgressElement {
       Number.MAX_SAFE_INTEGER)
     const width = clamp(this.width || need, minWidth, maxWidth)
     return width
+  }
+}
+
+interface ProgressSpinnerStyle {
+  interval: number
+  frames: string[]
+  width: number
+}
+
+export class ProgressSpinner extends ProgressItem {
+  private interval?: ReturnType<typeof setInterval>
+  style: ProgressSpinnerStyle = {
+    interval: 80,
+    width: 1,
+    frames: [
+      '⠋',
+      '⠙',
+      '⠹',
+      '⠸',
+      '⠼',
+      '⠴',
+      '⠦',
+      '⠧',
+      '⠇',
+      '⠏'
+    ]
+  }
+  frame = 0
+
+  calculateWidth () {
+    return this.requestWidth(this.style.width)
+  }
+
+  start () {
+    this.interval = setInterval(this.eventLoop, this.style.interval)
+  }
+
+  stop () {
+    if (this.interval) {
+      clearInterval(this.interval)
+    }
+  }
+
+  mounted () { this.start() }
+  willUnmount () { this.stop() }
+
+  eventLoop = () => {
+    this.frame = (this.frame + 1) % this.style.frames.length
+    this.update()
+  }
+
+  render () {
+    let { frame, style: { frames } } = this
+    return frames[frame % frames.length]
   }
 }
 
@@ -268,7 +336,7 @@ export class Progress extends ProgressGroup {
 
   update () {
     const { stream, columns } = this
-    this.clear()
+    cursorTo(stream, 0)
     stream.write(this.render(columns))
   }
 }

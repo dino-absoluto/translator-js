@@ -22,7 +22,7 @@
 import { parser as yargs } from './shared'
 import * as cmdGet from '../get/cli-interface'
 import chalk from 'chalk'
-import { Progress, ProgressBar, ProgressText } from '../utils/progress'
+import { Progress, ProgressBar, ProgressText, ProgressSpinner } from '../utils/progress'
 
 try {
   yargs
@@ -52,14 +52,17 @@ try {
           text: 'Hello World!',
           flex: 1
         }))
+        const spinner = new ProgressSpinner()
+        progress.addItem(spinner)
         progress.addItem(bar)
         progress.update()
         const loop = setInterval(() => {
           bar.ratio += .05
           if (bar.ratio >= 1) {
             clearInterval(loop)
+            spinner.stop()
           }
-        }, 100)
+        }, 200)
         return
       })
     .parse()
