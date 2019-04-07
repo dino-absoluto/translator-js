@@ -170,7 +170,7 @@ export abstract class Item implements Element, ChildElement {
     return false
   }
 
-  onUpdate () {
+  protected onUpdate () {
     this.willUpdate = false
     const { parent } = this
     if (parent) {
@@ -394,7 +394,7 @@ export class Group
   set flexGrow (_flex: number) { return }
   set flexShrink (_flex: number) { return }
 
-  onFrame = () => {
+  protected onFrame = () => {
     for (const fn of this.frameEvents) {
       fn()
     }
@@ -452,7 +452,7 @@ export class Group
     children.length = 0
   }
 
-  updateFlex () {
+  protected updateFlex () {
     const {
       children,
       growableChildren,
@@ -584,11 +584,16 @@ export class Progress extends Group {
     cursorTo(stream, 0)
   }
 
+  clearItems () {
+    super.clearItems()
+    this.clear()
+  }
+
   get columns () {
     return this.stream.columns || 40
   }
 
-  onUpdate () {
+  protected onUpdate () {
     super.onUpdate()
     const { stream, columns } = this
     const text = this.render(columns)

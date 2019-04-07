@@ -48,12 +48,13 @@ try {
             return chalk.green(cols[0]) + chalk.yellow(cols[1]) + chalk.gray(cols[2])
           }
         })
-        group.addItem(new Progress.Space({ flex: 1 }))
+        group.addItem(new Progress.Text({ text: '⸨', flexShrink: 0 }))
         group.addItem(barLeft)
+        group.addItem(new Progress.Text({ text: '⸩', flexShrink: 0 }))
         group.addItem(new Progress.Space())
         group.addItem(new Progress.Text({
           text: 'Hello World! Welcome to Hell!!!!!',
-          postProcess: chalk.red
+          postProcess: chalk.green
         }))
         progress.addItem(group)
         const spinner = new Progress.Spinner({ postProcess: chalk.blue })
@@ -72,7 +73,9 @@ try {
           flex: 1,
           ratio: .1
         })
+        progress.addItem(new Progress.Text({ text: '⸨', flexShrink: 0 }))
         progress.addItem(bar)
+        progress.addItem(new Progress.Text({ text: '⸩', flexShrink: 0 }))
         progress.update()
         let count = 0
         const loop = setInterval(() => {
@@ -86,7 +89,6 @@ try {
             if (count++ > 3) {
               clearInterval(loop)
               progress.clearItems()
-              console.log()
               console.log(progress.count)
             }
           }
