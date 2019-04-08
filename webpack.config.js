@@ -56,12 +56,7 @@ const defaultConfigs = {
   },
   externals: [
     nodeExternals()
-  ],
-  optimization: {
-    removeAvailableModules: false,
-    removeEmptyChunks: false,
-    splitChunks: false,
-  }
+  ]
 }
 
 module.exports = [
@@ -69,6 +64,11 @@ module.exports = [
     name: 'dev',
     output: {
       path: path.resolve(__dirname, '__tmp__/bin')
+    },
+    optimization: {
+      removeAvailableModules: false,
+      removeEmptyChunks: false,
+      splitChunks: false,
     }
   }),
   merge({}, defaultConfigs, {
