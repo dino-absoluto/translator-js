@@ -53,8 +53,8 @@ try {
         group.addItem(new Progress.Text({ text: '⸩', flexShrink: 0 }))
         group.addItem(new Progress.Space())
         group.addItem(new Progress.Text({
-          text: 'Hello!',
-          flex: 1,
+          text: 'Hello! Welcome to Hell!',
+          maxWidth: 6,
           align: Progress.TextAlignment.Left,
           postProcess: chalk.green
         }))
@@ -66,6 +66,7 @@ try {
         progress.addItem(new Progress.Space())
         progress.addItem(new Progress.Text({
           text: 'Hello World!',
+          flex: 1,
           postProcess: chalk.gray
         }))
         progress.addItem(new Progress.Space())
@@ -90,7 +91,7 @@ try {
             if (count++ > 3) {
               clearInterval(loop)
               progress.clearItems()
-              console.log(progress.count)
+              console.log(progress.count * 1000 / progress.elapsed)
             }
           }
         }, 40)

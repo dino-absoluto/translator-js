@@ -20,7 +20,8 @@
  */
 /* imports */
 // import chalk from 'chalk'
-import { clearLine, cursorTo } from 'readline'
+// import { WriteStream } from 'tty'
+import { clearLine, clearScreenDown, cursorTo } from 'readline'
 import _clamp = require('lodash/clamp')
 import _defaults = require('lodash/defaults')
 import _orderBy = require('lodash/orderBy')
@@ -592,9 +593,28 @@ export class Group
 }
 
 export class Progress extends Group {
-  stream = process.stdout
-  flex = 1
+  readonly stream: NodeJS.WriteStream = process.stderr
+  readonly isTTY: boolean = true
+  private lastColumns = 0
   count = 0
+  private createdTime = Date.now()
+
+  constructor (options?: ItemOptions & {
+    stream?: NodeJS.WriteStream
+  }) {
+    super(options)
+    if (options) {
+      const { stream } = options
+      if (stream) {
+        this.stream = stream
+        this.isTTY = !!stream.isTTY
+      }
+    }
+  }
+
+  get elapsed () {
+    return Date.now() - this.createdTime
+  }
 
   clear () {
     const { stream } = this
@@ -613,10 +633,16 @@ export class Progress extends Group {
 
   protected onUpdate () {
     super.onUpdate()
-    const { stream, columns } = this
+    const { stream, columns, lastColumns } = this
     const text = this.render(columns)
-    cursorTo(stream, 0)
+    if (lastColumns !== columns) {
+      this.lastColumns = columns
+      clearLine(stream, 0)
+      cursorTo(stream, 0)
+      clearScreenDown(stream)
+    }
     stream.write(text)
+    cursorTo(stream, 0)
     this.count++
   }
 }
