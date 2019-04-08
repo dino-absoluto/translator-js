@@ -48,50 +48,61 @@ try {
             return chalk.green(cols[0]) + chalk.yellow(cols[1]) + chalk.gray(cols[2])
           }
         })
-        group.addItem(new Progress.Text({ text: '⸨', flexShrink: 0 }))
-        group.addItem(barLeft)
-        group.addItem(new Progress.Text({ text: '⸩', flexShrink: 0 }))
-        group.addItem(new Progress.Space())
-        group.addItem(new Progress.Text({
+        group.add(new Progress.Text({ text: '⸨', flexShrink: 0 }))
+        group.add(barLeft)
+        group.add(new Progress.Text({ text: '⸩', flexShrink: 0 }))
+        group.add(new Progress.Space())
+        group.add(new Progress.Text({
           text: 'Hello! Welcome to Hell!',
-          maxWidth: 6,
           align: Progress.TextAlignment.Left,
           postProcess: chalk.green
         }))
-        progress.addItem(group)
+        progress.add(group)
         const spinner = new Progress.Spinner({ postProcess: chalk.blue })
-        group.addItem(spinner)
-        progress.addItem(spinner)
-        progress.addItem(new Progress.Spinner({ postProcess: chalk.yellow }))
-        progress.addItem(new Progress.Spinner({ postProcess: chalk.yellow }))
-        progress.addItem(new Progress.Space())
-        progress.addItem(new Progress.Text({
+        group.add(spinner)
+        progress.add(spinner)
+        progress.add(new Progress.Spinner({ postProcess: chalk.yellow }))
+        progress.add(new Progress.Spinner({ postProcess: chalk.yellow }))
+        progress.add(new Progress.Space())
+        const label = new Progress.Text({
           text: 'Hello World!',
           flex: 1,
           postProcess: chalk.gray
-        }))
-        progress.addItem(new Progress.Space())
+        })
+        progress.add(label)
+        progress.add(new Progress.Space())
         const bar = new Progress.Bar({
           width: 20,
           flex: 1,
-          ratio: .1
+          ratio: .1,
+          postProcess: (...cols) => {
+            return chalk.gray(cols[2]) + chalk.yellow(cols[1]) + chalk.green(cols[0])
+          }
         })
-        progress.addItem(new Progress.Text({ text: '⸨', flexShrink: 0 }))
-        progress.addItem(bar)
-        progress.addItem(new Progress.Text({ text: '⸩', flexShrink: 0 }))
+        progress.add(new Progress.Text({ text: '⸨', flexShrink: 0 }), 0)
+        progress.add(bar, 1)
+        progress.add(new Progress.Text({ text: '⸩', flexShrink: 0 }), 2)
         progress.update()
         let count = 0
+        let lcount = 0
         const loop = setInterval(() => {
+          lcount++
+          label.text = `Hello World! ${lcount}`
           barLeft.ratio += 0.03
           bar.ratio += .015
           if (barLeft.ratio >= 1) {
             barLeft.ratio = 0
           }
           if (bar.ratio >= 1) {
+            if (label.parent) {
+              progress.delete(label)
+            }
+            progress.clearLine()
+            console.log('Looped')
             bar.ratio = 0
             if (count++ > 3) {
               clearInterval(loop)
-              progress.clearItems()
+              progress.clear()
               console.log(progress.count * 1000 / progress.elapsed)
             }
           }

@@ -459,6 +459,43 @@ export class Group
     }
   }
 
+  add (item: ChildElement, atIndex?: number) {
+    const { children } = this
+    if (atIndex != null && Number.isInteger(atIndex) && Math.abs(atIndex) < children.length) {
+      const begin = atIndex >= 0 ? atIndex : atIndex + children.length
+      children.splice(atIndex, 0, item)
+      item.parent = this
+      for (let i = begin; i < children.length; ++i) {
+        children[i].id = i
+      }
+    } else {
+      const id = children.length
+      children.push(item)
+      item.parent = this
+      item.id = id
+    }
+    if (item.flexGrow || item.flexShrink) {
+      this.updateFlex()
+    }
+  }
+
+  delete (item: ChildElement) {
+    if (item.parent !== this || item.id == null) {
+      return
+    }
+    const begin = item.id
+    const { children } = this
+    children.splice(item.id, 1)
+    item.parent = undefined
+    item.id = undefined
+    for (let i = begin; i < children.length; ++i) {
+      children[i].id = i
+    }
+    if (item.flexGrow || item.flexShrink) {
+      this.updateFlex()
+    }
+  }
+
   addItem (...newItems: ChildElement[]) {
     const { children } = this
     for (const item of newItems) {
@@ -636,15 +673,16 @@ export class Progress extends Group {
     return Date.now() - this.createdTime
   }
 
-  clear () {
+  clearLine () {
     const { stream } = this
     clearLine(stream, 0)
     cursorTo(stream, 0)
+    clearScreenDown(stream)
   }
 
-  clearItems () {
+  clear () {
     super.clearItems()
-    this.clear()
+    this.clearLine()
   }
 
   get columns () {
@@ -657,9 +695,7 @@ export class Progress extends Group {
     const text = this.render(columns)
     if (lastColumns !== columns) {
       this.lastColumns = columns
-      clearLine(stream, 0)
-      cursorTo(stream, 0)
-      clearScreenDown(stream)
+      this.clearLine()
     }
     stream.write(text)
     cursorTo(stream, 0)
