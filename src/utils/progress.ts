@@ -187,12 +187,12 @@ export abstract class Item implements Element, ChildElement {
 
 interface SpinnerStyle {
   frames: string[]
-  width: number
+  width?: number
 }
 
 export class Spinner extends Item {
   width = 1
-  style: SpinnerStyle = {
+  private _style: SpinnerStyle & { width: number } = {
     width: 1,
     frames: [
       '⠋',
@@ -207,10 +207,30 @@ export class Spinner extends Item {
       '⠏'
     ]
   }
-  frame = 0
+  private _frame = 0
 
-  calculateWidth () {
-    return this.style.width
+  constructor (options?: ItemOptions & {
+    style?: SpinnerStyle
+  }) {
+    super(options)
+    if (options) {
+      if (options.style) {
+        this.style = options.style
+      }
+    }
+  }
+
+  get style () { return this._style }
+  set style (spinner: SpinnerStyle) {
+    if (!spinner.width) {
+      spinner.width = getLength(spinner.frames[0])
+    }
+    this._frame = 0
+    this._style = spinner as SpinnerStyle & { width: number }
+  }
+
+  calculateWidth (): number {
+    return this._style.width
   }
 
   mounted (parent: ParentElement) {
@@ -222,7 +242,7 @@ export class Spinner extends Item {
   }
 
   onFrame = () => {
-    this.frame = (this.frame + 1) % this.style.frames.length
+    this._frame = (this._frame + 1) % this.style.frames.length
     this.update()
   }
 
@@ -230,8 +250,8 @@ export class Spinner extends Item {
     if (maxWidth === 0) {
       return ''
     }
-    let { frame, style: { frames } } = this
-    return this.wrap(frames[frame % frames.length])
+    let { _frame, style: { frames } } = this
+    return this.wrap(frames[_frame % frames.length])
   }
 }
 

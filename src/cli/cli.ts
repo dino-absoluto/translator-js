@@ -63,6 +63,7 @@ try {
         group.addItem(spinner)
         progress.addItem(spinner)
         progress.addItem(new Progress.Spinner({ postProcess: chalk.yellow }))
+        progress.addItem(new Progress.Spinner({ postProcess: chalk.yellow }))
         progress.addItem(new Progress.Space())
         progress.addItem(new Progress.Text({
           text: 'Hello World!',
