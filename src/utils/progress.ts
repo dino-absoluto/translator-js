@@ -416,22 +416,19 @@ export class Group
   extends Item
   implements ParentElement {
   readonly children: ChildElement[] = []
-  flexGrowSum: number = 0
-  flexShrinkSum: number = 0
-  growableChildren: ChildElement[] = []
-  shrinkableChildren: ChildElement[] = []
-
+  private flexGrowSum: number = 0
+  private flexShrinkSum: number = 0
+  private growableChildren: ChildElement[] = []
+  private shrinkableChildren: ChildElement[] = []
   private frameEvents = new Set<FrameFn>()
   private interval?: ReturnType<typeof setTimeout>
 
   get flexGrow () {
-    return this.flexGrowSum && this.growableChildren.length / this.children.length
+    return this.flexGrowSum && this.growableChildren.length
   }
   get flexShrink () {
     return this.flexShrinkSum && this.shrinkableChildren.length / this.children.length
   }
-  set flexGrow (_flex: number) { return }
-  set flexShrink (_flex: number) { return }
 
   protected onFrame = () => {
     for (const fn of this.frameEvents) {
