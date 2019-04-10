@@ -77,66 +77,69 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     }
   })
   const output = new FlexProgress.Output()
-  output.append(
-    new FlexProgress.HideCursor()
-  , 1
-  , new FlexProgress.Spinner({ postProcess: chalk.cyan }))
-  process.on('SIGTERM', () => {
-    output.clear()
-    process.exit(0)
-  })
-  for (const novelData of novels) {
-    const novel = new Series(novelData)
-    const group = new FlexProgress.Group()
-    const bar = new FlexProgress.Bar({
-      width: 20
-    , postProcess:
-      overArgs((...s: string[]) => s.join(''),
-        chalk.green, chalk.yellow, chalk.gray)
+  try {
+    output.append(
+      new FlexProgress.HideCursor()
+    , 1
+    , new FlexProgress.Spinner({ postProcess: chalk.cyan }))
+    process.on('SIGTERM', () => {
+      output.clear()
+      process.exit(0)
     })
-    const init = once(() => {
-      group.append(
-        '⸨', bar, '⸩'
-      , 1, new FlexProgress.Text({
-        text: path.basename(novel.container.name || 'unknown')
-      , flex: {
-        shrink: 1,
-        grow: 0
-      }
-      }))
-      output.add(group, 0)
-    })
-    await novel.ready
-    const report = await novel.updateIndex({
-      onProgress: (_novel, count, total) => {
-        if (total > 0) {
-          init()
-          bar.ratio = count / total
+    for (const novelData of novels) {
+      const novel = new Series(novelData)
+      const group = new FlexProgress.Group()
+      const bar = new FlexProgress.Bar({
+        width: 20
+      , postProcess:
+        overArgs((...s: string[]) => s.join(''),
+          chalk.green, chalk.yellow, chalk.gray)
+      })
+      const init = once(() => {
+        group.append(
+          '⸨', bar, '⸩'
+        , 1, new FlexProgress.Text({
+          text: path.basename(novel.container.name || 'unknown')
+        , flex: {
+          shrink: 1,
+          grow: 0
         }
-      },
-      checkFs
-    })
-    group.clear()
-    output.remove(group)
-    output.clearLine()
-    console.log(chalk`⸨{yellow ${
-      report.updates.length.toString()
-    } updated}, {green ${
-      report.news.length.toString()
-    } new}⸩ ${
-      path.basename(novel.container.name || 'unknown')
-    }`)
-    const newsLength = report.news.length
-    for (const { index, chapter } of report.news.slice(0, MAX_LOG)) {
-      console.log(chalk`{green ${
-        index.toString().padStart(3, '0')
-      }} ${chapter.name}`)
+        }))
+        output.add(group, 0)
+      })
+      await novel.ready
+      const report = await novel.updateIndex({
+        onProgress: (_novel, count, total) => {
+          if (total > 0) {
+            init()
+            bar.ratio = count / total
+          }
+        },
+        checkFs
+      })
+      group.clear()
+      output.remove(group)
+      output.clearLine()
+      console.log(chalk`⸨{yellow ${
+        report.updates.length.toString()
+      } updated}, {green ${
+        report.news.length.toString()
+      } new}⸩ ${
+        path.basename(novel.container.name || 'unknown')
+      }`)
+      const newsLength = report.news.length
+      for (const { index, chapter } of report.news.slice(0, MAX_LOG)) {
+        console.log(chalk`{green ${
+          index.toString().padStart(3, '0')
+        }} ${chapter.name}`)
+      }
+      if (report.news.length > MAX_LOG) {
+        console.log(chalk`{gray ...}and {green ${newsLength.toString()}} more chapters`)
+      }
     }
-    if (report.news.length > MAX_LOG) {
-      console.log(chalk`{gray ...}and {green ${newsLength.toString()}} more chapters`)
-    }
+  } finally {
+    output.clear()
   }
-  output.clear()
 }
 
 export const command: Cmd.Command = 'get [<sources>..]'
