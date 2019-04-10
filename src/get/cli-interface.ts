@@ -77,15 +77,15 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     }
   })
   const output = new FlexProgress.Output()
+  process.on('SIGINT', () => {
+    output.clear(false)
+    process.exit(0)
+  })
   try {
     output.append(
       new FlexProgress.HideCursor()
     , 1
     , new FlexProgress.Spinner({ postProcess: chalk.cyan }))
-    process.on('SIGTERM', () => {
-      output.clear()
-      process.exit(0)
-    })
     for (const novelData of novels) {
       const novel = new Series(novelData)
       const group = new FlexProgress.Group()
