@@ -95,10 +95,18 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
         overArgs((...s: string[]) => s.join(''),
           chalk.green, chalk.yellow, chalk.gray)
       })
+      const label = new FlexProgress.Text({
+        text: ''
+        , postProcess: chalk.yellow
+        , flex: {
+          shrink: 1,
+          grow: 0
+        }
+      })
       const init = once(() => {
         group.append(
           '⸨', bar, '⸩'
-        , 1, new FlexProgress.Text({
+        , 1, label, new FlexProgress.Text({
           text: path.basename(novel.container.name || 'unknown')
         , flex: {
           shrink: 1,
@@ -112,6 +120,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
         onProgress: (_novel, count, total) => {
           if (total > 0) {
             init()
+            label.text = count + '/' + total + ' '
             bar.ratio = count / total
           }
         },
