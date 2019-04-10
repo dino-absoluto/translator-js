@@ -22,7 +22,7 @@
 import { SharedOptions, Cmd } from '../cli/shared'
 import * as path from 'path'
 import chalk from 'chalk'
-import * as FlexProgress from '@dinoabsoluto/flex-progress-js'
+import * as FlexProgress from '@dinoabsoluto/flex-progress'
 import once = require('lodash/once')
 import overArgs = require('lodash/overArgs')
 
