@@ -22,8 +22,9 @@
 import { SharedOptions, Cmd } from '../cli/shared'
 import * as path from 'path'
 import chalk from 'chalk'
-import Progress = require('progress')
-import cliTruncate = require('cli-truncate')
+import * as FlexProgress from '@dinoabsoluto/flex-progress-js'
+import once = require('lodash/once')
+import overArgs = require('lodash/overArgs')
 
 /* code */
 const CWD = path.resolve('.')
@@ -75,36 +76,54 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
       }
     }
   })
+  const output = new FlexProgress.Output()
+  output.append(
+    new FlexProgress.HideCursor()
+  , 1
+  , new FlexProgress.Spinner({ postProcess: chalk.cyan }))
+  process.on('SIGTERM', () => {
+    output.clear()
+    process.exit(0)
+  })
   for (const novelData of novels) {
     const novel = new Series(novelData)
-    const columns = process.stdout.columns || 40
-    let prg: Progress | undefined
+    const group = new FlexProgress.Group()
+    const bar = new FlexProgress.Bar({
+      width: 20
+    , postProcess:
+      overArgs((...s: string[]) => s.join(''),
+        chalk.green, chalk.yellow, chalk.gray)
+    })
+    const init = once(() => {
+      group.append(
+        '⸨', bar, '⸩'
+      , 1, new FlexProgress.Text({
+        text: path.basename(novel.container.name || 'unknown')
+      , flex: {
+        shrink: 1,
+        grow: 0
+      }
+      }))
+      output.add(group, 0)
+    })
     await novel.ready
     const report = await novel.updateIndex({
-      onProgress: (novel, _c, total) => {
-        if (prg) {
-          prg.tick()
-        } else {
-          const limit = Math.floor(columns / 2) - total.toString().length * 2
-          const name = cliTruncate(`${
-            path.basename(novel.container.name || 'unknown')}`, limit)
-          prg = new Progress(
-            chalk`{gray [{green :bar}] [:current/:total]} ${name}`, {
-              complete: '█',
-              incomplete: '░',
-              width: Math.floor(columns / 3),
-              clear: true,
-              total
-            })
+      onProgress: (_novel, count, total) => {
+        if (total > 0) {
+          init()
+          bar.ratio = count / total
         }
       },
       checkFs
     })
-    console.log(chalk`{gray [{yellow ${
+    group.clear()
+    output.remove(group)
+    output.clearLine()
+    console.log(chalk`⸨{yellow ${
       report.updates.length.toString()
     } updated}, {green ${
       report.news.length.toString()
-    } new}]} ${
+    } new}⸩ ${
       path.basename(novel.container.name || 'unknown')
     }`)
     const newsLength = report.news.length
@@ -117,6 +136,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
       console.log(chalk`{gray ...}and {green ${newsLength.toString()}} more chapters`)
     }
   }
+  output.clear()
 }
 
 export const command: Cmd.Command = 'get [<sources>..]'
