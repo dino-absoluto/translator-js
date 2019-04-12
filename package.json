@@ -4,7 +4,7 @@
   "description": "Scripts to support novel translation",
   "repository": "git@github.com:dino-absoluto/translator-js.git",
   "author": "Dino",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "test": "jest",
