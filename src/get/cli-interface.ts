@@ -81,7 +81,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   })
   try {
     output.append(
-      new FlexProgress.HideCursor(), 1,
+      new FlexProgress.HideCursor(),
       new FlexProgress.Spinner({ postProcess: kleur.cyan }), 1)
     for (const novelData of novels) {
       const novel = new Series(novelData)
