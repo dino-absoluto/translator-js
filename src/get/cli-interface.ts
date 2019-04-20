@@ -81,9 +81,8 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   })
   try {
     output.append(
-      new FlexProgress.HideCursor()
-    , 1
-    , new FlexProgress.Spinner({ postProcess: chalk.cyan }))
+      new FlexProgress.HideCursor(), 1,
+      new FlexProgress.Spinner({ postProcess: chalk.cyan }), 1)
     for (const novelData of novels) {
       const novel = new Series(novelData)
       const group = new FlexProgress.Group()
@@ -94,12 +93,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
           chalk.green, chalk.yellow, chalk.gray)
       })
       const label = new FlexProgress.Text({
-        text: ''
-        , postProcess: chalk.yellow
-        , flex: {
-          shrink: 1,
-          grow: 0
-        }
+        text: '', postProcess: chalk.yellow
       })
       const init = once(() => {
         group.append(
@@ -111,7 +105,8 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
           grow: 0
         }
         }))
-        output.add(group, 0)
+        // output.add(group, 0)
+        output.append(group)
       })
       await novel.ready
       const report = await novel.updateIndex({
@@ -127,11 +122,11 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
       group.clear()
       output.remove(group)
       output.clearLine()
-      console.log(chalk`⸨{yellow ${
+      console.log(chalk`{blue · }{yellow ${
         report.updates.length.toString()
       } updated}, {green ${
         report.news.length.toString()
-      } new}⸩ ${
+      } new} {blue -} ${
         path.basename(novel.container.name || 'unknown')
       }`)
       const newsLength = report.news.length
