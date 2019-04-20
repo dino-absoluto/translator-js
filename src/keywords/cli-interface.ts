@@ -17,7 +17,7 @@
  *
  */
 /* imports */
-import chalk from 'chalk'
+import * as c from 'kleur'
 import * as path from 'path'
 import * as pfs from '../utils/pfs'
 /* -imports */
@@ -34,7 +34,7 @@ const cmdKeywords = async (options: CommandOptions) => {
   pfs.writeFile(output, JSON.stringify(await sum(MULTIPLIER), null, 1))
 }
 
-console.log(chalk`{blueBright Generating keywords!}`)
+console.log(c.blue('Generating keywords!'))
 
 cmdKeywords({ multiplier: 50 }).catch(err => {
   console.error(err)

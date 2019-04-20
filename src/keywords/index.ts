@@ -20,7 +20,7 @@
 import { JSDOM } from 'jsdom'
 import fetch from '../utils/syosetu-fetch'
 import { clearLine, cursorTo } from 'readline'
-import chalk from 'chalk'
+import * as c from 'kleur'
 
 const getURL = (page: number, subdomain = 'yomou') => {
   if (subdomain !== 'yomou') {
@@ -104,15 +104,18 @@ const generate = async (multiplier = 10) => {
     for (let i = 1; i <= MAX; ++i) {
       clearLine(stdout, 0)
       cursorTo(stdout, 0)
-      stdout.write(chalk`Fetching from {green ${
-        subdomain}}{gray /}{green page-${i.toString()}}`)
+      stdout.write(`Fetching from ${
+        c.green(subdomain)}${
+        c.gray('/')}${
+        c.green(`page-${i.toString()}`)}`
+      )
       const url = getURL(i, subdomain)
       await get(url, map[subdomain])
     }
   }
   clearLine(stdout, 0)
   cursorTo(stdout, 0)
-  console.log(chalk`{green Done!}`)
+  console.log(c.green('Done!'))
   for (const [subdomain, subMap] of Object.entries(map)) {
     map[subdomain] = sort(subMap)
   }
