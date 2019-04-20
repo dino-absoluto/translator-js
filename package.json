@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@dinoabsoluto/flex-progress": "^2.2.2",
-    "chalk": "^2.4.2",
     "cookie": "^0.3.1",
     "filenamify": "^4.0.0",
     "jsdom": "^14.0.0",
+    "kleur": "^3.0.3",
     "lodash": "^4.17.11",
     "make-dir": "^3.0.0",
     "mime": "^2.4.2",

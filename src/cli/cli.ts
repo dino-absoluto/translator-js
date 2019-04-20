@@ -19,7 +19,7 @@
 /* imports */
 import { parser as yargs } from './shared'
 import * as cmdGet from '../get/cli-interface'
-import chalk from 'chalk'
+import * as kleur from 'kleur'
 
 try {
   yargs
@@ -28,12 +28,12 @@ try {
     .fail((msg, err) => {
       yargs.showHelp()
       if (err) {
-        console.log(chalk.red(err.stack || ''))
+        console.log(kleur.red(err.stack || ''))
       } else {
-        console.error(chalk.red(msg))
+        console.error(kleur.red(msg))
       }
     })
     .parse()
 } catch (err) {
-  console.error(chalk.red((err.stack || '').toString()))
+  console.error(kleur.red((err.stack || '').toString()))
 }
