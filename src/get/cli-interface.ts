@@ -20,7 +20,7 @@
 import { SharedOptions, Cmd } from '../cli/shared'
 import * as FlexProgress from '@dinoabsoluto/flex-progress'
 import * as path from 'path'
-import * as kleur from 'kleur'
+import * as c from 'ansi-colors'
 import once = require('lodash/once')
 import overArgs = require('lodash/overArgs')
 
@@ -82,7 +82,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   try {
     output.append(
       new FlexProgress.HideCursor(),
-      new FlexProgress.Spinner({ postProcess: kleur.cyan }), 1)
+      new FlexProgress.Spinner({ postProcess: c.cyan }), 1)
     for (const novelData of novels) {
       const novel = new Series(novelData)
       const group = new FlexProgress.Group()
@@ -90,10 +90,10 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
         width: 20
       , postProcess:
         overArgs((...s: string[]) => s.join(''),
-          kleur.green, kleur.yellow, kleur.gray)
+          c.green, c.yellow, c.gray)
       })
       const label = new FlexProgress.Text({
-        text: '', postProcess: kleur.yellow
+        text: '', postProcess: c.yellow
       })
       const init = once(() => {
         group.append(
@@ -122,23 +122,23 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
       group.clear()
       output.remove(group)
       output.clearLine()
-      console.log(kleur.blue('·'),
-        kleur.yellow(report.updates.length.toString() + ' updated') + ',',
-        kleur.green(report.news.length.toString() + ' new'),
-        kleur.gray('-'),
+      console.log(c.blue('·'),
+        c.yellow(report.updates.length.toString() + ' updated') + ',',
+        c.green(report.news.length.toString() + ' new'),
+        c.gray('-'),
         path.basename(novel.container.name || 'unknown')
       )
       const newsLength = report.news.length
       for (const { index, chapter } of report.news.slice(0, MAX_LOG)) {
         console.log(
-          kleur.green(index.toString().padStart(3, '0')),
+          c.green(index.toString().padStart(3, '0')),
           chapter.name
         )
       }
       if (report.news.length > MAX_LOG) {
         console.log(
-          kleur.gray('...') + 'and',
-          kleur.green(newsLength.toString()),
+          c.gray('...') + 'and',
+          c.green(newsLength.toString()),
           'more chapters')
       }
     }
