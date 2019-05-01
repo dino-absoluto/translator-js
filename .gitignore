@@ -2,8 +2,9 @@
 Thumbs.db
 desktop.ini
 
+__tmp__
 /node_modules
 /download
 /archived
-/bin
-/__tmp__
+/dist
+/coverage

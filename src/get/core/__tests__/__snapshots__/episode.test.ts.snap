@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EpisodeList simple tree 1`] = `Object {}`;
+
+exports[`EpisodeList simple tree 2`] = `
+Object {
+  "!meta/!cache.json": "vYsssrNFNi1Te3r9FQn521gQFYOmyLg4F7F/f3jVbwO0ik8/2/3/lkLzpNQK1SHxJoRZG6m2OaksRhQRtxGXqw==",
+  "000/001 prologue.txt": "dzoT1yO51iMf1luIDuZamvpcsEew1gqoeA2YX8KdQC6cURXJNn7ZLbir+FFhCVCrkrmNLz9TsotDk/W+f0FmMA==",
+  "000/002 First Chapter.txt": "Cy5fJw8MtZLYO3pJCPtvxo80Bkp3PS2Uc/GSqPI7OCHAby3qPdrAe+hy1Whzg3o5R4T3ioqp/3/Zf2UdmnhGag==",
+  "000/003 2nd Chapter.txt": "EJQc0Y7rcdhw8FvhC59S62YL41I0MLfPk0qaakN05tpgQ6bDw1oZpzWpRQ4BJtoHp032GGYgzymJ8LYJbXr8Yg==",
+  "001 New group/004 3nd Chapter.txt": "sQAI+xLZMu9k64LRk1P5OYEPJcq/gm6p0shtDSV9ZjwqM+sqC38c6tnSdCQqolOo6ZedlWADeXeECLdeIxCdQg==",
+}
+`;
+
+exports[`EpisodeList simple tree 3`] = `
+Object {
+  "!meta/!cache.json": "0W3vebijZHAOC3rbxI/IFaNugoHaXJatpw1X36kPhGl4RhkXEHjHFRZpRYCRv5KwN9E95+HdfX1SlvhlUOK/Ng==",
+  "000/001 prologue.txt": "dzoT1yO51iMf1luIDuZamvpcsEew1gqoeA2YX8KdQC6cURXJNn7ZLbir+FFhCVCrkrmNLz9TsotDk/W+f0FmMA==",
+  "000/002 First Chapter.txt": "KaXxqbus/LT+n30iAc9i4gVSYTXQ9fw6n5mOxfKFSm9dMef5lyxzAPfq/bDYz4mdy2UgRTLvRxe2B8Dq9G6fqA==",
+  "000/003 2nd Chapter.txt": "8YYpZ6n9yTXbeP5HhlMEvGK9nwn3sFxEZqtUaUl091zQB1jAX1vuk7Y6K0iZ256z7V4l2Mr+QgaylAPW85LU4g==",
+  "001 New group/004 3nd Chapter.txt": "sQAI+xLZMu9k64LRk1P5OYEPJcq/gm6p0shtDSV9ZjwqM+sqC38c6tnSdCQqolOo6ZedlWADeXeECLdeIxCdQg==",
+}
+`;
+
+exports[`EpisodeList simple tree 4`] = `
+Object {
+  "!meta/!cache.json": "OKCkW17uNPlw41N6VDAfiOpYR0gCrg39jhHiSXOZCvrUZM/0jYMRgxoMe1y21PBHgktsqRdL8rY5lU0T6TatMA==",
+  "000/001 prologue.txt": "dzoT1yO51iMf1luIDuZamvpcsEew1gqoeA2YX8KdQC6cURXJNn7ZLbir+FFhCVCrkrmNLz9TsotDk/W+f0FmMA==",
+  "000/002 First Chapter.txt": "KaXxqbus/LT+n30iAc9i4gVSYTXQ9fw6n5mOxfKFSm9dMef5lyxzAPfq/bDYz4mdy2UgRTLvRxe2B8Dq9G6fqA==",
+  "001 New group/003 2nd Chapter.txt": "8YYpZ6n9yTXbeP5HhlMEvGK9nwn3sFxEZqtUaUl091zQB1jAX1vuk7Y6K0iZ256z7V4l2Mr+QgaylAPW85LU4g==",
+  "001 New group/004 3nd Chapter.txt": "sQAI+xLZMu9k64LRk1P5OYEPJcq/gm6p0shtDSV9ZjwqM+sqC38c6tnSdCQqolOo6ZedlWADeXeECLdeIxCdQg==",
+}
+`;
