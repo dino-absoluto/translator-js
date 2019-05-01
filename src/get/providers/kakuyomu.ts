@@ -144,6 +144,31 @@ export class KakuyomuNovel implements Novel, KakuyomuNovelData {
       this.genre = trim(e && e.textContent)
     }
     {
+      let texts: string[] = []
+      {
+        const e = doc.getElementById('catchphrase-body')
+        const t = trim(e && e.textContent)
+        if (t) {
+          texts.push(t)
+        }
+      }
+      {
+        const e = doc.getElementById('catchphrase-author')
+        const t = trim(e && e.textContent)
+        if (t) {
+          texts.push('- ' + t + '\n')
+        }
+      }
+      {
+        const e = doc.getElementById('introduction')
+        const t = trim(e && e.textContent)
+        if (t) {
+          texts.push(t)
+        }
+      }
+      this.description = texts.join('\n')
+    }
+    {
       const data = doc.querySelectorAll('.widget-credit > dd')
       let e = data[0]
       let completed = false
