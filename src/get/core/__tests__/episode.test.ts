@@ -43,7 +43,7 @@ class FakeChapter implements Chapter {
   public constructor (options: FakeData) {
     Object.assign(this, options)
   }
-  public async fetch () {
+  public async fetch (): Promise<void> {
     this.content = (fmt) => {
       fmt.requestFile(this.name + '.txt', _fname => [
         _fname,

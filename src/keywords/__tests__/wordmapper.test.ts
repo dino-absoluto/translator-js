@@ -28,7 +28,7 @@ interface TestOptions {
   outputFile: string
 }
 
-const testKeywords = async (options: TestOptions) => {
+const testKeywords = async (options: TestOptions): Promise<void> => {
   const keywords = await import('./keywords.json')
   const outMap: { [id: string]: WordMap } = {
     yomou: {},
