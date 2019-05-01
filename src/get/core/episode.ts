@@ -42,17 +42,17 @@ export interface UpdateReport {
 }
 
 class Context extends AbstractContext {
-  readonly files = new Map<string, string[] | Buffer>()
-  readonly prefix: string
-  constructor (prefix: string) {
+  public readonly files = new Map<string, string[] | Buffer>()
+  public readonly prefix: string
+  public constructor (prefix: string) {
     super()
     this.prefix = prefix
   }
 
-  requestFile (name: string, get: (name: string) => string[] | Buffer) {
+  public requestFile (name: string, get: (name: string) => string[] | Buffer): void {
     const { files, prefix } = this
     flow(this.resolveName(`${prefix}${name}`.trim()))
-      .then(name => {
+      .then((name): void => {
         if (files.has(name)) {
           return
         }
@@ -73,15 +73,15 @@ interface EpisodeListData {
 }
 
 export class EpisodeList {
-  readonly rootDir: Folder
-  data: EpisodeListData
-  ready: Promise<void>
+  public readonly rootDir: Folder
+  public data: EpisodeListData
+  public ready: Promise<void>
   private folders: Folder[]
   private metaFile: File
   private compressedCache: boolean
   private pad0: number = 3
   private saveThrottle = throttle(this.save.bind(this), 3000)
-  constructor (rootDir: Folder, options: {
+  public constructor (rootDir: Folder, options: {
     compressedCache?: boolean
     pad0?: number
     data?: EpisodeListData
@@ -104,7 +104,10 @@ export class EpisodeList {
     this.ready = this.load()
   }
 
-  async updateWith (newData: Chapter[], options: UpdateOptions = {}) {
+  public async updateWith (
+    newData: Chapter[],
+    options: UpdateOptions = {}
+  ): Promise<UpdateReport> {
     const { data: { episodes } } = this
     const { groups, chapters } = this.preprocess(newData)
     const { progress } = options
@@ -134,8 +137,8 @@ export class EpisodeList {
     if (progress) {
       progress(0, length)
     }
-    await Promise.all(tasks.map(({ index, chapter }) => {
-      return limit(async () => {
+    await Promise.all(tasks.map(({ index, chapter }): Promise<void> => {
+      return limit(async (): Promise<void> => {
         await this.updateEpisode(index, chapter, options)
         await this.saveThrottle()
         if (progress) {
@@ -148,14 +151,14 @@ export class EpisodeList {
     return report
   }
 
-  private encode (data: object) {
+  private encode (data: object): Buffer {
     if (!this.compressedCache) {
-      return JSON.stringify(data, null, 1)
+      return Buffer.from(JSON.stringify(data, null, 1))
     } else {
       return gzipSync(JSON.stringify(data))
     }
   }
-  private decode (data: Buffer) {
+  private decode (data: Buffer): EpisodeListData {
     if (!this.compressedCache) {
       return JSON.parse(data.toString())
     } else {
@@ -163,7 +166,7 @@ export class EpisodeList {
     }
   }
 
-  private async updateGroups (groups: string[]) {
+  private async updateGroups (groups: string[]): Promise<void> {
     const { folders, rootDir, data } = this
     for (const [index, group] of groups.entries()) {
       const id = index + 1
@@ -217,7 +220,7 @@ export class EpisodeList {
     index: number,
     ch: Chapter & EpisodeData,
     options: UpdateOptions
-  ) {
+  ): Promise<EpisodeData | false> {
     const { data: { episodes } } = this
     let ep = episodes[index]
     if (!ep) {
@@ -234,7 +237,7 @@ export class EpisodeList {
     index: number,
     ch: Chapter & EpisodeData,
     options: UpdateOptions
-  ) {
+  ): Promise<void> {
     const ep = await this.pingEpisode(index, ch, options)
     if (!ep) {
       return
@@ -242,7 +245,8 @@ export class EpisodeList {
     if (ep.files) {
       const folder = this.folders[ep.groupId || 0]
       // remove old files
-      await Promise.all(ep.files.map(file => folder.requestFile(file).remove()))
+      await Promise.all(ep.files.map(
+        (file): Promise<void> => folder.requestFile(file).remove()))
       delete ep.files
     }
     await ch.fetch()
@@ -266,7 +270,7 @@ export class EpisodeList {
         buf = data
       } else {
         buf = flow(data.join('\n\n---\n\n'))
-          .then(text => {
+          .then((text): string => {
             if (text[text.length - 1] !== '\n') {
               return text + '\n'
             } else {
@@ -284,7 +288,9 @@ export class EpisodeList {
     }
   }
 
-  private preprocess (chapters: Chapter[]) {
+  private preprocess (
+    chapters: Chapter[]
+  ): { groups: string[]; chapters: Chapter[] } {
     let groupId = 0
     let groupName: string | undefined
     const groups = []
@@ -308,7 +314,7 @@ export class EpisodeList {
     }
   }
 
-  private async load () {
+  private async load (): Promise<void> {
     const { metaFile } = this
     try {
       const cache = await this.decode(await metaFile.read())
@@ -322,7 +328,7 @@ export class EpisodeList {
     }
   }
 
-  async save () {
+  public async save (): Promise<void> {
     const { metaFile } = this
     await metaFile.write(await this.encode(this.data))
   }
