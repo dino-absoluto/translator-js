@@ -24,7 +24,8 @@ import { JSDOM } from 'jsdom'
 import { SimpleContext } from '../context'
 
 /* setup */
-const {} = setup(__filename, {
+// const { __TMPDIR } =
+setup(__filename, {
   network: true
 })
 

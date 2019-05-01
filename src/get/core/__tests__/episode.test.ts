@@ -35,15 +35,15 @@ interface FakeData extends ChapterData {
 }
 
 class FakeChapter implements Chapter {
-  group?: string | undefined
-  name: string = ''
-  updateId?: string | undefined
-  content?: RenderFn
+  public group?: string | undefined
+  public name: string = ''
+  public updateId?: string | undefined
+  public content?: RenderFn
   private text: string = ''
-  constructor (options: FakeData) {
+  public constructor (options: FakeData) {
     Object.assign(this, options)
   }
-  async fetch () {
+  public async fetch () {
     this.content = (fmt) => {
       fmt.requestFile(this.name + '.txt', _fname => [
         _fname,
