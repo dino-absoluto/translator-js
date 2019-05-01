@@ -25,7 +25,8 @@ import { SimpleContext } from '../context'
 // import * as path from 'path'
 
 /* setup */
-const { __TMPDIR } = setup(__filename, {
+// const { __TMPDIR } =
+setup(__filename, {
   network: true
 })
 

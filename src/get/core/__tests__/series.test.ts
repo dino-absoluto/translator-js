@@ -117,7 +117,10 @@ describe('Series', () => {
       status: { completed: true, size: 82 }
     }))
   })
-  test('updateIndex()', async () => {
+  test.each([
+    new URL('http://ncode.syosetu.com/n0537cm/'),
+    new URL('https://kakuyomu.jp/works/1177354054880848824')
+  ])('updateIndex()', async (href) => {
     const outputDir = path.join(__TMPDIR, 'updateIndex')
     const series = new Series({
       novel: await getNovel(href),
