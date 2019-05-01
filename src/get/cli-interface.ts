@@ -17,7 +17,12 @@
  *
  */
 /* imports */
-import { SharedOptions, Cmd } from '../cli/shared'
+import {
+  SharedOptions,
+  CmdHandler,
+  CmdBuilder
+} from '../cli/shared'
+import { SeriesOptions } from '.'
 import * as FlexProgress from '@dinoabsoluto/flex-progress'
 import * as path from 'path'
 import * as c from 'kleur'
@@ -49,7 +54,8 @@ interface CmdOptions extends SharedOptions {
   overwrite?: boolean
 }
 
-export const handler: Cmd.Handler = async (argv: CmdOptions) => {
+export const handler: CmdHandler =
+async (argv: CmdOptions): Promise<void> => {
   if (!argv.sources) {
     throw new Error('no sources specified')
   }
@@ -58,7 +64,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   const outputDir = argv.outputDir || path.resolve('download')
   const { Series } = await import('.')
   const names = argv.name || []
-  const novels = argv.sources.map(src => {
+  const novels = argv.sources.map((src): SeriesOptions => {
     if (src.type === 'url') {
       return {
         overwrite: argv.overwrite,
@@ -75,7 +81,7 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
     }
   })
   const output = new FlexProgress.Output()
-  process.on('SIGINT', () => {
+  process.on('SIGINT', (): void => {
     output.clear(false)
     process.exit(0)
   })
@@ -87,30 +93,30 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
       const novel = new Series(novelData)
       const group = new FlexProgress.Group()
       const bar = new FlexProgress.Bar({
-        width: 20
-      , postProcess:
-        overArgs((...s: string[]) => s.join(''),
+        width: 20,
+        postProcess:
+        overArgs((...s: string[]): string => s.join(''),
           c.green, c.yellow, c.gray)
       })
       const label = new FlexProgress.Text({
         text: '', postProcess: c.yellow
       })
-      const init = once(() => {
+      const init = once((): void => {
         group.append(
           '⸨', bar, '⸩'
-        , 1, label, new FlexProgress.Text({
-          text: path.basename(novel.container.name || 'unknown')
-        , flex: {
-          shrink: 1,
-          grow: 0
-        }
-        }))
+          , 1, label, new FlexProgress.Text({
+            text: path.basename(novel.container.name || 'unknown'),
+            flex: {
+              shrink: 1,
+              grow: 0
+            }
+          }))
         // output.add(group, 0)
         output.append(group)
       })
       await novel.ready
       const report = await novel.updateIndex({
-        onProgress: (_novel, count, total) => {
+        onProgress: (_novel, count, total): void => {
           if (total > 0) {
             init()
             label.text = count + '/' + total + ' '
@@ -147,59 +153,61 @@ export const handler: Cmd.Handler = async (argv: CmdOptions) => {
   }
 }
 
-export const command: Cmd.Command = 'get [<sources>..]'
-export const describe: Cmd.Describe = 'Download novel from sources'
-export const builder: Cmd.Builder = yargs =>
+export const command = 'get [<sources>..]'
+export const describe = 'Download novel from sources'
+export const builder: CmdBuilder =
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+yargs =>
   yargs.strict()
-  .usage('$0 get [--output-dir=<path>] [options] [<URL> | <path>..]')
-  .coerce('sources', (values: ArgString): Source[] => {
-    if (!Array.isArray(values)) {
-      values = [ values ]
-    }
-    return values.map(a => {
-      try {
-        return {
-          type: 'url',
-          url: new URL(a)
-        } as SourceURL
-      } catch {
-        return {
-          type: 'folder',
-          fpath: path.relative(CWD, path.resolve(a))
-        } as SourceFolder
-      }
-    })
-  })
-  .option('output-dir', {
-    type: 'string',
-    default: 'download',
-    requiresArg: true,
-    coerce: values => {
-      if (Array.isArray(values)) {
-        throw new Error('--output-dir was used twice')
-      }
-      return path.normalize(values)
-    },
-    desc: 'Output directory'
-  })
-  .option('name', {
-    type: 'string',
-    requiresArg: true,
-    coerce: values => {
+    .usage('$0 get [--output-dir=<path>] [options] [<URL> | <path>..]')
+    .coerce('sources', (values: ArgString): Source[] => {
       if (!Array.isArray(values)) {
-        return [ values ]
+        values = [ values ]
       }
-      return values
-    },
-    desc: 'Hint to name new folder'
-  })
-  .option('overwrite', {
-    type: 'boolean',
-    default: false,
-    desc: 'Force overwriting exist data'
-  })
-  .option('check-fs', {
-    type: 'boolean',
-    default: false,
-    desc: 'Download missing files'
-  })
+      return values.map((a): Source => {
+        try {
+          return {
+            type: 'url',
+            url: new URL(a)
+          }
+        } catch {
+          return {
+            type: 'folder',
+            fpath: path.relative(CWD, path.resolve(a))
+          }
+        }
+      })
+    })
+    .option('output-dir', {
+      type: 'string',
+      default: 'download',
+      requiresArg: true,
+      coerce: (values): string => {
+        if (Array.isArray(values)) {
+          throw new Error('--output-dir was used twice')
+        }
+        return path.normalize(values)
+      },
+      desc: 'Output directory'
+    })
+    .option('name', {
+      type: 'string',
+      requiresArg: true,
+      coerce: (values): string[] => {
+        if (!Array.isArray(values)) {
+          return [ values ]
+        }
+        return values
+      },
+      desc: 'Hint to name new folder'
+    })
+    .option('overwrite', {
+      type: 'boolean',
+      default: false,
+      desc: 'Force overwriting exist data'
+    })
+    .option('check-fs', {
+      type: 'boolean',
+      default: false,
+      desc: 'Download missing files'
+    })

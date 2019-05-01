@@ -24,7 +24,7 @@ import * as pfs from '../../utils/pfs'
 import chalk from 'chalk'
 
 interface TestOptions {
-  lax?: boolean,
+  lax?: boolean
   outputFile: string
 }
 

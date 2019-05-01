@@ -31,11 +31,8 @@ export const parser = yargs.strict(true)
   })
 export type Parser = typeof parser
 export type SharedOptions = typeof parser.argv
-
-export namespace Cmd {
-  export type Command = string | string[]
-  export type Aliases = string | string[]
-  export type Describe = string | false
-  export type Builder = (yargs: Parser) => Parser
-  export type Handler = (argv: SharedOptions) => void
-}
+// export type CmdCommand = string | string[]
+// export type CmdAliases = string | string[]
+// export type CmdDescribe = string | false
+export type CmdBuilder = (yargs: Parser) => Parser
+export type CmdHandler = (argv: SharedOptions) => void

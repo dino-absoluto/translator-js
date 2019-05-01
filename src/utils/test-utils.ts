@@ -18,11 +18,11 @@
  */
 /* imports */
 import globby, { GlobbyOptions } from 'globby'
-import hasha = require('hasha')
 import * as path from 'path'
 import del from 'del'
-import makeDir = require('make-dir')
 import { back as nockBack, NockBackContext } from 'nock'
+import hasha = require('hasha')
+import makeDir = require('make-dir')
 
 /* setup */
 const SRC_DIR = path.normalize(__dirname + '/../')
@@ -49,7 +49,7 @@ export const setup = (fname: string, options: TestEnvSetupOptions = {}) => {
   const unit = path.posix.normalize(path.relative(SRC_DIR, fname))
     .replace(/\/([^\/]+)\/__tests__\//g, '/$1__')
   const tmpdir = path.join(TMP_DIR, unit)
-  let nock: { nockDone: () => void, context: NockBackContext }
+  let nock: { nockDone: () => void; context: NockBackContext }
   beforeAll(async () => {
     await del(path.join(tmpdir, '*'))
     await makeDir(tmpdir)

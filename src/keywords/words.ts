@@ -1104,7 +1104,7 @@ export const phrases: WordMap = {
   'チン負け': 'succumbed to dick',
   // '家族愛': 'family love',
   // website
-  'アイリス' : 'Iris',
+  'アイリス': 'Iris',
   'ネット小説': 'Webnovel',
   '感想': 'Impression',
   '初投稿': 'first contribution',

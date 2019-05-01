@@ -196,7 +196,6 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
         size
       }
     }
-    return
   }
 
   async fetchIndex () {
@@ -256,7 +255,7 @@ const fromURL = (url: URL) => {
   try {
     return new SyosetuNovel(url)
   } catch {
-    return
+
   }
 }
 

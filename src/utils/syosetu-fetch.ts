@@ -17,9 +17,9 @@
  *
  */
 /* imports */
-import cookie = require('cookie')
 import nodeFetch, { Request, RequestInit, Headers } from 'node-fetch'
 import pLimit from 'p-limit'
+import cookie = require('cookie')
 /* -imports */
 
 const syosetuLimit = pLimit(1)

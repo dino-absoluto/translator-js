@@ -25,7 +25,7 @@ try {
   yargs
     .command(cmdGet)
     .help()
-    .fail((msg, err) => {
+    .fail((msg, err): void => {
       yargs.showHelp()
       if (err) {
         console.log(c.red(err.stack || ''))

@@ -76,7 +76,7 @@ export class Folder implements FSItem {
 
   async real () {
     if (this._accessed) {
-      return
+
     } else {
       await makeDir(this.path)
       this._accessed = true
@@ -127,7 +127,6 @@ export class Folder implements FSItem {
         }
       }
     }
-    return
   }
 
   requestFolder (name: string): Folder {
@@ -164,7 +163,6 @@ export class File implements FSItem {
     if (!this._filename) {
       throw new Error('filename is not set')
     }
-    return
   }
 
   async rename (name: string) {

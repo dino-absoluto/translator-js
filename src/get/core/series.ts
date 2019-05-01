@@ -53,7 +53,7 @@ export class Series {
     data.name = name
     if (options.basename) {
       container = new Folder(null,
-        path.join(options.outputDir,options.basename))
+        path.join(options.outputDir, options.basename))
     } else {
       const rootDir = new Folder(null, options.outputDir)
       container = rootDir.requestFolder(name || '')
@@ -147,7 +147,7 @@ export class Series {
   }
 
   async updateIndex (options: {
-    onProgress?: SeriesProgressFn,
+    onProgress?: SeriesProgressFn
     checkFs?: boolean
   } = {}) {
     const { onProgress, checkFs = false } = options

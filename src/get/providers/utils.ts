@@ -23,20 +23,26 @@ import * as mime from 'mime'
 import fetch from '../../utils/syosetu-fetch'
 
 /* code */
-export const fetchDOM = async (url: string) => {
+export const fetchDOM = async (url: string): Promise<Document> => {
   let { window: { document: doc } } =
     new JSDOM(await (await fetch(url)).text(), { url })
   return doc
 }
 
-export const fetchFile = async (url: string) => {
+interface FetchedFile {
+  url: string
+  buf: Buffer
+  name: string
+}
+
+export const fetchFile = async (url: string): Promise<FetchedFile> => {
   const res = await fetch(url)
   const buf = await res.buffer()
   {
     const disp = res.headers.get('content-disposition')
     if (disp) {
       const name = trim(flow(disp.match(/; filename="[^"]+"/))
-        .then(a => a[1]).value)
+        .then((a): string => a[1]).value)
       if (name) {
         return {
           url,
