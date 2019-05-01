@@ -56,7 +56,7 @@ export class KakuyomuChapter implements Chapter {
       })
     const nodes: Element[] = []
     ;[
-      '.widget-episode'
+      '.widget-episodeBody'
     ].forEach((id): void =>
       void flow(main.querySelector(id))
         .then((node): void => {

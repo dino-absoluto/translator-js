@@ -24,7 +24,7 @@ import filenamify = require('filenamify')
 /* code */
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
-const Node = flow(new JSDOM()).then(dom => {
+export const Node = flow(new JSDOM()).then(dom => {
   return dom.window.Node
 }).value
 
