@@ -24,7 +24,8 @@ import cookie = require('cookie')
 
 const syosetuLimit = pLimit(1)
 
-function fetch (href: string | Request, init?: RequestInit) {
+function fetch (href: string | Request, init?: RequestInit
+): ReturnType<typeof nodeFetch> {
   let url = typeof href === 'string'
     ? new URL(href.toString())
     : new URL(href.url)
@@ -37,7 +38,7 @@ function fetch (href: string | Request, init?: RequestInit) {
     if (/^(novel18|noc|mnlt|mid)./.test(url.hostname)) {
       headers.set('Cookie', cookie.serialize('over18', 'yes'))
     }
-    return syosetuLimit(() => nodeFetch(href, init))
+    return syosetuLimit((): ReturnType<typeof nodeFetch> => nodeFetch(href, init))
   } else {
     return nodeFetch(href, init)
   }
