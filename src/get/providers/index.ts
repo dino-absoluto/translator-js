@@ -23,7 +23,7 @@ import { Provider, Novel } from './common'
 let initialized: Promise<void>
 const domains = new Map()
 
-export const register = (provider: Provider) => {
+export const register = (provider: Provider): void => {
   for (const domain of provider.acceptDomains) {
     if (domains.has(domain)) {
       throw new Error(`'${domain}' domain existed`)
@@ -34,7 +34,7 @@ export const register = (provider: Provider) => {
 
 export const getProvider = async (url: URL): Promise<Provider> => {
   if (!initialized) {
-    initialized = (async () => {
+    initialized = (async (): Promise<void> => {
       register((await import('./syosetu')).default)
     })()
     await initialized

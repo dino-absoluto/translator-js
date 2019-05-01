@@ -25,11 +25,11 @@ import { Context } from './context'
 
 export class SyosetuChapter implements Chapter {
   private url: URL
-  group?: string
-  name: string
-  updateId?: string
-  content?: RenderFn
-  constructor (options: {
+  public group?: string
+  public name: string
+  public updateId?: string
+  public content?: RenderFn
+  public constructor (options: {
     url: URL
     group?: string
     name: string
@@ -41,7 +41,7 @@ export class SyosetuChapter implements Chapter {
     this.updateId = options.updateId
   }
 
-  async fetch () {
+  public async fetch (): Promise<void> {
     const url = this.url.toString()
     const doc = await fetchDOM(url)
     const main = doc.getElementById('novel_contents')
@@ -49,8 +49,8 @@ export class SyosetuChapter implements Chapter {
       return
     }
     flow(main.querySelector('.novel_subtitle'))
-      .then(node => trim(node.textContent))
-      .then(text => {
+      .then((node): string | undefined => trim(node.textContent))
+      .then((text): void => {
         this.name = text
       })
     const nodes: Element[] = []
@@ -58,9 +58,12 @@ export class SyosetuChapter implements Chapter {
       '#novel_p',
       '#novel_honbun',
       '#novel_a'
-    ].forEach(id => flow(main.querySelector(id)).then(node => {
-      nodes.push(node)
-    }))
+    ].forEach((id): void =>
+      void flow(main.querySelector(id))
+        .then((node): void => {
+          nodes.push(node)
+        })
+    )
     const tokensArray = nodes.map(Context.tokenize)
     const imagePromises: ReturnType<typeof fetchFile>[] = []
     for (const tokens of tokensArray) {
@@ -71,15 +74,15 @@ export class SyosetuChapter implements Chapter {
       }
     }
     const images = await Promise.all(imagePromises)
-    this.content = (ctx) => {
+    this.content = (ctx): void => {
       for (const img of images) {
-        ctx.requestFile(img.name, filename => {
+        ctx.requestFile(img.name, (filename): Buffer => {
           ctx.mapURL(img.url, filename)
           return img.buf
         })
       }
-      ctx.requestFile(this.name + '.txt', (_name) => {
-        const sections = tokensArray.map(toks => ctx.render(toks))
+      ctx.requestFile(this.name + '.txt', (): string[] => {
+        const sections = tokensArray.map((toks): string => ctx.render(toks))
         sections.unshift(this.name)
         return sections
       })
@@ -93,20 +96,20 @@ interface SyosetuNovelData extends NovelData {
 }
 
 export class SyosetuNovel implements Novel, SyosetuNovelData {
-  readonly id: string
-  readonly url: string
-  readonly over18: boolean
-  name?: string
-  author?: string
-  description?: string
-  keywords?: string[]
-  genre?: string
-  status?: {
+  public readonly id: string
+  public readonly url: string
+  public readonly over18: boolean
+  public name?: string
+  public author?: string
+  public description?: string
+  public keywords?: string[]
+  public genre?: string
+  public status?: {
     completed: boolean
     size: number
   }
 
-  constructor (url: URL) {
+  public constructor (url: URL) {
     const hostname = url.hostname
     if (hostname.indexOf('novel18.') === 0) {
       this.over18 = true
@@ -123,19 +126,19 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
     this.url = this.indexURL
   }
 
-  get rootURL () {
+  public get rootURL (): string {
     return `https://${this.over18 ? 'novel18' : 'ncode'}.syosetu.com/`
   }
 
-  get infoURL () {
+  public get infoURL (): string {
     return `${this.rootURL}novelview/infotop/ncode/${this.id}/`
   }
 
-  get indexURL () {
+  public get indexURL (): string {
     return `${this.rootURL}${this.id}/`
   }
 
-  async fetch () {
+  public async fetch (): Promise<void> {
     const url = this.infoURL
     const doc = await fetchDOM(url)
     const main = doc.getElementById('contents_main')
@@ -160,10 +163,10 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
       this.description = trim(lines[0].textContent)
       this.author = trim(lines[1].textContent)
       this.keywords = flow(trim(lines[2].textContent)).then(
-        s => s.split(/\s+/g)
+        (s): string[] => s.split(/\s+/g)
       ).value
       this.genre = flow(trim(lines[3].textContent)).then(
-        s => s.split('〔', 1)[0]
+        (s): string => s.split('〔', 1)[0]
       ).value
     }
     {
@@ -198,7 +201,7 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
     }
   }
 
-  async fetchIndex () {
+  public async fetchIndex (): Promise<SyosetuChapter[]> {
     const url = this.indexURL
     const doc = await fetchDOM(url)
     let indexBox = doc.getElementsByClassName('index_box')[0]
@@ -251,7 +254,7 @@ export class SyosetuNovel implements Novel, SyosetuNovelData {
   }
 }
 
-const fromURL = (url: URL) => {
+const fromURL = (url: URL): SyosetuNovel | undefined => {
   try {
     return new SyosetuNovel(url)
   } catch {
