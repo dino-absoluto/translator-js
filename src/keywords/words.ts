@@ -43,13 +43,13 @@ export const separators: WordMap = {
 type ParticleFn = (key: string, left: string, right: string) => string
 
 export const particles: WordMapFn<ParticleFn> = {
-  'の': (_, left, right) => `${right} of ${left}`,
+  'の': (_, left, right): string => `${right} of ${left}`,
   '×': ' × ',
-  'が': (_, left, right) => `${left}'s ${right}'`,
-  'は': (_, left, right) => `${right} ${left}`,
+  'が': (_, left, right): string => `${left}'s ${right}'`,
+  'は': (_, left, right): string => `${right} ${left}`,
   'な': ' ',
   'と': ' & ',
-  'ではない': (_, left, right) => `not ${left} ${right}`,
+  'ではない': (_, left, right): string => `not ${left} ${right}`,
   '系': ' '
 }
 

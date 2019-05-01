@@ -27,7 +27,7 @@ interface CommandOptions {
   multiplier?: number
 }
 
-const cmdKeywords = async (options: CommandOptions) => {
+const cmdKeywords = async (options: CommandOptions): Promise<void> => {
   const output = path.join(options.output || './download/', 'keywords.json')
   const sum = (await import('.')).default
   const MULTIPLIER = Math.max(1, options.multiplier || 0)
@@ -36,6 +36,6 @@ const cmdKeywords = async (options: CommandOptions) => {
 
 console.log(c.blue('Generating keywords!'))
 
-cmdKeywords({ multiplier: 50 }).catch(err => {
+cmdKeywords({ multiplier: 50 }).catch((err): void => {
   console.error(err)
 })

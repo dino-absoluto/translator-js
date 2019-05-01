@@ -22,7 +22,7 @@ import fetch from '../utils/syosetu-fetch'
 import { clearLine, cursorTo } from 'readline'
 import * as c from 'kleur'
 
-const getURL = (page: number, subdomain = 'yomou') => {
+const getURL = (page: number, subdomain = 'yomou'): string => {
   if (subdomain !== 'yomou') {
     return `https://${subdomain}.syosetu.com/search/search/search.php?` +
       `&order_former=search&order=monthlypoint&all4=1&all3=1&all2=1&p=${page}`
@@ -35,9 +35,9 @@ interface KeywordsMap {
   [id: string]: number
 }
 
-const get = async (href: string, map: KeywordsMap = {}) => {
+const get = async (href: string, map: KeywordsMap = {}): Promise<KeywordsMap> => {
   const body = await (await fetch(href)).text()
-  const procLink = (links: NodeListOf<Node>) => {
+  const procLink = (links: NodeListOf<Node>): void => {
     for (const node of links) {
       const text = (node.textContent || '').trim()
       map[text] = (map[text] || 0) + 1
@@ -57,9 +57,9 @@ const get = async (href: string, map: KeywordsMap = {}) => {
   return map
 }
 
-const sort = (data: KeywordsMap) => {
+const sort = (data: KeywordsMap): KeywordsMap => {
   const array = [...Object.entries(data)]
-  array.sort((a, b) => {
+  array.sort((a, b): 0 | 1 | -1 => {
     let A = a[1]
     let B = b[1]
     if (A > B) {
@@ -91,7 +91,9 @@ const batches: [SubDomain, number][] = [
   [ SubDomain.mid, 1 ]
 ]
 
-const generate = async (multiplier = 10) => {
+const generate = async (
+  multiplier = 10
+): Promise< { [id: string]: KeywordsMap }> => {
   const { stdout } = process
   const map: { [id: string]: KeywordsMap } = {
     yomou: {},

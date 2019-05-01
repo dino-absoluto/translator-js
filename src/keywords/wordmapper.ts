@@ -23,17 +23,19 @@ import {
   separators, particles
 } from './words'
 
-const ms = (word: string) => phrases[word] || word
+const ms = (word: string): string => phrases[word] || word
 
 interface MapState {
   word: string
   remain: number
 }
 
+type Replacer = (i: MapState) => void
+
 const createState = (word: string): MapState =>
   ({ word, remain: word.length })
 
-const replaceSymbols = (() => {
+const replaceSymbols = ((): Replacer => {
   const set = new Set(Object.getOwnPropertyNames(symbols))
   set.delete('(')
   set.delete(')')
@@ -41,50 +43,62 @@ const replaceSymbols = (() => {
   set.add('\\)')
   const keys = [...set].sort().reverse()
   const exp = new RegExp(keys.join('|'), 'gu')
-  return (w: MapState) => {
-    w.word = w.word.replace(/[\uFF01-\uFF5E]/g, (tok: string) =>
-      (w.remain -= tok.length, String.fromCharCode(tok.charCodeAt(0) - 0xFEE0)))
-    w.word = w.word.replace(exp, tok =>
-      (w.remain -= tok.length, symbols[tok]))
+  return (w: MapState): void => {
+    w.word = w.word.replace(/[\uFF01-\uFF5E]/g, (tok: string): string => {
+      w.remain -= tok.length
+      return String.fromCharCode(tok.charCodeAt(0) - 0xFEE0)
+    })
+    w.word = w.word.replace(exp, (tok): string => {
+      w.remain -= tok.length
+      return symbols[tok]
+    })
   }
 })()
 
-const replaceLetters = (w: MapState) => {
-  w.word = w.word.replace(/\w+/g, tok =>
-    (w.remain -= tok.length, ` ${tok.toUpperCase()}`))
+const replaceLetters = (w: MapState): void => {
+  w.word = w.word.replace(/\w+/g, (tok): string => {
+    w.remain -= tok.length
+    return ` ${tok.toUpperCase()}`
+  })
 }
 
-const replacePhrases = (() => {
+const replacePhrases = ((): Replacer => {
   const keys = Object.getOwnPropertyNames(phrases).sort().reverse()
   const exp = new RegExp(keys.join('|'), 'g')
-  return (w: MapState) => {
-    w.word = w.word.replace(exp, tok =>
-      (w.remain -= tok.length, ` ${ms(tok)}`))
+  return (w: MapState): void => {
+    w.word = w.word.replace(exp, (tok): string => {
+      w.remain -= tok.length
+      return ` ${ms(tok)}`
+    })
   }
 })()
 
-const replacePrefixes = (() => {
+const replacePrefixes = ((): Replacer => {
   const keys = Object.getOwnPropertyNames(prefixes).sort().reverse()
-  const exp = new RegExp(`^(${keys.join('|')})\s*`, 'g')
-  return (w: MapState) => {
-    w.word = w.word.replace(exp, tok =>
-      (w.remain -= tok.length, prefixes[tok]))
+  const exp = new RegExp(`^(${keys.join('|')})`, 'g')
+  return (w: MapState): void => {
+    w.word = w.word.replace(exp, (tok): string => {
+      w.remain -= tok.length
+      return prefixes[tok]
+    })
   }
 })()
 
-const replaceSuffixes = (() => {
+const replaceSuffixes = ((): Replacer => {
   const keys = Object.getOwnPropertyNames(suffixes).sort().reverse()
-  const exp = new RegExp(`\s*(${keys.join('|')})$`, 'g')
-  return (w: MapState) => {
-    w.word = w.word.replace(exp, tok =>
-      (w.remain -= tok.length, suffixes[tok]))
+  const exp = new RegExp(`(${keys.join('|')})$`, 'g')
+  return (w: MapState): void => {
+    w.word = w.word.replace(exp, (tok): string => {
+      w.remain -= tok.length
+      return suffixes[tok]
+    })
   }
 })()
 
-const processParticles = (() => {
+const processParticles = ((): Replacer => {
   const keys = Object.getOwnPropertyNames(particles).sort().reverse()
   const exp = new RegExp(`(?<=\\s|\\w)(${keys.join('|')})(?=\\s|\\w)`, 'g')
-  return (w: MapState) => {
+  return (w: MapState): void => {
     const [left, key] = w.word.split(exp, 2)
     if (!key) {
       return
@@ -100,17 +114,17 @@ const processParticles = (() => {
   }
 })()
 
-const splitFragments = (() => {
+const splitFragments = ((): (s: string) => string[] => {
   const keys = Object.getOwnPropertyNames(separators).sort().reverse()
   const exp = new RegExp(`(${keys.join('|')})`, 'g')
-  return (word: string) =>
+  return (word: string): string[] =>
     word.split(exp)
 })()
 
-const trim = (word: string) =>
-  word.trim().replace(/\s+/g, ' ').replace(/(?<=[\-(])\s/g, '')
+const trim = (word: string): string =>
+  word.trim().replace(/\s+/g, ' ').replace(/(?<=[-(])\s/g, '')
 
-export const mapKeyword = (word: string, lax?: boolean) => {
+export const mapKeyword = (word: string, lax?: boolean): string => {
   word = word.trim().toLowerCase()
   if (phrases[word]) {
     return phrases[word]
