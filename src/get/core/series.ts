@@ -20,11 +20,15 @@
 import { Novel, NovelData } from '../providers/common'
 import { getNovel } from '../providers'
 import { Folder, File } from './fs'
-import { EpisodeList, ProgressFn } from './episode'
+import { EpisodeList, ProgressFn, UpdateReport } from './episode'
 import * as path from 'path'
 /* code */
 
 type SeriesProgressFn = (series: Series, c: number, total: number) => void
+
+interface OldData {
+  sourceURL: string
+}
 
 export interface SeriesOptions {
   outputDir: string
@@ -38,12 +42,12 @@ export interface SeriesOptions {
 export class Series {
   private novel?: Novel
   private episodes?: EpisodeList
-  readonly data: NovelData
-  readonly container: Folder
-  readonly metaFile: File
-  readonly ready: Promise<void>
-  readonly overwrite: boolean
-  constructor (options: SeriesOptions) {
+  public readonly data: NovelData
+  public readonly container: Folder
+  public readonly metaFile: File
+  public readonly ready: Promise<void>
+  public readonly overwrite: boolean
+  public constructor (options: SeriesOptions) {
     const data = Object.assign({}, options.novel, options.data)
     this.data = data
     this.novel = options.novel
@@ -61,7 +65,7 @@ export class Series {
     const metaFile = container.requestFile('index.json')
     this.container = container
     this.metaFile = metaFile
-    this.ready = (async () => {
+    this.ready = (async (): Promise<void> => {
       if (!this.novel && options.sourceURL) {
         await this.loadURL(options.sourceURL)
       }
@@ -71,7 +75,7 @@ export class Series {
     })()
   }
 
-  private async loadURL (sourceURL: string) {
+  private async loadURL (sourceURL: string): Promise<void> {
     try {
       const url = new URL(sourceURL)
       this.novel = await getNovel(url)
@@ -80,7 +84,7 @@ export class Series {
     }
   }
 
-  private async verify (data: any): Promise<NovelData | undefined> {
+  private async verify (data: Partial<NovelData & OldData> | undefined): Promise<NovelData | undefined> {
     if (!data || typeof data !== 'object') {
       return
     }
@@ -96,12 +100,12 @@ export class Series {
         }
       }
     }
-    if (data.id) {
-      return data
+    if (typeof data.id === 'string') {
+      return data as NovelData
     }
   }
 
-  async load () {
+  public async load (): Promise<void> {
     const { metaFile, data, data: { name } } = this
     if (!name) {
       return
@@ -120,7 +124,7 @@ export class Series {
     }
   }
 
-  hasMeta (): boolean {
+  public hasMeta (): boolean {
     const { data } = this
     return !!(data.name &&
       data.author &&
@@ -130,7 +134,7 @@ export class Series {
       data.status)
   }
 
-  async update () {
+  public async update (): Promise<void> {
     const { novel, data } = this
     if (!novel) {
       throw new Error('novel is undefined')
@@ -146,10 +150,10 @@ export class Series {
     await this.metaFile.write(JSON.stringify(data, null, 1))
   }
 
-  async updateIndex (options: {
+  public async updateIndex (options: {
     onProgress?: SeriesProgressFn
     checkFs?: boolean
-  } = {}) {
+  } = {}): Promise<UpdateReport> {
     const { onProgress, checkFs = false } = options
     let progress: ProgressFn | undefined
     if (onProgress) {
