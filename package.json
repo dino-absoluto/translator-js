@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "lint": "eslint --ext .js,.ts src",
     "build": "webpack"
   },
   "dependencies": {
@@ -34,7 +35,15 @@
     "@types/node-fetch": "^2.3.2",
     "@types/webpack": "^4.4.27",
     "@types/webpack-node-externals": "^1.6.3",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
     "del": "^4.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
     "globby": "^9.2.0",
     "hasha": "^5.0.0",
     "jest": "^24.7.1",
@@ -42,9 +51,6 @@
     "source-map-loader": "^0.2.4",
     "ts-jest": "^24.0.2",
     "ts-loader": "^5.3.3",
-    "tslint": "^5.16.0",
-    "tslint-config-standard": "^8.0.1",
-    "tslint-consistent-codestyle": "^1.15.1",
     "typescript": "^3.4.4",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0",
