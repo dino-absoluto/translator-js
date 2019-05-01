@@ -33,8 +33,8 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest'
   },
   testMatch: [
-    "**/?(*.)+(spec|test).(js)",
-    "**/?(*.)+(spec|test).(ts|tsx)"
+    '**/?(*.)+(spec|test).(js)',
+    '**/?(*.)+(spec|test).(ts|tsx)'
   ],
   moduleFileExtensions: [
     'js',
