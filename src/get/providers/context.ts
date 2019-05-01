@@ -23,6 +23,7 @@ import * as path from 'path'
 import filenamify = require('filenamify')
 /* code */
 
+/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 const Node = flow(new JSDOM()).then(dom => {
   return dom.window.Node
 }).value
@@ -64,10 +65,10 @@ export type ContextCallback = (name: string) => Buffer | string[]
 export abstract class Context {
   private names = new Set<string>()
   private urls = new Map<string, string>()
-  abstract requestFile (
+  public abstract requestFile (
     name: string,
     fn: ContextCallback): void
-  resolveName (name: string) {
+  public resolveName (name: string): string | undefined {
     name = path.normalize(trim(name) || '')
     if (name === '.') {
       return
@@ -90,19 +91,19 @@ export abstract class Context {
     return ''
   }
 
-  mapURL (url: string, filename: string) {
+  public mapURL (url: string, filename: string): void {
     this.urls.set(url, filename)
   }
 
-  resolveURL (url: string): string {
+  public resolveURL (url: string): string {
     return this.urls.get(url) || url
   }
 
-  parseNode (node: Node): string {
+  public parseNode (node: Node): string {
     return this.render(Context.tokenize(node))
   }
 
-  render (tokens: Token[]): string {
+  public render (tokens: Token[]): string {
     let text = ''
     for (const tok of tokens) {
       let tt: string
@@ -136,13 +137,13 @@ export abstract class Context {
     return text
   }
 
-  static tokenizeArray (nodes: NodeList): Token[] {
-    return [...nodes].reduce((acc, cnode) => {
+  public static tokenizeArray (nodes: NodeList): Token[] {
+    return [...nodes].reduce((acc, cnode): Token[] => {
       return acc.concat(Context.tokenize(cnode))
     }, [] as Token[])
   }
 
-  static tokenize (node: Node): Token[] {
+  public static tokenize (node: Node): Token[] {
     if (node.nodeType === Node.TEXT_NODE) {
       return [{
         type: 'text',
@@ -155,9 +156,9 @@ export abstract class Context {
     switch (node.nodeName) {
       case 'RUBY': {
         const text = trim(flow(node.querySelector('rb'))
-          .then(rb => rb.textContent)
+          .then((rb): string | null => rb.textContent)
           .value ||
-        flow([...node.children]).then(children => {
+        flow([...node.children]).then((children): string => {
           let text = ''
           for (const node of children) {
             if (node.nodeType === Node.TEXT_NODE) {
@@ -167,9 +168,10 @@ export abstract class Context {
           return text
         }).value || node.textContent)
         if (text) {
-          const ruby = flow(node.querySelector('rt')).then(rt => {
-            return trim(rt.textContent)
-          }).value
+          const ruby = flow(node.querySelector('rt')).then(
+            (rt): string | undefined => {
+              return trim(rt.textContent)
+            }).value
           if (ruby && text !== ruby) {
             return [{
               type: 'ruby',
@@ -188,8 +190,9 @@ export abstract class Context {
       }
       case 'BR': {
         if (flow(node.nextSibling)
-          .then(n => n.nodeType === Node.TEXT_NODE && n.textContent || undefined)
-          .then(t => t.startsWith('\n'))) {
+          .then((n): string | undefined =>
+            (n.nodeType === Node.TEXT_NODE && n.textContent) || undefined)
+          .then((t): boolean => t.startsWith('\n'))) {
           return []
         }
         return [{
@@ -204,7 +207,7 @@ export abstract class Context {
           url: a.href
         }
         const tokens = [...a.querySelectorAll('img')].reduce(
-          (all, node) => all.concat(this.tokenize(node)), [] as Token[])
+          (all, node): Token[] => all.concat(this.tokenize(node)), [] as Token[])
         if (tokens.length) {
           tokens.push({
             type: 'br'
@@ -243,9 +246,9 @@ export abstract class Context {
 }
 
 export class SimpleContext extends Context {
-  text: ([string, string[]])[] = []
-  bufs: ([string, Buffer])[] = []
-  requestFile (unsafeName: string, get: ContextCallback) {
+  public text: ([string, string[]])[] = []
+  public bufs: ([string, Buffer])[] = []
+  public requestFile (unsafeName: string, get: ContextCallback): void {
     const name = this.resolveName(unsafeName)
     if (!name) {
       return
