@@ -128,24 +128,37 @@ async (argv: CmdOptions): Promise<void> => {
       group.clear()
       output.remove(group)
       output.clearLine()
-      console.log(c.blue('·'),
-        c.yellow(report.updates.length.toString() + ' updated') + ',',
-        c.green(report.news.length.toString() + ' new'),
-        c.gray('-'),
+      const message: string[] = []
+      if (report.updates.length > 0) {
+        message.push(c.yellow(report.updates.length + ' updated'))
+      }
+      if (report.news.length > 0) {
+        message.push(c.green(report.news.length + ' new'))
+      }
+      message.push()
+      console.log(c.blue('-'),
+        ...(message.length > 0
+          ? [ `[${message.join(', ')}]` ]
+          : []),
+        // c.gray('#'),
         path.basename(novel.container.name || 'unknown')
       )
       const newsLength = report.news.length
-      for (const { index, chapter } of report.news.slice(0, MAX_LOG)) {
-        console.log(
-          c.green(index.toString().padStart(3, '0')),
-          chapter.name
-        )
-      }
       if (report.news.length > MAX_LOG) {
         console.log(
-          c.gray('...') + 'and',
-          c.green(newsLength.toString()),
-          'more chapters')
+          ' ',
+          c.gray('...'),
+          c.green((newsLength - MAX_LOG).toString()),
+          'chapters and',
+          c.gray('...')
+        )
+      }
+      for (const { index, chapter } of report.news.slice(newsLength - MAX_LOG)) {
+        console.log(
+          ' ',
+          c.green(index.toString().padStart(3, '0') + ':'),
+          chapter.name
+        )
       }
     }
   } finally {
