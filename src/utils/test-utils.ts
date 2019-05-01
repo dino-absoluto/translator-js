@@ -16,6 +16,7 @@
  * limitations under the License.
  *
  */
+/* eslint-env jest */
 /* imports */
 import globby, { GlobbyOptions } from 'globby'
 import * as path from 'path'
@@ -24,40 +25,36 @@ import { back as nockBack, NockBackContext } from 'nock'
 import hasha = require('hasha')
 import makeDir = require('make-dir')
 
+/* code */
 /* setup */
-const SRC_DIR = path.normalize(__dirname + '/../')
+const SRC_DIR = path.normalize(path.join(__dirname, '..'))
 const TMP_DIR = path.resolve('__tmp__/jest/')
 const FIXTURES_DIR = path.resolve('__tmp__/nock-fixtures')
 nockBack.fixtures = FIXTURES_DIR
 nockBack.setMode('record')
 
-/* code */
-export const setupTmpDir = (name: string) => {
-  const fpath = path.join(TMP_DIR, name)
-  beforeAll(async () => {
-    await del(path.join(fpath, '*'))
-    await makeDir(fpath)
-  })
-  return fpath
-}
-
 interface TestEnvSetupOptions {
   network?: boolean
 }
 
-export const setup = (fname: string, options: TestEnvSetupOptions = {}) => {
+interface TestEnv {
+  __TMPDIR: string
+}
+
+export const setup = (fname: string, options: TestEnvSetupOptions = {}
+): TestEnv => {
   const unit = path.posix.normalize(path.relative(SRC_DIR, fname))
-    .replace(/\/([^\/]+)\/__tests__\//g, '/$1__')
+    .replace(/\/([^/]+)\/__tests__\//g, '/$1__')
   const tmpdir = path.join(TMP_DIR, unit)
   let nock: { nockDone: () => void; context: NockBackContext }
-  beforeAll(async () => {
+  beforeAll(async (): Promise<void> => {
     await del(path.join(tmpdir, '*'))
     await makeDir(tmpdir)
     if (options.network) {
       nock = await nockBack(unit + '.json')
     }
   })
-  afterAll(async () => {
+  afterAll(async (): Promise<void> => {
     if (nock && nock.nockDone) {
       await nock.nockDone()
     }
@@ -67,20 +64,28 @@ export const setup = (fname: string, options: TestEnvSetupOptions = {}) => {
   }
 }
 
+interface HashedDir {
+  [id: string]: string
+}
+
 export const hashDir = async (
   patt: string | ReadonlyArray<string>,
   options: GlobbyOptions
-) => {
+): Promise<HashedDir> => {
   let files = await globby(patt, options)
   files = files.sort()
   const cwd = options.cwd || path.resolve('.')
-  const arrays = await Promise.all(files.map(async (fname: string) => {
+  interface File {
+    fname: string
+    content?: string
+  }
+  const arrays = await Promise.all(files.map(async (fname: string): Promise<File> => {
     let content = await hasha.fromFile(fname, {
       encoding: 'base64'
     })
     return {
       fname: path.posix.normalize(path.relative(cwd, fname)),
-      content
+      content: content || undefined
     }
   }))
   const data: { [id: string]: string } = {}
@@ -90,7 +95,7 @@ export const hashDir = async (
   return data
 }
 
-export const hash = async (data: any) => {
+export const hash = async (data: unknown): Promise<string> => {
   let text: string
   if (typeof data === 'string') {
     text = data
