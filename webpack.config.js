@@ -20,16 +20,9 @@
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
 const merge = require('lodash/merge')
+// const webpack = require('webpack')
 
-const defaultConfigs = {
-  mode: 'development',
-  target: 'node',
-  entry: './src/cli/cli.ts',
-  output: {
-    pathinfo: false,
-    filename: 'cli.js',
-    path: path.resolve(__dirname, '__tmp__/new')
-  },
+const setupTypescript = (env) => ({
   devtool: 'source-map',
   resolve: {
     extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
@@ -42,7 +35,10 @@ const defaultConfigs = {
           loader: 'ts-loader',
           options: {
             transpileOnly: true,
-            experimentalWatchApi: true
+            experimentalWatchApi: true,
+            compilerOptions: {
+              removeComments: !!env.prod
+            }
           }
         }
       }, {
@@ -53,27 +49,65 @@ const defaultConfigs = {
     ]
   },
   externals: [
-    nodeExternals()
+    nodeExternals({
+      whitelist: [ /^lodash/ ]
+    })
   ]
+})
+
+const setupProductionMode = (env) => !env.prod ? ({
+  mode: 'development',
+  optimization: {
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    splitChunks: false
+  }
+}) : ({
+  mode: 'production'
+})
+
+const setupAnalyzeBundle = (env) => {
+  if (!env.analyzeBundle) {
+    return {}
+  }
+  try {
+    const BundleAnalyzerPlugin =
+    require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+    return {
+      plugins: [
+        new BundleAnalyzerPlugin()
+      ]
+    }
+  } catch {
+    return {}
+  }
 }
 
-module.exports = [
-  merge({}, defaultConfigs, {
-    name: 'dev',
-    output: {
-      path: path.resolve(__dirname, '__tmp__/bin')
-    },
-    optimization: {
-      removeAvailableModules: false,
-      removeEmptyChunks: false,
-      splitChunks: false,
-    }
-  }),
-  merge({}, defaultConfigs, {
-    name: 'minify',
-    mode: 'production',
-    output: {
-      path: path.resolve(__dirname, 'dist/')
-    }
-  })
-]
+const setupWatch = (env) => env.watch ? ({
+  watch: true,
+  watchOptions: {
+    ignored: [ 'node_modules' ]
+  }
+}) : {}
+
+const configBin = (env) => ({
+  target: 'node',
+  entry: './src/cli/cli.ts',
+  output: {
+    pathinfo: false,
+    filename: 'index.js',
+    libraryTarget: 'commonjs',
+    path: path.resolve(__dirname, env.prod ? 'dist' : '__tmp__/dist')
+  }
+})
+
+module.exports = (env = {}) => {
+  const lib = merge({}
+    , configBin(env)
+    , setupTypescript(env)
+    , setupProductionMode(env)
+    , setupAnalyzeBundle(env)
+    , setupWatch(env)
+  )
+  return lib
+}
