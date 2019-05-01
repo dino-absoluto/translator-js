@@ -36,6 +36,7 @@ export const getProvider = async (url: URL): Promise<Provider> => {
   if (!initialized) {
     initialized = (async (): Promise<void> => {
       register((await import('./syosetu')).default)
+      register((await import('./kakuyomu')).default)
     })()
     await initialized
     return getProvider(url)
