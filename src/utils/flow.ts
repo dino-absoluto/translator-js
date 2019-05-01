@@ -29,8 +29,11 @@ export const trim = (text: string | undefined | null): string | undefined => {
   return text
 }
 
+/* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
 export const flow = <T> (value: T) => {
+  /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
   return {
+    /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type */
     then <O> (fn: (input: NonNullable<T>) => O) {
       if (value) {
         return flow(fn(value as NonNullable<T>))
