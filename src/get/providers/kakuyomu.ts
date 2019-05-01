@@ -233,8 +233,7 @@ const fromURL = (url: URL): KakuyomuNovel | undefined => {
 
 const Syosetu: Provider = {
   acceptDomains: [
-    'ncode.syosetu.com',
-    'novel18.syosetu.com'
+    'kakuyomu.jp'
   ],
   fromURL
 }
