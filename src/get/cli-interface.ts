@@ -129,11 +129,11 @@ async (argv: CmdOptions): Promise<void> => {
       output.remove(group)
       output.clearLine()
       const message: string[] = []
-      if (report.updates.length > 0) {
-        message.push(c.yellow(report.updates.length + ' updated'))
-      }
       if (report.news.length > 0) {
         message.push(c.green(report.news.length + ' new'))
+      }
+      if (report.updates.length > 0) {
+        message.push(c.yellow(report.updates.length + ' updated'))
       }
       message.push()
       console.log(c.blue('-'),
