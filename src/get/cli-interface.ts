@@ -136,9 +136,9 @@ async (argv: CmdOptions): Promise<void> => {
         message.push(c.yellow(report.updates.length + ' updated'))
       }
       message.push()
-      console.log(c.blue('-'),
+      console.log(c.green('✓'),
         ...(message.length > 0
-          ? [ `[${message.join(', ')}]` ]
+          ? [ `${message.join(', ')}` ]
           : []),
         // c.gray('#'),
         path.basename(novel.container.name || 'unknown')
@@ -170,8 +170,8 @@ export const command = 'get [<sources>..]'
 export const describe = 'Download novel from sources'
 export const builder: CmdBuilder =
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-yargs =>
-  yargs.strict()
+yargs => {
+  return yargs.strict()
     .usage('$0 get [--output-dir=<path>] [options] [<URL> | <path>..]')
     .coerce('sources', (values: ArgString): Source[] => {
       if (!Array.isArray(values)) {
@@ -224,3 +224,4 @@ yargs =>
       default: false,
       desc: 'Download missing files'
     })
+}
